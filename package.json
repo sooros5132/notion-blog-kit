@@ -1,0 +1,39 @@
+{
+  "name": "sooros-log",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@mui/material": "^5.8.5",
+    "@next/bundle-analyzer": "^12.1.6",
+    "@notionhq/client": "^1.0.4",
+    "axios": "^0.27.2",
+    "babel-plugin-styled-components": "^2.0.7",
+    "lodash": "^4.17.21",
+    "next": "12.1.6",
+    "next-connect": "^0.12.2",
+    "next-seo": "^5.4.0",
+    "notion-client": "^6.12.9",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "react-icons": "^4.4.0",
+    "swr": "^1.3.0",
+    "zustand": "^4.0.0-rc.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.182",
+    "@types/node": "17.0.40",
+    "@types/react": "18.0.12",
+    "@types/react-dom": "18.0.5",
+    "eslint": "8.17.0",
+    "eslint-config-next": "12.1.6",
+    "typescript": "4.7.3"
+  }
+}
