@@ -37,6 +37,10 @@ const size = {
 
 export const CommonCustomTheme = {
   size: size,
+  font: {
+    normal: '-apple-system,BlinkMacSystemFont,helvetica,Apple SD Gothic Neo,sans-serif',
+    code: 'SFMono-Regular,source-code-pro,Menlo,Monaco,Consolas,Liberation Mono,Menlo,Courier,monospace'
+  },
   mediaQuery: {
     /* Extra small devices (phones, 600px and down) */
     mobile: '@media only screen and (max-width: 600px)',
@@ -73,7 +77,7 @@ export const CommonCustomTheme = {
     redMain: '#E86D5F',
     redLight: '#F08C7D',
     redDark: '#70261B',
-    redBackgroundLight: '#F7B7B0',
+    redBackgroundLight: 'rgb(154 50 38 / 63%)',
     redBackgroundDark: '#361915',
     greenMain: '#30CF5D',
     greenLight: '#7BEC9B',
@@ -126,6 +130,7 @@ const CommonTheme: ThemeOptions = {
   size: CommonCustomTheme.size,
   mediaQuery: CommonCustomTheme.mediaQuery,
   color: CommonCustomTheme.color,
+  font: CommonCustomTheme.font,
   palette: {
     primary: {
       main: CommonCustomTheme.color.main
@@ -161,7 +166,7 @@ const CommonTheme: ThemeOptions = {
     // },
   },
   typography: {
-    fontFamily: '-apple-system,BlinkMacSystemFont,helvetica,Apple SD Gothic Neo,sans-serif'
+    fontFamily: CommonCustomTheme.font.normal
     // app: LTSize
   },
   components: {
@@ -170,7 +175,7 @@ const CommonTheme: ThemeOptions = {
         body: {
           // '& *::selection': { backgroundColor: CommonStyles.LTMainTransparency30 },
           // '& *::-moz-selection': { backgroundColor: CommonStyles.LTMainTransparency30 }
-          fontFamily: '-apple-system,BlinkMacSystemFont,helvetica,Apple SD Gothic Neo,sans-serif',
+          fontFamily: CommonCustomTheme.font.normal,
           // WebkitFontSmoothing: 'antialiased',
           // MozOsxFontSmoothing: 'grayscale',
           backgroundColor: CommonCustomTheme.color.htmlBackground,

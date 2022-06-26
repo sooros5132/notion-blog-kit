@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTheme, styled } from '@mui/material/styles';
-import { AiFillThunderbolt, AiOutlineClose } from 'react-icons/ai';
-import Link from 'next/link';
+import { RiCloseFill } from 'react-icons/ri';
 import { FlexAlignItemsCenterBox, FlexBox } from '../modules/Box';
 import { SiNotion, SiNextdotjs, SiGithub } from 'react-icons/si';
 
@@ -30,9 +29,9 @@ const Footer: React.FC = (): JSX.Element => {
     <FooterContainer>
       <FooterInner>
         <FlexAlignItemsCenterBox>
-          <Link href='/'>
-            <a>SOOLOG</a>
-          </Link>
+          <a href='https://github.com/sooros5132' rel='noreferrer' target='_blank'>
+            SOOROS
+          </a>
           &nbsp;
           <a href='https://github.com/sooros5132/soolog' rel='noreferrer' target='_blank'>
             <FlexAlignItemsCenterBox>
@@ -47,7 +46,7 @@ const Footer: React.FC = (): JSX.Element => {
             </FlexAlignItemsCenterBox>
           </a>
           &nbsp;
-          <AiOutlineClose />
+          <RiCloseFill />
           &nbsp;
           <a href='https://notion.so/' rel='noreferrer' target='_blank'>
             <FlexAlignItemsCenterBox>

@@ -1,9 +1,7 @@
-import { CircularProgress } from '@mui/material';
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
-import { ParsedUrlQuery } from 'querystring';
-import { useEffect, useState } from 'react';
+import type { GetStaticProps, NextPage } from 'next';
+import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
 import { NotionBlocksChildrenList } from 'src/types/notion';
@@ -33,7 +31,7 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
     const [blocks, pageInfo] = await Promise.all([
       axios
@@ -57,7 +55,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
           '/notion/blocks/children/list': blocks.result,
           '/notion/pages': pageInfo.result
         }
-      }
+      },
+      revalidate: 60
     };
   } catch (e) {
     return {

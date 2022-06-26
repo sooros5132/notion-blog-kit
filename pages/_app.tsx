@@ -7,11 +7,13 @@ import { CommonCustomTheme } from 'src/styles/CommomTheme';
 
 declare module '@mui/material/styles' {
   interface Theme {
+    font: typeof CommonCustomTheme.font;
     size: typeof CommonCustomTheme.size;
     color: typeof CommonCustomTheme.color;
     mediaQuery: typeof CommonCustomTheme.mediaQuery;
   }
   interface ThemeOptions {
+    font?: typeof CommonCustomTheme.font;
     size?: typeof CommonCustomTheme.size;
     color?: typeof CommonCustomTheme.color;
     mediaQuery?: typeof CommonCustomTheme.mediaQuery;
