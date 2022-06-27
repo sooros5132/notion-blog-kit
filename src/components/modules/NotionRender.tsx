@@ -14,7 +14,8 @@ interface NotionRenderProps {
 const NotionContainer = styled('div')(({ theme }) => ({
   width: '100%',
   maxWidth: theme.size.desktopWidth,
-  margin: '0 auto'
+  margin: '0 auto',
+  marginBottom: theme.size.px20
 }));
 
 const RichTextContainer = styled('div')(({ theme }) => ({
@@ -61,15 +62,20 @@ const UnderlineSpan = styled('span')({
 });
 
 const DatabaseContainer = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexWrap: 'wrap',
-  columnGap: 20,
-  rowGap: 20,
+  display: 'grid',
+  gap: 20,
   textAlign: 'center',
-  '& > div': {
-    flex: '0 0 33.333333%'
+  [theme.mediaQuery.tablet]: {
+    gridTemplateColumns: '1fr 1fr'
+  },
+  [theme.mediaQuery.mobile]: {
+    gridTemplateColumns: '1fr'
+  },
+  [theme.mediaQuery.laptop]: {
+    gridTemplateColumns: '1fr 1fr 1fr'
   }
 }));
+
 const DatabaseFlexItem = styled('div')(({ theme }) => ({
   borderRadius: theme.size.px10,
   minWidth: 100,
