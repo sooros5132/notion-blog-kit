@@ -8,7 +8,12 @@ import { SiNotion, SiNextdotjs } from 'react-icons/si';
 interface HeaderProps {}
 
 const HeaderContainer = styled('nav')(({ theme }) => ({
-  backgroundColor: theme.color.footerBackground
+  position: 'sticky',
+  top: 0,
+  left: 0,
+  backdropFilter: 'blur(12px) brightness(0.9)',
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  padding: theme.size.px4 + ' 0'
 }));
 const HeaderInner = styled('div')(({ theme }) => ({
   display: 'flex',

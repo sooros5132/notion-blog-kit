@@ -7,7 +7,8 @@ import { SiNotion, SiNextdotjs, SiGithub } from 'react-icons/si';
 interface FooterProps {}
 
 const FooterContainer = styled('footer')(({ theme }) => ({
-  backgroundColor: theme.color.footerBackground
+  backgroundColor: theme.color.footerBackground,
+  padding: theme.size.px8 + ' 0'
 }));
 const FooterInner = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
   display: 'flex',
