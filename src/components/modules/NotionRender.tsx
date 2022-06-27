@@ -20,7 +20,8 @@ const NotionContainer = styled('div')(({ theme }) => ({
 const RichTextContainer = styled('div')(({ theme }) => ({
   lineHeight: 1.8,
   minHeight: '1.8em',
-  whiteSpace: 'break-spaces'
+  whiteSpace: 'break-spaces',
+  wordBreak: 'break-all'
 }));
 
 const ParagraphText = styled('span')<{
