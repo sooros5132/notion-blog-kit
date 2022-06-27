@@ -3,6 +3,8 @@ import { tabsClasses } from '@mui/material/Tabs';
 
 // default theme at https://material-ui.com/customization/default-theme/
 const size = {
+  px1: '0.071428571428571rem',
+  px2: '0.142857142857143rem',
   px3: '0.214285714285714rem',
   px4: '0.285714285714286rem',
   px5: '0.357142857142857rem',
