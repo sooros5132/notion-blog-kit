@@ -4,17 +4,16 @@ import type { GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { NotionBlocksChildrenList } from 'src/types/notion';
+import { NotionBlock, NotionBlocksChildrenList } from 'src/types/notion';
 import useSWR, { SWRConfig } from 'swr';
 import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface HomeProps {
-  fallback: {
-    '/notion/blocks/children/list': NotionBlocksChildrenList;
-    '/notion/pages': GetPageResponse;
-  };
+  slug: string;
+  notionBlocksChildrenList: NotionBlocksChildrenList;
+  pageInfo: GetPageResponse;
 }
-const Home: NextPage<HomeProps> = ({ fallback }) => {
+const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo }) => {
   const [query, setQuery] = useState<{
     start_cursor?: string;
     page_size?: number;
@@ -23,10 +22,13 @@ const Home: NextPage<HomeProps> = ({ fallback }) => {
   return (
     <SWRConfig
       value={{
-        fallback
+        fallback: {
+          ['/notion/blocks/children/list/' + slug]: notionBlocksChildrenList,
+          ['/notion/pages/' + slug]: { pageInfo }
+        }
       }}
     >
-      <NotionRender key={`notion-render`} />
+      <NotionRender slug={slug} />
     </SWRConfig>
   );
 };
@@ -51,10 +53,9 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     }
     return {
       props: {
-        fallback: {
-          '/notion/blocks/children/list': blocks.result,
-          '/notion/pages': pageInfo.result
-        }
+        slug: NOTION_BASE_BLOCK,
+        notionBlocksChildrenList: blocks.result,
+        pageInfo: pageInfo.result
       },
       revalidate: 60
     };

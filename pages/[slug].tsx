@@ -1,33 +1,22 @@
-import { CircularProgress } from '@mui/material';
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import axios from 'axios';
 import type { GetServerSideProps, NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { ParsedUrlQuery } from 'querystring';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { fetcher } from 'src/lib/swr';
 import { NotionBlocksChildrenList } from 'src/types/notion';
-import useSWR, { SWRConfig } from 'swr';
+import { SWRConfig } from 'swr';
 import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface SlugProps {
-  params: ParsedUrlQuery;
+  slug: string;
   fallback: {
     '/notion/blocks/children/list': NotionBlocksChildrenList;
     '/notion/pages': GetPageResponse;
   };
 }
 
-const Slug: React.FC = () => {
-  const { data: blocks } = useSWR<NotionBlocksChildrenList>('/notion/blocks/children/list');
-  const { data: pages } = useSWR<NotionBlocksChildrenList>('/notion/pages');
-
-  return <div>{JSON.stringify(blocks)}</div>;
-};
-
-const Page: NextPage<SlugProps> = ({ fallback }) => {
+const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
   const [query, setQuery] = useState<{
     start_cursor?: string;
     page_size?: number;
@@ -36,10 +25,13 @@ const Page: NextPage<SlugProps> = ({ fallback }) => {
   return (
     <SWRConfig
       value={{
-        fallback
+        fallback: {
+          ['/notion/blocks/children/list/' + slug]: fallback['/notion/blocks/children/list'],
+          ['/notion/pages/' + slug]: fallback['/notion/pages']
+        }
       }}
     >
-      <Slug />
+      <NotionRender slug={slug} />
     </SWRConfig>
   );
   // if (isValidating) {
@@ -51,22 +43,25 @@ const Page: NextPage<SlugProps> = ({ fallback }) => {
   // return <NotionRender blocks={blocks.results} key={`notion-render`} />;
 };
 
-export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ params }) => {
   try {
-    const { slug } = query;
+    const slug = params?.slug;
+    if (typeof slug !== 'string') {
+      throw 'type error "slug"';
+    }
 
     const [blocks, pageInfo] = await Promise.all([
       axios
         .get<IResponseSuccess<NotionBlocksChildrenList>>(
           BASE_API_PATH + '/notion/blocks/children/list/' + slug,
           {
-            params: query
+            params
           }
         )
         .then((res) => res.data),
       axios
         .get<IResponseSuccess<GetPageResponse>>(BASE_API_PATH + '/notion/pages/' + slug, {
-          params: query
+          params
         })
         .then((res) => res.data)
     ]);
@@ -76,7 +71,7 @@ export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ query 
     }
     return {
       props: {
-        params: query,
+        slug,
         fallback: {
           '/notion/blocks/children/list': blocks.result,
           '/notion/pages': pageInfo.result
@@ -90,4 +85,4 @@ export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ query 
   }
 };
 
-export default Page;
+export default Slug;

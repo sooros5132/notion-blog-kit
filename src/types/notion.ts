@@ -113,6 +113,10 @@ export declare type RichTextTitle = {
 export declare type RichText = {
   plain_text: string;
   href?: string | null;
+  text: {
+    content: string;
+    link: string | null;
+  };
   annotations: RichTextAnnotation;
   type: RichTextType;
 };
@@ -174,10 +178,62 @@ export declare type NotionBlockTypes =
   | 'page_or_database';
 
 export interface NotionBlocksChildrenList {
+  blocksChildrenList: {
+    object: 'list'; // Always "list".
+    results: Array<NotionBlock>;
+    next_cursor?: string | null; // Only available when "has_more" is true.
+    has_more: boolean;
+    type: NotionBlockTypes;
+    block: {};
+  };
+  databaseBlocks: Record<string, NotionDatabasesQuery>;
+}
+
+export interface FileObject {
+  type: 'file';
+  file: {
+    url: string;
+    expiry_time: string;
+  };
+}
+export interface TimeObject {
+  object: string;
+  id: string;
+}
+
+export interface DatabasesProperties extends Partial<Record<PropertyType | string, any>> {
+  id: string;
+  type: string;
+  created_time?: string;
+  multi_select?: any;
+  title?: Array<RichText>;
+}
+
+export interface NotionDatabases {
+  object: string; // Always "database"
+  id: string; // uuid
+  created_time: string;
+  created_by: TimeObject;
+  last_edited_time: string;
+  last_edited_by: TimeObject;
+  // title?: RichText;
+  // description?: RichText;
+  icon?: FileObject | null;
+  cover?: FileObject | null;
+  properties: DatabasesProperties;
+  parent?: {
+    type: 'database_id' | string;
+    database_id: string;
+  };
+  url?: string | null;
+  archived?: boolean | null;
+  is_inline?: boolean | null;
+}
+export interface NotionDatabasesQuery {
   object: 'list'; // Always "list".
-  results: Array<NotionBlock>;
+  results: Array<NotionDatabases>;
   next_cursor?: string | null; // Only available when "has_more" is true.
   has_more: boolean;
   type: NotionBlockTypes;
-  block: {};
+  page: {};
 }

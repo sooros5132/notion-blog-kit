@@ -1,16 +1,26 @@
 import React from 'react';
 import { useTheme, styled } from '@mui/material/styles';
-import { NotionBlock, NotionBlocksChildrenList } from 'src/types/notion';
+import { NotionBlock, NotionBlocksChildrenList, RichText } from 'src/types/notion';
 import useSWR from 'swr';
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { CircularProgress } from '@mui/material';
+import Link from 'next/link';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
+  readonly slug: string;
 }
 
+const NotionContainer = styled('div')(({ theme }) => ({
+  width: '100%',
+  maxWidth: theme.size.desktopWidth,
+  margin: '0 auto'
+}));
+
 const RichTextContainer = styled('div')(({ theme }) => ({
-  lineHeight: 1.5
+  lineHeight: 1.8,
+  minHeight: '1.8em',
+  whiteSpace: 'break-spaces'
 }));
 
 const ParagraphText = styled('span')<{
@@ -27,8 +37,8 @@ const ParagraphText = styled('span')<{
     borderBottomLeftRadius: code === 'once' || code === 'first' ? theme.size.px4 : undefined,
     borderTopRightRadius: code === 'once' || code === 'end' ? theme.size.px4 : undefined,
     borderBottomRightRadius: code === 'once' || code === 'end' ? theme.size.px4 : undefined,
-    paddingTop: theme.size.px3,
-    paddingBottom: theme.size.px3,
+    paddingTop: theme.size.px2,
+    paddingBottom: theme.size.px2,
     paddingLeft: code === 'once' || code === 'first' ? theme.size.px4 : undefined,
     paddingRight: code === 'once' || code === 'end' ? theme.size.px4 : undefined
   };
@@ -41,41 +51,93 @@ const ParagraphText = styled('span')<{
   };
 });
 
-const NotionRender: React.FC<NotionRenderProps> = (): JSX.Element => {
-  const theme = useTheme();
-  const { data: blocks } = useSWR<NotionBlocksChildrenList>('/notion/blocks/children/list');
-  const { data: pages } = useSWR<GetPageResponse>('/notion/pages');
+const ParagraphAnchor = styled('a')({
+  textDecoration: 'underline'
+});
+
+const UnderlineSpan = styled('span')({
+  textDecoration: 'underline'
+});
+
+const DatabaseContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  columnGap: 20,
+  rowGap: 20,
+  textAlign: 'center',
+  '& > div': {
+    flex: '0 0 33.333333%'
+  }
+}));
+const DatabaseFlexItem = styled('div')(({ theme }) => ({
+  borderRadius: theme.size.px10,
+  minWidth: 100,
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  overflow: 'hidden',
+  '&:hover img.page-cover': {
+    filter: 'brightness(0.75)'
+  }
+}));
+
+const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
+  padding: theme.size.px8
+}));
+
+const DatabaseItemCover = styled('div')({
+  height: 200
+});
+
+const DatabaseItemCoverImage = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  objectPosition: 'center center',
+  transition: 'filter 0.2s Linear'
+});
+
+const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
+  const { data: blocks } = useSWR<NotionBlocksChildrenList>('/notion/blocks/children/list/' + slug);
+  const { data: pages } = useSWR<GetPageResponse>('/notion/pages/' + slug);
 
   // const { data, error } = useSWR("/key", fetch);
 
-  if (!blocks || !blocks?.results || !pages) {
+  if (!blocks?.blocksChildrenList?.results || !pages) {
     return <CircularProgress size={20} />;
   }
 
   return (
-    <>
-      {blocks.results.map((block, i) => {
+    <NotionContainer>
+      {blocks.blocksChildrenList.results.map((block, i) => {
         switch (block.type) {
           case 'child_database': {
-            return <ChildDatabase block={block} key={`block-${block.id}-${block.type}`} />;
-          }
-          case 'bookmark': {
-            break;
+            return (
+              <ChildDatabase
+                block={block}
+                databases={blocks.databaseBlocks}
+                key={`block-${block.id}-${i}`}
+              />
+            );
           }
           case 'heading_1':
           case 'heading_2':
           case 'heading_3': {
-            return <Heading block={block} key={`block-${block.id}-${block.type}`} />;
+            return <Heading block={block} key={`block-${block.id}-${i}`} />;
           }
           case 'paragraph': {
-            return <Paragraph block={block} key={`block-${block.id}-${block.type}`} />;
+            return (
+              <Paragraph
+                blockId={block.id}
+                richText={block.paragraph.rich_text}
+                key={`block-${block.id}-${i}`}
+              />
+            );
           }
           default: {
-            break;
+            return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
           }
         }
       })}
-    </>
+    </NotionContainer>
   );
 };
 
@@ -85,18 +147,37 @@ const Heading: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   return (
     <RichTextContainer>
       {block[type].rich_text.map((text, i) => {
-        return <span key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</span>;
+        switch (type) {
+          case 'heading_1': {
+            return <h1 key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</h1>;
+          }
+          case 'heading_2': {
+            return <h2 key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</h2>;
+          }
+          case 'heading_3': {
+            return <h3 key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</h3>;
+          }
+          default: {
+            return <span key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</span>;
+          }
+        }
       })}
     </RichTextContainer>
   );
 };
-const Paragraph: React.FC<NotionChildrenRenderProps> = ({ block }) => {
+
+interface ParagraphProps {
+  blockId: string;
+  richText: Array<RichText>;
+}
+
+const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
   return (
     <RichTextContainer>
-      {block.paragraph.rich_text.map((text, i) => {
+      {richText.map((text, i) => {
         if (text.type === 'mention') {
           return (
-            <></>
+            <React.Fragment key={`block-mention-${blockId}-${i}`}></React.Fragment>
             // <ParagraphText key={`block-${block.id}-${block.type}-${text.type}-${i}`}>
             //   mention
             // </ParagraphText>
@@ -106,11 +187,12 @@ const Paragraph: React.FC<NotionChildrenRenderProps> = ({ block }) => {
         const {
           type,
           plain_text,
+          href,
           annotations: { bold, code, italic, strikethrough, underline }
         } = text;
 
-        const prevTextIsCode = code && block.paragraph.rich_text[i - 1]?.annotations.code;
-        const nextTextIsCode = code && block.paragraph.rich_text[i + 1]?.annotations.code;
+        const prevTextIsCode = code && richText[i - 1]?.annotations.code;
+        const nextTextIsCode = code && richText[i + 1]?.annotations.code;
 
         const annotations: Partial<typeof ParagraphText['defaultProps']> = {
           bold: bold ? 'bold' : undefined,
@@ -128,8 +210,20 @@ const Paragraph: React.FC<NotionChildrenRenderProps> = ({ block }) => {
             : undefined
         };
 
+        if (href) {
+          return (
+            <ParagraphAnchor
+              key={`block-anchor-${blockId}-${i}`}
+              href={href}
+              rel='noreferrer'
+              target='_blank'
+            >
+              <ParagraphText {...annotations}>{plain_text}</ParagraphText>
+            </ParagraphAnchor>
+          );
+        }
         return (
-          <ParagraphText key={`block-${block.id}-${block.type}-${type}-${i}`} {...annotations}>
+          <ParagraphText key={`block-${blockId}-${i}`} {...annotations}>
             {plain_text}
           </ParagraphText>
         );
@@ -138,8 +232,38 @@ const Paragraph: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   );
 };
 
-const ChildDatabase: React.FC<NotionChildrenRenderProps> = ({ block }) => {
-  return <div>database: {block.child_database.title}</div>;
+interface ChildDatabaseProps extends NotionChildrenRenderProps {
+  databases: NotionBlocksChildrenList['databaseBlocks'];
+}
+
+const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
+  const database = databases[block.id];
+  return (
+    <div>
+      <h1>{block.child_database.title}</h1>
+      <DatabaseContainer>
+        {database.results.map((database) => (
+          <DatabaseFlexItem key={`database-${database.id}`}>
+            <Link href={`/${database.id}`}>
+              <a>
+                <DatabaseItemCover>
+                  {database?.cover && (
+                    <DatabaseItemCoverImage className='page-cover' src={database.cover.file.url} />
+                  )}
+                </DatabaseItemCover>
+                <DatabaseDescriptionBox>
+                  <Paragraph
+                    blockId={database.id}
+                    richText={database?.properties?.['이름']?.title}
+                  />
+                </DatabaseDescriptionBox>
+              </a>
+            </Link>
+          </DatabaseFlexItem>
+        ))}
+      </DatabaseContainer>
+    </div>
+  );
 };
 
 NotionRender.displayName = 'NotionRender';
