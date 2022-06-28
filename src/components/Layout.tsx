@@ -23,8 +23,7 @@ const Layout = styled(FlexColumnBox)(({ theme }) => ({
 const MainContent = styled('main')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  marginBottom: 'auto',
-  padding: '0 ' + theme.size.px8
+  marginBottom: 'auto'
 }));
 
 export const introductionPathnameList = [

@@ -4,14 +4,14 @@ import type { GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { NotionBlock, NotionBlocksChildrenList } from 'src/types/notion';
+import { NotionBlock, NotionBlocksChildrenList, NotionPagesRetrieve } from 'src/types/notion';
 import useSWR, { SWRConfig } from 'swr';
 import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface HomeProps {
   slug: string;
   notionBlocksChildrenList: NotionBlocksChildrenList;
-  pageInfo: GetPageResponse;
+  pageInfo: NotionPagesRetrieve;
 }
 const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo }) => {
   const [query, setQuery] = useState<{
@@ -24,7 +24,7 @@ const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo })
       value={{
         fallback: {
           ['/notion/blocks/children/list/' + slug]: notionBlocksChildrenList,
-          ['/notion/pages/' + slug]: { pageInfo }
+          ['/notion/pages/' + slug]: pageInfo
         }
       }}
     >
@@ -42,7 +42,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
         )
         .then((res) => res.data),
       axios
-        .get<IResponseSuccess<GetPageResponse>>(
+        .get<IResponseSuccess<NotionPagesRetrieve>>(
           BASE_API_PATH + '/notion/pages/' + NOTION_BASE_BLOCK
         )
         .then((res) => res.data)

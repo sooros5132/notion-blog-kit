@@ -196,6 +196,14 @@ export interface FileObject {
     expiry_time: string;
   };
 }
+
+export interface ExternalObject {
+  type: 'external';
+  external: {
+    url: string | null;
+  };
+}
+
 export interface TimeObject {
   object: string;
   id: string;
@@ -236,4 +244,36 @@ export interface NotionDatabasesQuery {
   has_more: boolean;
   type: NotionBlockTypes;
   page: {};
+}
+export interface EmojiObject {
+  type: 'emoji';
+  emoji: string;
+}
+
+export interface ParentObject {
+  type: 'workspace' | 'database_id' | 'page_id';
+  workspace?: boolean; // workspace의 경우 Always true.
+  database_id?: string;
+  page_id?: string;
+}
+
+export interface NotionPagesRetrieve {
+  object: 'page'; // Always "page"
+  id: string;
+  created_time: string;
+  last_edited_time: string;
+  created_by: TimeObject;
+  last_edited_by: TimeObject;
+  cover: ExternalObject;
+  icon: EmojiObject;
+  parent: ParentObject;
+  archived: false;
+  properties: {
+    title: {
+      id: 'title';
+      type: 'title';
+      title: Array<RichText>;
+    };
+  };
+  url: string;
 }

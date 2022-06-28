@@ -1,8 +1,12 @@
 import React from 'react';
-import { useTheme, styled } from '@mui/material/styles';
-import { NotionBlock, NotionBlocksChildrenList, RichText } from 'src/types/notion';
+import { styled } from '@mui/material/styles';
+import {
+  NotionBlock,
+  NotionBlocksChildrenList,
+  NotionPagesRetrieve,
+  RichText
+} from 'src/types/notion';
 import useSWR from 'swr';
-import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import { CircularProgress } from '@mui/material';
 import Link from 'next/link';
 
@@ -13,14 +17,74 @@ interface NotionRenderProps {
 
 const NotionContainer = styled('div')(({ theme }) => ({
   width: '100%',
+  marginBottom: theme.size.px20,
+  fontSize: theme.size.px16,
+  color: theme.color.textDefaultBlack
+}));
+
+const PageInfoContainer = styled('div')(({ theme }) => ({}));
+
+const PageInfoCover = styled('div')(({ theme }) => ({
+  width: '100%',
+  height: '30vh'
+}));
+
+const PageInfoInner = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, theme }) => ({
   maxWidth: theme.size.desktopWidth,
   margin: '0 auto',
-  marginBottom: theme.size.px20
+  marginTop: emoji === 'true' ? `-${theme.size.px50}` : undefined,
+  [theme.mediaQuery.mobile]: {
+    paddingRight: theme.size.px12,
+    paddingLeft: theme.size.px12
+  },
+  [theme.mediaQuery.tablet]: {
+    paddingRight: theme.size.px24,
+    paddingLeft: theme.size.px24
+  },
+  [theme.mediaQuery.laptop]: {
+    paddingRight: theme.size.px40,
+    paddingLeft: theme.size.px40
+  }
+}));
+
+const PageEmoji = styled('span')(({ theme }) => ({
+  padding: `0 ${theme.size.px12}`,
+  fontSize: theme.size.px70,
+  fontWeight: 'bold'
+}));
+
+const PageTitle = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, theme }) => ({
+  marginTop: emoji === 'true' ? theme.size.px10 : theme.size.px50,
+  fontSize: theme.size.px40,
+  fontWeight: 'bold',
+  lineHeight: '1'
+}));
+
+const NotionContent = styled('div')(({ theme }) => ({
+  maxWidth: theme.size.desktopWidth,
+  margin: '0 auto',
+  lineHeight: '1.2',
+  [theme.mediaQuery.mobile]: {
+    paddingRight: theme.size.px12,
+    paddingLeft: theme.size.px12
+  },
+  [theme.mediaQuery.tablet]: {
+    paddingRight: theme.size.px24,
+    paddingLeft: theme.size.px24
+  },
+  [theme.mediaQuery.laptop]: {
+    paddingRight: theme.size.px40,
+    paddingLeft: theme.size.px40
+  }
+}));
+
+const Block = styled('div')(({ theme }) => ({
+  margin: theme.size.px6 + ' 0'
 }));
 
 const RichTextContainer = styled('div')(({ theme }) => ({
-  lineHeight: 1.8,
-  minHeight: '1.8em',
+  lineHeight: 'inherit',
+  minHeight: '1.25em',
   whiteSpace: 'break-spaces',
   wordBreak: 'break-all'
 }));
@@ -53,9 +117,10 @@ const ParagraphText = styled('span')<{
   };
 });
 
-const ParagraphAnchor = styled('a')({
-  textDecoration: 'underline'
-});
+const ParagraphAnchor = styled('a')(({ theme }) => ({
+  textDecoration: 'underline',
+  color: theme.color.gray85
+}));
 
 const UnderlineSpan = styled('span')({
   textDecoration: 'underline'
@@ -65,11 +130,11 @@ const DatabaseContainer = styled('div')(({ theme }) => ({
   display: 'grid',
   gap: 20,
   textAlign: 'center',
-  [theme.mediaQuery.tablet]: {
-    gridTemplateColumns: '1fr 1fr'
-  },
   [theme.mediaQuery.mobile]: {
     gridTemplateColumns: '1fr'
+  },
+  [theme.mediaQuery.tablet]: {
+    gridTemplateColumns: '1fr 1fr'
   },
   [theme.mediaQuery.laptop]: {
     gridTemplateColumns: '1fr 1fr 1fr'
@@ -79,7 +144,15 @@ const DatabaseContainer = styled('div')(({ theme }) => ({
 const DatabaseFlexItem = styled('div')(({ theme }) => ({
   borderRadius: theme.size.px10,
   minWidth: 100,
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  backgroundColor: theme.color.cardBackground,
+  /**
+   * Safari 브라우저 borderRadius 오류.
+   * 쌓임 맥락에 추가 https://www.sungikchoi.com/blog/safari-overflow-border-radius/
+   * isolation: isolate
+   * will-change: transform;
+   * 추가하기
+   */
+  isolation: 'isolate',
   overflow: 'hidden',
   '&:hover img.page-cover': {
     filter: 'brightness(0.75)'
@@ -104,46 +177,64 @@ const DatabaseItemCoverImage = styled('img')({
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<NotionBlocksChildrenList>('/notion/blocks/children/list/' + slug);
-  const { data: pages } = useSWR<GetPageResponse>('/notion/pages/' + slug);
+  const { data: pages } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
 
   // const { data, error } = useSWR("/key", fetch);
 
   if (!blocks?.blocksChildrenList?.results || !pages) {
     return <CircularProgress size={20} />;
   }
+  console.log(pages);
 
   return (
     <NotionContainer>
-      {blocks.blocksChildrenList.results.map((block, i) => {
-        switch (block.type) {
-          case 'child_database': {
-            return (
-              <ChildDatabase
-                block={block}
-                databases={blocks.databaseBlocks}
-                key={`block-${block.id}-${i}`}
-              />
-            );
+      <PageInfoContainer>
+        {pages?.cover?.[pages?.cover?.type]?.url && (
+          <PageInfoCover>
+            <DatabaseItemCoverImage src={pages?.cover?.[pages?.cover?.type]?.url!} />
+          </PageInfoCover>
+        )}
+        <PageInfoInner emoji={`${Boolean(pages.icon?.emoji)}`}>
+          {pages.icon?.emoji && <PageEmoji>{pages.icon?.emoji}</PageEmoji>}
+          <PageTitle emoji={`${Boolean(pages.icon?.emoji)}`}>
+            <Paragraph blockId={pages.id} richText={pages.properties.title?.title} />
+          </PageTitle>
+        </PageInfoInner>
+      </PageInfoContainer>
+      <NotionContent>
+        {blocks.blocksChildrenList.results.map((block, i) => {
+          switch (block.type) {
+            case 'child_database': {
+              return (
+                <ChildDatabase
+                  block={block}
+                  databases={blocks.databaseBlocks}
+                  key={`block-${block.id}-${i}`}
+                />
+              );
+            }
+            case 'heading_1':
+            case 'heading_2':
+            case 'heading_3': {
+              return (
+                <Block key={`block-${block.id}-${i}`}>
+                  <Heading block={block} />
+                </Block>
+              );
+            }
+            case 'paragraph': {
+              return (
+                <Block key={`block-${block.id}-${i}`}>
+                  <Paragraph blockId={block.id} richText={block.paragraph.rich_text} />
+                </Block>
+              );
+            }
+            default: {
+              return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
+            }
           }
-          case 'heading_1':
-          case 'heading_2':
-          case 'heading_3': {
-            return <Heading block={block} key={`block-${block.id}-${i}`} />;
-          }
-          case 'paragraph': {
-            return (
-              <Paragraph
-                blockId={block.id}
-                richText={block.paragraph.rich_text}
-                key={`block-${block.id}-${i}`}
-              />
-            );
-          }
-          default: {
-            return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
-          }
-        }
-      })}
+        })}
+      </NotionContent>
     </NotionContainer>
   );
 };
@@ -221,7 +312,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
           return (
             <ParagraphAnchor
               key={`block-anchor-${blockId}-${i}`}
-              href={href.charAt(0) === '/' ? `https://notion.so${href}` : href }
+              href={href.charAt(0) === '/' ? `https://notion.so${href}` : href}
               rel='noreferrer'
               target='_blank'
             >
