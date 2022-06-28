@@ -50,7 +50,8 @@ const PageInfoInner = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, them
 const PageEmoji = styled('span')(({ theme }) => ({
   padding: `0 ${theme.size.px12}`,
   fontSize: theme.size.px70,
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  fontFamily: 'initial'
 }));
 
 const PageTitle = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, theme }) => ({
