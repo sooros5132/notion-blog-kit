@@ -8,7 +8,34 @@ import { CommonCustomTheme } from './CommomTheme';
 // import amber from '@mui/material/colors/amber';
 
 export const LightColor: typeof CommonCustomTheme['color'] = {
-  ...CommonCustomTheme['color']
+  ...CommonCustomTheme['color'],
+  footerBackground: '#d4d4d4',
+  textDefaultBlack: '#000000',
+  textDefaultWhite: '#ffffff',
+  htmlBackground: '#f7f7f7',
+  gray01: '#fcfcfc',
+  gray03: '#f7f7f7',
+  gray05: '#f2f2f2',
+  gray10: '#e6e6e6',
+  gray15: '#d9d9d9',
+  gray20: '#cccccc',
+  gray25: '#bfbfbf',
+  gray30: '#b3b3b3',
+  gray35: '#a6a6a6',
+  gray40: '#999999',
+  gray45: '#8c8c8c',
+  gray50: '#808080',
+  gray55: '#737373',
+  gray60: '#666666',
+  gray65: '#595959',
+  gray70: '#4d4d4d',
+  gray75: '#404040',
+  gray80: '#333333',
+  gray85: '#262626',
+  gray90: '#1a1a1a',
+  gray95: '#0d0d0d',
+  gray97: '#080808',
+  gray99: '#030303'
   //   backgroundLrightingMain: '#000000'
 };
 

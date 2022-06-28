@@ -14,7 +14,7 @@ const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 18;
 
 const defaultState = {
-  mode: 'light' as Theme['mode'],
+  mode: 'dark' as Theme['mode'],
   fontSize: DEFAULT_FONT_SIZE
 };
 
@@ -24,14 +24,16 @@ export const useThemeStore = create(
   persist<Theme>(
     (set, get) => ({
       ...initialState,
-      useDarkTheme: () =>
+      useDarkTheme() {
         set(() => ({
           mode: 'dark'
-        })),
-      useLightTheme: () =>
+        }));
+      },
+      useLightTheme() {
         set(() => ({
           mode: 'light'
-        })),
+        }));
+      },
       changeFontSize: (fontSize: number) =>
         set(() => ({
           fontSize: isNaN(fontSize)

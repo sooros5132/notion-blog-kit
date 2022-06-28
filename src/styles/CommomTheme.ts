@@ -1,4 +1,4 @@
-import { ThemeOptions } from '@mui/material';
+import { darkScrollbar, ThemeOptions } from '@mui/material';
 import { tabsClasses } from '@mui/material/Tabs';
 
 // default theme at https://material-ui.com/customization/default-theme/
@@ -65,7 +65,7 @@ export const CommonCustomTheme = {
     textDefaultBlack: '#080808',
     textDefaultWhite: '#FFFFFF',
     textBlueGray: '#A4B7BB',
-    htmlBackground: '#041210',
+    htmlBackground: '#f7f7f7',
     main: '#B157E0',
     mainLight: '#CD9EE6',
     mainDark: '#8844AD',
@@ -79,8 +79,9 @@ export const CommonCustomTheme = {
     redMain: '#E86D5F',
     redLight: '#F08C7D',
     redDark: '#70261B',
-    redBackgroundLight: 'rgb(154 50 38 / 63%)',
     redBackgroundDark: '#361915',
+    redBackgroundLight: 'rgb(154 50 38 / 24%)',
+    cardBackground: 'rgb(46 46 46 / 8%)',
     greenMain: '#30CF5D',
     greenLight: '#7BEC9B',
     greenDark: '#249C46',
@@ -181,7 +182,7 @@ const CommonTheme: ThemeOptions = {
           // WebkitFontSmoothing: 'antialiased',
           // MozOsxFontSmoothing: 'grayscale',
           backgroundColor: CommonCustomTheme.color.htmlBackground,
-          color: CommonCustomTheme.color.textDefaultWhite
+          color: CommonCustomTheme.color.textDefaultBlack
         },
         code: {
           fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace"
