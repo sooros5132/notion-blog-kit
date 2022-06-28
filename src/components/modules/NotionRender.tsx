@@ -221,7 +221,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
           return (
             <ParagraphAnchor
               key={`block-anchor-${blockId}-${i}`}
-              href={href}
+              href={href.charAt(0) === '/' ? `https://notion.so${href}` : href }
               rel='noreferrer'
               target='_blank'
             >
