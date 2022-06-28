@@ -17,7 +17,8 @@ const HeaderContainer = styled('nav')(({ theme }) => ({
   left: 0,
   backdropFilter: 'blur(21px) brightness(0.9)',
   backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  borderBottom: '1px solid rgba(255, 255, 255, 0.15)'
+  borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+  zIndex: 1
 }));
 
 const HeaderInner = styled('div')(({ theme }) => ({

@@ -16,7 +16,7 @@ const FooterInner = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
   alignItems: 'center',
   maxWidth: theme.size.maxWidth,
   margin: '0 auto',
-  padding: '0 ' + theme.size.px8,
+  padding: '0 ' + theme.size.px16,
   color: theme.color.textDefaultBlack,
   fontSize: theme.size.px20
 }));
