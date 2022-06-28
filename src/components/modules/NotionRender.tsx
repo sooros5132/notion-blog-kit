@@ -184,7 +184,6 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   if (!blocks?.blocksChildrenList?.results || !pages) {
     return <CircularProgress size={20} />;
   }
-  console.log(pages);
 
   return (
     <NotionContainer>
@@ -197,7 +196,11 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         <PageInfoInner emoji={`${Boolean(pages.icon?.emoji)}`}>
           {pages.icon?.emoji && <PageEmoji>{pages.icon?.emoji}</PageEmoji>}
           <PageTitle emoji={`${Boolean(pages.icon?.emoji)}`}>
-            <Paragraph blockId={pages.id} richText={pages.properties.title?.title} />
+            {pages.parent.type === 'workspace' ? (
+              <Paragraph blockId={pages.id} richText={pages.properties.title?.title} />
+            ) : pages.parent.type === 'database_id' ? (
+              <Paragraph blockId={pages.id} richText={pages.properties?.['이름']?.title} />
+            ) : null}
           </PageTitle>
         </PageInfoInner>
       </PageInfoContainer>

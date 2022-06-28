@@ -209,12 +209,9 @@ export interface TimeObject {
   id: string;
 }
 
-export interface DatabasesProperties extends Partial<Record<PropertyType | string, any>> {
+export interface Properties extends Partial<Record<PropertyType | string, any>> {
   id: string;
   type: string;
-  created_time?: string;
-  multi_select?: any;
-  title?: Array<RichText>;
 }
 
 export interface NotionDatabases {
@@ -228,7 +225,11 @@ export interface NotionDatabases {
   // description?: RichText;
   icon?: FileObject | null;
   cover?: FileObject | null;
-  properties: DatabasesProperties;
+  properties: Properties & {
+    created_time?: string;
+    multi_select?: any;
+    title?: Array<RichText>;
+  };
   parent?: {
     type: 'database_id' | string;
     database_id: string;
@@ -268,7 +269,7 @@ export interface NotionPagesRetrieve {
   icon: EmojiObject;
   parent: ParentObject;
   archived: false;
-  properties: {
+  properties: Properties & {
     title: {
       id: 'title';
       type: 'title';
