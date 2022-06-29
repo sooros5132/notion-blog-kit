@@ -9,6 +9,7 @@ import {
 import useSWR from 'swr';
 import { CircularProgress } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -155,7 +156,7 @@ const DatabaseFlexItem = styled('div')(({ theme }) => ({
    */
   isolation: 'isolate',
   overflow: 'hidden',
-  '&:hover img.page-cover': {
+  '&:hover .page-cover': {
     filter: 'brightness(0.75)'
   }
 }));
@@ -165,15 +166,17 @@ const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
 }));
 
 const DatabaseItemCover = styled('div')({
-  height: 200
+  height: 200,
+  transition: 'filter 0.2s Linear'
 });
 
-const DatabaseItemCoverImage = styled('img')({
+const DatabaseItemCoverImage = styled('div')({
   width: '100%',
   height: '100%',
-  objectFit: 'cover',
-  objectPosition: 'center center',
-  transition: 'filter 0.2s Linear'
+  position: 'relative',
+  zIndex: -1
+  // objectFit: 'cover',
+  // objectPosition: 'center center',
 });
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
@@ -191,7 +194,15 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       <PageInfoContainer>
         {pages?.cover?.[pages?.cover?.type]?.url && (
           <PageInfoCover>
-            <DatabaseItemCoverImage src={pages?.cover?.[pages?.cover?.type]?.url!} />
+            <DatabaseItemCoverImage>
+              <Image
+                src={pages?.cover?.[pages?.cover?.type]?.url!}
+                placeholder='blur'
+                blurDataURL='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
+                layout='fill'
+                objectFit='cover'
+              />
+            </DatabaseItemCoverImage>
           </PageInfoCover>
         )}
         <PageInfoInner emoji={`${Boolean(pages.icon?.emoji)}`}>
@@ -348,9 +359,17 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
           <DatabaseFlexItem key={`database-${database.id}`}>
             <Link href={`/${database.id}`}>
               <a>
-                <DatabaseItemCover>
+                <DatabaseItemCover className='page-cover'>
                   {database?.cover && (
-                    <DatabaseItemCoverImage className='page-cover' src={database.cover.file.url} />
+                    <DatabaseItemCoverImage>
+                      <Image
+                        src={database.cover.file.url}
+                        placeholder='blur'
+                        blurDataURL='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
+                        layout='fill'
+                        objectFit='cover'
+                      />
+                    </DatabaseItemCoverImage>
                   )}
                 </DatabaseItemCover>
                 <DatabaseDescriptionBox>
