@@ -15,6 +15,7 @@ import DarkTheme from 'src/styles/DarkTheme';
 import Header from './header/Header';
 import Footer from './footer/Footer';
 import { FlexColumnBox } from './modules/Box';
+import NextNProgress from 'nextjs-progressbar';
 
 const Layout = styled(FlexColumnBox)(({ theme }) => ({
   minHeight: '100vh'
@@ -77,6 +78,7 @@ function SoologLayout({ children }: any) {
   return (
     <MuiThemeProvider<MuiTheme> theme={theme}>
       <CssBaseline />
+      <NextNProgress startPosition={0.2} />
       <Layout>
         <Header />
         <MainContent>{children}</MainContent>

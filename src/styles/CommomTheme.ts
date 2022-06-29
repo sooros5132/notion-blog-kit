@@ -190,6 +190,9 @@ const CommonTheme: ThemeOptions = {
         a: {
           color: 'inherit',
           textDecoration: 'none'
+        },
+        'html.nprogress-busy > body > #nprogress > .spinner': {
+          display: 'none'
         }
       }
     },
