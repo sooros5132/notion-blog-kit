@@ -2,6 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { AiFillThunderbolt } from 'react-icons/ai';
 import Link from 'next/link';
+import { FlexAlignItemsCenterBox } from '../modules/Box';
 // import { FlexAlignItemsCenterBox } from '../modules/Box';
 // import { useThemeStore } from 'src/store/theme';
 // import shallow from 'zustand/shallow';
@@ -16,7 +17,7 @@ const HeaderContainer = styled('nav')(({ theme }) => ({
   top: 0,
   left: 0,
   backdropFilter: 'blur(21px) brightness(0.9)',
-  backgroundColor: 'rgba(48, 48, 48, 0.76)', //'rgba(255, 255, 255, 0.05)',
+  backgroundColor: 'rgba(33, 33, 33, 0.68)', //'rgba(255, 255, 255, 0.05)',
   borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
   zIndex: 1
 }));
@@ -35,10 +36,10 @@ const HeaderLogo = styled('div')(({ theme }) => ({
   padding: theme.size.px6 + ' 0'
 }));
 
-const FlexAlignItemsCenterAnchor = styled('a')(({ theme }) => ({
-  cursor: 'pointer',
+const HeaderLogoInner = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
+  cursor: 'pointer',
   padding: `${theme.size.px2} ${theme.size.px6}`
 }));
 
@@ -54,10 +55,12 @@ const Header: React.FC = (): JSX.Element => {
       <HeaderInner>
         <HeaderLogo>
           <Link href='/'>
-            <FlexAlignItemsCenterAnchor>
-              <AiFillThunderbolt />
-              &nbsp;SOOLOG
-            </FlexAlignItemsCenterAnchor>
+            <a>
+              <HeaderLogoInner>
+                <AiFillThunderbolt />
+                &nbsp;SOOLOG
+              </HeaderLogoInner>
+            </a>
           </Link>
         </HeaderLogo>
         {/* <FlexAlignItemsCenterBox>
