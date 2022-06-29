@@ -10,6 +10,7 @@ import useSWR from 'swr';
 import { CircularProgress } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
+import { NextSeo } from 'next-seo';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -191,6 +192,18 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
 
   return (
     <NotionContainer>
+      <NextSeo
+        title={
+          pages.parent.type === 'workspace' && pages.properties.title?.title
+            ? pages.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
+            : pages.parent.type === 'database_id' && pages.properties?.['이름']?.title
+            ? pages.properties?.['이름']?.title
+                ?.map((text: RichText) => text?.plain_text)
+                .join('') || 'untitled'
+            : 'soolog'
+        }
+      />
+
       <PageInfoContainer>
         {pages?.cover?.[pages?.cover?.type]?.url && (
           <PageInfoCover>

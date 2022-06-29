@@ -1,11 +1,10 @@
-import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import axios from 'axios';
 import type { GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { NotionBlock, NotionBlocksChildrenList, NotionPagesRetrieve } from 'src/types/notion';
-import useSWR, { SWRConfig } from 'swr';
+import { NotionBlocksChildrenList, NotionPagesRetrieve } from 'src/types/notion';
+import { SWRConfig } from 'swr';
 import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface HomeProps {
@@ -14,10 +13,10 @@ interface HomeProps {
   pageInfo: NotionPagesRetrieve;
 }
 const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo }) => {
-  const [query, setQuery] = useState<{
-    start_cursor?: string;
-    page_size?: number;
-  }>();
+  // const [query, setQuery] = useState<{
+  //   start_cursor?: string;
+  //   page_size?: number;
+  // }>();
 
   return (
     <SWRConfig
