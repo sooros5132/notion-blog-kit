@@ -58,7 +58,7 @@ const Header: React.FC = (): JSX.Element => {
             <a>
               <HeaderLogoInner>
                 <AiFillThunderbolt />
-                &nbsp;SOOLOG
+                &nbsp;soolog
               </HeaderLogoInner>
             </a>
           </Link>
