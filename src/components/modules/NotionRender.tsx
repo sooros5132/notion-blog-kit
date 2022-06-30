@@ -2,15 +2,20 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import {
   NotionBlock,
-  NotionBlocksChildrenList,
+  IGetNotion,
   NotionPagesRetrieve,
-  RichText
+  RichText,
+  NotionBlocksChildrenList,
+  Color
 } from 'src/types/notion';
 import useSWR from 'swr';
 import { CircularProgress } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
 import { NextSeo } from 'next-seo';
+import { useRef } from 'react';
+import { useState } from 'react';
+import { TiChevronRight } from 'react-icons/ti';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -85,6 +90,14 @@ const Block = styled('div')(({ theme }) => ({
   margin: theme.size.px6 + ' 0'
 }));
 
+const DepthBlock = styled('div')(({ theme }) => ({
+  marginLeft: theme.size.px26
+}));
+
+const HorizontalRule = styled('hr')(({ theme }) => ({
+  borderColor: theme.color.gray50
+}));
+
 const RichTextContainer = styled('div')(({ theme }) => ({
   lineHeight: 'inherit',
   minHeight: '1.25em',
@@ -98,7 +111,8 @@ const ParagraphText = styled('span')<{
   strikethrough?: string;
   underline?: string;
   code?: 'once' | 'first' | 'end' | 'middle';
-}>(({ theme, bold, italic, strikethrough, underline, code }) => {
+  color?: Color;
+}>(({ theme, bold, italic, strikethrough, underline, code, color }) => {
   const codeStyle = code && {
     fontFamily: theme.font.code,
     backgroundColor: theme.color.redBackgroundLight,
@@ -112,13 +126,45 @@ const ParagraphText = styled('span')<{
     paddingRight: code === 'once' || code === 'end' ? theme.size.px4 : undefined
   };
 
+  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const backgroundColor =
+    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
+
   return {
     fontWeight: bold,
     fontStyle: italic,
     textDecoration: `${strikethrough ? strikethrough : ''} ${underline ? underline : ''}`,
+    color: fontColor ? fontColor : undefined,
+    backgroundColor: backgroundColor ? backgroundColor : undefined,
     ...codeStyle
   };
 });
+
+const NumberedListItemContainer = styled('div')(({}) => ({
+  display: 'flex'
+}));
+const NumberedListItemNumber = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  flex: `0 0 ${theme.size.px26}`,
+  textAlign: 'right',
+  paddingRight: theme.size.px4
+}));
+
+const NumberedListItemInner = styled('div')(({}) => ({
+  flex: `1 1 auto`
+}));
+
+const ToggleArrowBox = styled(NumberedListItemNumber)<{ toggled: 'true' | 'false' }>(
+  ({ toggled }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    transform: toggled === 'true' ? 'rotate(90deg)' : undefined,
+    transition: 'transform 0.15s'
+  })
+);
 
 const ParagraphAnchor = styled('a')(({ theme }) => ({
   textDecoration: 'underline',
@@ -181,12 +227,12 @@ const DatabaseItemCoverImage = styled('div')({
 });
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
-  const { data: blocks } = useSWR<NotionBlocksChildrenList>('/notion/blocks/children/list/' + slug);
+  const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
   const { data: pages } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
 
   // const { data, error } = useSWR("/key", fetch);
 
-  if (!blocks?.blocksChildrenList?.results || !pages) {
+  if (!blocks?.blocks?.results || !pages) {
     return <CircularProgress size={20} />;
   }
 
@@ -211,7 +257,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
               <Image
                 src={pages?.cover?.[pages?.cover?.type]?.url!}
                 placeholder='blur'
-                blurDataURL='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
+                blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
                 layout='fill'
                 objectFit='cover'
               />
@@ -230,40 +276,140 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         </PageInfoInner>
       </PageInfoContainer>
       <NotionContent>
-        {blocks.blocksChildrenList.results.map((block, i) => {
-          switch (block.type) {
-            case 'child_database': {
-              return (
-                <ChildDatabase
-                  block={block}
-                  databases={blocks.databaseBlocks}
-                  key={`block-${block.id}-${i}`}
-                />
-              );
-            }
-            case 'heading_1':
-            case 'heading_2':
-            case 'heading_3': {
-              return (
-                <Block key={`block-${block.id}-${i}`}>
-                  <Heading block={block} />
-                </Block>
-              );
-            }
-            case 'paragraph': {
-              return (
-                <Block key={`block-${block.id}-${i}`}>
-                  <Paragraph blockId={block.id} richText={block.paragraph.rich_text} />
-                </Block>
-              );
-            }
-            default: {
-              return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
-            }
-          }
-        })}
+        <NotionContentContainer blocks={blocks} />
       </NotionContent>
     </NotionContainer>
+  );
+};
+
+interface NotionContentContainerProps {
+  blocks: IGetNotion;
+}
+
+const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks }) => {
+  const numberOfSameTag = useRef(0);
+  const childrenDepth = useRef(0);
+
+  return (
+    <div>
+      {blocks.blocks.results.map((block, i) => {
+        numberOfSameTag.current =
+          blocks.blocks.results?.[i - 1]?.type === block.type ? numberOfSameTag.current + 1 : 0;
+
+        childrenDepth.current = block?.has_children ? childrenDepth.current + 1 : 0;
+
+        switch (block.type) {
+          case 'child_database': {
+            return (
+              <ChildDatabase
+                block={block}
+                databases={blocks.databaseBlocks}
+                key={`block-${block.id}-${i}`}
+              />
+            );
+          }
+          case 'heading_1':
+          case 'heading_2':
+          case 'heading_3': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <Heading block={block} />
+              </NotionBlockRender>
+            );
+          }
+          case 'paragraph': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <Paragraph blockId={block.id} richText={block.paragraph.rich_text} />
+              </NotionBlockRender>
+            );
+          }
+          case 'divider': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <HorizontalRule />
+              </NotionBlockRender>
+            );
+          }
+          case 'toggle': {
+            // 토글은 안에서 BlockRender시킴.
+            return (
+              <Toggle
+                key={`block-${block.id}-${i}`}
+                blocks={blocks}
+                block={block}
+                chilrenBlockDepth={childrenDepth.current}
+              />
+            );
+          }
+          case 'numbered_list_item': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <NumberedListItemContainer>
+                  <NumberedListItemNumber>{numberOfSameTag.current + 1}.</NumberedListItemNumber>
+                  <NumberedListItemInner>
+                    <Paragraph blockId={block.id} richText={block.numbered_list_item.rich_text} />
+                  </NumberedListItemInner>
+                </NumberedListItemContainer>
+              </NotionBlockRender>
+            );
+          }
+        }
+
+        return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
+      })}
+    </div>
+  );
+};
+
+interface NotionBlockProps {
+  block: NotionBlock;
+  blocks: IGetNotion;
+  children?: React.ReactNode;
+  chilrenBlockDepth?: number;
+}
+
+const NotionBlockRender: React.FC<NotionBlockProps> = ({
+  block,
+  blocks,
+  children,
+  chilrenBlockDepth
+}) => {
+  return (
+    <Block>
+      {children}
+      {block?.has_children && typeof chilrenBlockDepth === 'number' && chilrenBlockDepth > 0 && (
+        <DepthBlock>
+          <NotionContentContainer
+            blocks={{
+              blocks: blocks['childrenBlocks'][block.id],
+              childrenBlocks: blocks.childrenBlocks,
+              databaseBlocks: blocks.databaseBlocks
+            }}
+          />
+        </DepthBlock>
+      )}
+    </Block>
   );
 };
 
@@ -314,7 +460,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
           type,
           plain_text,
           href,
-          annotations: { bold, code, italic, strikethrough, underline }
+          annotations: { bold, code, italic, strikethrough, underline, color }
         } = text;
 
         const prevTextIsCode = code && richText[i - 1]?.annotations.code;
@@ -325,6 +471,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
           italic: italic ? 'italic' : undefined,
           strikethrough: strikethrough ? 'line-through' : undefined,
           underline: underline ? 'underline' : undefined,
+          color: color ? color : undefined,
           code: code
             ? !prevTextIsCode && !nextTextIsCode
               ? 'once'
@@ -358,8 +505,38 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
   );
 };
 
+interface ToggleProps {
+  block: NotionBlock;
+  blocks: IGetNotion;
+  chilrenBlockDepth?: number;
+}
+
+const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => {
+  const [isOpen, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const handleClickToggleButton = () => {
+    setOpen((prev) => !prev);
+  };
+  return (
+    <NotionBlockRender
+      block={block}
+      blocks={blocks}
+      chilrenBlockDepth={isOpen ? chilrenBlockDepth : undefined}
+    >
+      <NumberedListItemContainer>
+        <ToggleArrowBox onClick={handleClickToggleButton} toggled={`${isOpen}`}>
+          <TiChevronRight />
+        </ToggleArrowBox>
+        <NumberedListItemInner>
+          <Paragraph blockId={block.id} richText={block.toggle.rich_text} />
+        </NumberedListItemInner>
+      </NumberedListItemContainer>
+    </NotionBlockRender>
+  );
+};
+
 interface ChildDatabaseProps extends NotionChildrenRenderProps {
-  databases: NotionBlocksChildrenList['databaseBlocks'];
+  databases: IGetNotion['databaseBlocks'];
 }
 
 const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
@@ -378,7 +555,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
                       <Image
                         src={database.cover.file.url}
                         placeholder='blur'
-                        blurDataURL='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
+                        blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
                         layout='fill'
                         objectFit='cover'
                       />
