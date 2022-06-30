@@ -125,7 +125,26 @@ export const CommonCustomTheme = {
     gray97: '#080808',
     gray99: '#030303',
     tooltipBackground: 'rgba(11, 12, 11, 0.92)',
-    tooltipArrow: 'rgba(11, 12, 11, 0.92)'
+    tooltipArrow: 'rgba(11, 12, 11, 0.92)',
+    notionColor_default: '#080808',
+    notionColor_gray: 'rgba(120, 119, 116, 1)',
+    notionColor_brown: 'rgba(159, 107, 83, 1)',
+    notionColor_orange: 'rgba(217, 115, 13, 1)',
+    notionColor_yellow: 'rgba(68, 131, 97, 1)',
+    notionColor_green: 'rgba(68, 131, 97, 1)',
+    notionColor_blue: 'rgba(51, 126, 169, 1)',
+    notionColor_purple: 'rgba(144, 101, 176, 1)',
+    notionColor_pink: 'rgba(212, 76, 71, 1)',
+    notionColor_red: 'rgba(212, 76, 71, 1)',
+    notionColor_gray_background: 'rgba(241, 241, 239, 1)',
+    notionColor_brown_background: 'rgba(244, 238, 238, 1)',
+    notionColor_orange_background: 'rgba(251, 236, 221, 1)',
+    notionColor_yellow_background: 'rgba(251, 243, 219, 1)',
+    notionColor_green_background: 'rgba(237, 243, 236, 1)',
+    notionColor_blue_background: 'rgba(231, 243, 248, 1)',
+    notionColor_purple_background: 'rgba(244, 240, 247, 0.8)',
+    notionColor_pink_background: 'rgba(244, 240, 247, 0.8)',
+    notionColor_red_background: 'rgba(253, 235, 236, 1)'
   }
 };
 

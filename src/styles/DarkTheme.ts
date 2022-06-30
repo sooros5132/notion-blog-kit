@@ -16,7 +16,8 @@ export const DarkColor: typeof CommonCustomTheme['color'] = {
   black: '#ffffff',
   textDefaultBlack: '#FFFFFF',
   textDefaultWhite: '#080808',
-  htmlBackground: '#041210',
+  htmlBackground: '#151a19',
+  footerBackground: '#232b2a',
   gray99: '#fcfcfc',
   gray97: '#f7f7f7',
   gray95: '#f2f2f2',
@@ -41,7 +42,26 @@ export const DarkColor: typeof CommonCustomTheme['color'] = {
   gray03: '#080808',
   gray01: '#030303',
   redBackgroundLight: 'rgb(154 50 38 / 63%)',
-  cardBackground: 'rgba(255, 255, 255, 0.05)'
+  cardBackground: 'rgba(255, 255, 255, 0.05)',
+  notionColor_default: '#fffff',
+  notionColor_gray: 'rgba(155, 155, 155, 1)',
+  notionColor_brown: 'rgba(186, 133, 111, 1)',
+  notionColor_orange: 'rgba(199, 125, 72, 1)',
+  notionColor_yellow: 'rgba(202, 152, 73, 1)',
+  notionColor_green: 'rgba(82, 158, 114, 1)',
+  notionColor_blue: 'rgba(82, 158, 114, 1)',
+  notionColor_purple: 'rgba(157, 104, 211, 1)',
+  notionColor_pink: 'rgba(209, 87, 150, 1)',
+  notionColor_red: 'rgba(223, 84, 82, 1)',
+  notionColor_gray_background: 'rgba(47, 47, 47, 1)',
+  notionColor_brown_background: 'rgba(74, 50, 40, 1)',
+  notionColor_orange_background: 'rgba(92, 59, 35, 1)',
+  notionColor_yellow_background: 'rgba(86, 67, 40, 1)',
+  notionColor_green_background: 'rgba(36, 61, 48, 1)',
+  notionColor_blue_background: 'rgba(20, 58, 78, 1)',
+  notionColor_purple_background: 'rgba(60, 45, 73, 1)',
+  notionColor_pink_background: 'rgba(78, 44, 60, 1)',
+  notionColor_red_background: 'rgba(82, 46, 42, 1)'
 };
 
 const DarkTheme: ThemeOptions = {
