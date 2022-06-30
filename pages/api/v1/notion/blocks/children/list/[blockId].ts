@@ -4,9 +4,9 @@ import nc from 'next-connect';
 import { notion } from 'src-server/lib/notion';
 import { Error } from 'src-server/middleware/Error';
 import { IResponseSuccess } from 'src-server/types/response';
-import { NotionBlock, NotionBlocksChildrenList, NotionDatabasesQuery } from 'src/types/notion';
+import { IGetNotion, NotionDatabasesQuery, NotionBlocksChildrenList } from 'src/types/notion';
 
-type IGetResponse = IResponseSuccess<NotionBlocksChildrenList>;
+type IGetResponse = IResponseSuccess<IGetNotion>;
 
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError: Error.handleError,
@@ -33,34 +33,54 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       }
     }
 
-    const blocksChildrenList = (await notion.blocks.children.list({
+    const blocks = (await notion.blocks.children.list({
       block_id: blockId,
       page_size: page_size ?? undefined, // Default: 100, Maximum: 100
       start_cursor: start_cursor
-    })) as NotionBlocksChildrenList['blocksChildrenList'];
+    })) as NotionBlocksChildrenList;
 
     const databaseBlocks: Record<string, NotionDatabasesQuery> = {};
-    const databasePromises: Array<any> = [];
-    for (const block of blocksChildrenList.results) {
-      if (block.type !== 'child_database') continue;
+    const childrenBlocks: Record<string, NotionBlocksChildrenList> = {};
+    const moreFetch: Array<any> = [];
 
-      databasePromises.push(
-        notion.databases
-          .query({
-            database_id: block.id
-          })
-          .then((database) => {
-            databaseBlocks[block.id] = database as NotionDatabasesQuery;
-          })
-      );
+    for (const block of blocks.results) {
+      if (block.has_children) {
+        moreFetch.push(
+          notion.blocks.children
+            .list({
+              block_id: block.id,
+              page_size: page_size ?? undefined, // Default: 100, Maximum: 100
+              start_cursor: start_cursor
+            })
+            .then((res) => {
+              childrenBlocks[block.id] = res as NotionBlocksChildrenList;
+            })
+        );
+        continue;
+      }
+      switch (block.type) {
+        case 'child_database': {
+          moreFetch.push(
+            notion.databases
+              .query({
+                database_id: block.id
+              })
+              .then((database) => {
+                databaseBlocks[block.id] = database as NotionDatabasesQuery;
+              })
+          );
+          continue;
+        }
+      }
     }
-    await Promise.all(databasePromises);
+    await Promise.all(moreFetch);
 
     res.status(200).json({
       success: true,
       result: {
-        blocksChildrenList,
-        databaseBlocks
+        blocks,
+        databaseBlocks,
+        childrenBlocks
       }
     });
   } catch (e) {
