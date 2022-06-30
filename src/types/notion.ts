@@ -177,16 +177,19 @@ export declare type NotionBlockTypes =
   | 'property_item'
   | 'page_or_database';
 
-export interface NotionBlocksChildrenList {
-  blocksChildrenList: {
-    object: 'list'; // Always "list".
-    results: Array<NotionBlock>;
-    next_cursor?: string | null; // Only available when "has_more" is true.
-    has_more: boolean;
-    type: NotionBlockTypes;
-    block: {};
-  };
+export interface IGetNotion {
+  blocks: NotionBlocksChildrenList;
   databaseBlocks: Record<string, NotionDatabasesQuery>;
+  childrenBlocks: Record<string, NotionBlocksChildrenList>;
+}
+
+export interface NotionBlocksChildrenList {
+  object: 'list'; // Always "list".
+  results: Array<NotionBlock>;
+  next_cursor?: string | null; // Only available when "has_more" is true.
+  has_more: boolean;
+  type: NotionBlockTypes;
+  block: {};
 }
 
 export interface FileObject {
@@ -237,6 +240,14 @@ export interface NotionDatabases {
   url?: string | null;
   archived?: boolean | null;
   is_inline?: boolean | null;
+}
+export interface NotionDatabasesQuery {
+  object: 'list'; // Always "list".
+  results: Array<NotionDatabases>;
+  next_cursor?: string | null; // Only available when "has_more" is true.
+  has_more: boolean;
+  type: NotionBlockTypes;
+  page: {};
 }
 export interface NotionDatabasesQuery {
   object: 'list'; // Always "list".

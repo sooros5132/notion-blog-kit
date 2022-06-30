@@ -1,15 +1,14 @@
 import axios from 'axios';
-import type { GetStaticProps, NextPage } from 'next';
-import { useState } from 'react';
+import type { GetServerSideProps, NextPage } from 'next';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { NotionBlocksChildrenList, NotionPagesRetrieve } from 'src/types/notion';
+import { IGetNotion, NotionPagesRetrieve } from 'src/types/notion';
 import { SWRConfig } from 'swr';
 import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface HomeProps {
   slug: string;
-  notionBlocksChildrenList: NotionBlocksChildrenList;
+  notionBlocksChildrenList: IGetNotion;
   pageInfo: NotionPagesRetrieve;
 }
 const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo }) => {
@@ -32,11 +31,11 @@ const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo })
   );
 };
 
-export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   try {
     const [blocks, pageInfo] = await Promise.all([
       axios
-        .get<IResponseSuccess<NotionBlocksChildrenList>>(
+        .get<IResponseSuccess<IGetNotion>>(
           BASE_API_PATH + '/notion/blocks/children/list/' + NOTION_BASE_BLOCK
         )
         .then((res) => res.data),
@@ -55,8 +54,8 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
         slug: NOTION_BASE_BLOCK,
         notionBlocksChildrenList: blocks.result,
         pageInfo: pageInfo.result
-      },
-      revalidate: 60
+      }
+      // revalidate: 60
     };
   } catch (e) {
     return {

@@ -4,14 +4,14 @@ import type { GetServerSideProps, NextPage } from 'next';
 import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { NotionBlocksChildrenList } from 'src/types/notion';
+import { IGetNotion } from 'src/types/notion';
 import { SWRConfig } from 'swr';
 import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface SlugProps {
   slug: string;
   fallback: {
-    '/notion/blocks/children/list': NotionBlocksChildrenList;
+    '/notion/blocks/children/list': IGetNotion;
     '/notion/pages': GetPageResponse;
   };
 }
@@ -52,12 +52,9 @@ export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ params
 
     const [blocks, pageInfo] = await Promise.all([
       axios
-        .get<IResponseSuccess<NotionBlocksChildrenList>>(
-          BASE_API_PATH + '/notion/blocks/children/list/' + slug,
-          {
-            params
-          }
-        )
+        .get<IResponseSuccess<IGetNotion>>(BASE_API_PATH + '/notion/blocks/children/list/' + slug, {
+          params
+        })
         .then((res) => res.data),
       axios
         .get<IResponseSuccess<GetPageResponse>>(BASE_API_PATH + '/notion/pages/' + slug, {
