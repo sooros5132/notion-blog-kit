@@ -49,7 +49,7 @@ export const DarkColor: typeof CommonCustomTheme['color'] = {
   notionColor_orange: 'rgba(199, 125, 72, 1)',
   notionColor_yellow: 'rgba(202, 152, 73, 1)',
   notionColor_green: 'rgba(82, 158, 114, 1)',
-  notionColor_blue: 'rgba(82, 158, 114, 1)',
+  notionColor_blue: 'rgba(94, 135, 201, 1)',
   notionColor_purple: 'rgba(157, 104, 211, 1)',
   notionColor_pink: 'rgba(209, 87, 150, 1)',
   notionColor_red: 'rgba(223, 84, 82, 1)',
