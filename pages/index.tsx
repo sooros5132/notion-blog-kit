@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { GetStaticProps, NextPage } from 'next';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
 import { IGetNotion, NotionPagesRetrieve } from 'src/types/notion';
@@ -31,7 +31,7 @@ const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo })
   );
 };
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
     const [blocks, pageInfo] = await Promise.all([
       axios
@@ -54,8 +54,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
         slug: NOTION_BASE_BLOCK,
         notionBlocksChildrenList: blocks.result,
         pageInfo: pageInfo.result
-      }
-      // revalidate: 60
+      },
+      revalidate: 60
     };
   } catch (e) {
     return {
