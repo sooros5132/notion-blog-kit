@@ -269,6 +269,12 @@ export interface ParentObject {
   page_id?: string;
 }
 
+export interface IconObject {
+  type: 'emoji' | 'file';
+  file?: FileObject['file'];
+  emoji?: EmojiObject['emoji'];
+}
+
 export interface NotionPagesRetrieve {
   object: 'page'; // Always "page"
   id: string;
@@ -277,7 +283,7 @@ export interface NotionPagesRetrieve {
   created_by: TimeObject;
   last_edited_by: TimeObject;
   cover: ExternalObject;
-  icon: EmojiObject;
+  icon: IconObject;
   parent: ParentObject;
   archived: false;
   properties: Properties & {

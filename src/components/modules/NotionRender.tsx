@@ -36,10 +36,17 @@ const PageInfoCover = styled('div')(({ theme }) => ({
   height: '30vh'
 }));
 
-const PageInfoInner = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, theme }) => ({
+const PageInfoInner = styled('div')<{
+  iconType?: NotionPagesRetrieve['icon']['type'];
+  cover?: 'true' | 'false';
+}>(({ iconType, theme, cover }) => ({
   maxWidth: theme.size.desktopWidth,
   margin: '0 auto',
-  marginTop: emoji === 'true' ? `-${theme.size.px50}` : undefined,
+  marginTop: cover === 'true' && iconType === 'emoji' ? `-${theme.size.px50}` : undefined,
+  paddingTop:
+    iconType === 'file' || (cover === 'false' && iconType === 'emoji')
+      ? theme.size.px50
+      : undefined,
   [theme.mediaQuery.mobile]: {
     paddingRight: theme.size.px12,
     paddingLeft: theme.size.px12
@@ -54,15 +61,24 @@ const PageInfoInner = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, them
   }
 }));
 
+const PageImage = styled('div')(({ theme }) => ({
+  position: 'relative',
+  width: 70,
+  height: 70
+}));
+
 const PageEmoji = styled('span')(({ theme }) => ({
   padding: `0 ${theme.size.px12}`,
   fontSize: theme.size.px70,
   fontWeight: 'bold',
-  fontFamily: 'initial'
+  fontFamily: 'emoji'
 }));
 
-const PageTitle = styled('div')<{ emoji?: 'true' | 'false' }>(({ emoji, theme }) => ({
-  marginTop: emoji === 'true' ? theme.size.px10 : theme.size.px50,
+const PageTitle = styled('div')<{
+  iconType?: NotionPagesRetrieve['icon']['type'];
+  cover?: 'true' | 'false';
+}>(({ iconType, theme, cover }) => ({
+  marginTop: iconType === 'emoji' ? theme.size.px10 : theme.size.px50,
   fontSize: theme.size.px40,
   fontWeight: 'bold',
   lineHeight: '1'
@@ -217,7 +233,7 @@ const DatabaseItemCover = styled('div')({
   transition: 'filter 0.2s Linear'
 });
 
-const DatabaseItemCoverImage = styled('div')({
+const ImageWrapper = styled('div')({
   width: '100%',
   height: '100%',
   position: 'relative',
@@ -228,11 +244,11 @@ const DatabaseItemCoverImage = styled('div')({
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
-  const { data: pages } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
+  const { data: page } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
 
   // const { data, error } = useSWR("/key", fetch);
 
-  if (!blocks?.blocks?.results || !pages) {
+  if (!blocks?.blocks?.results || !page) {
     return <CircularProgress size={20} />;
   }
 
@@ -240,10 +256,10 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
     <NotionContainer>
       <NextSeo
         title={
-          pages.parent.type === 'workspace' && pages.properties.title?.title
-            ? pages.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
-            : pages.parent.type === 'database_id' && pages.properties?.['이름']?.title
-            ? pages.properties?.['이름']?.title
+          page.parent.type === 'workspace' && page.properties.title?.title
+            ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
+            : page.parent.type === 'database_id' && page.properties?.['이름']?.title
+            ? page.properties?.['이름']?.title
                 ?.map((text: RichText) => text?.plain_text)
                 .join('') || 'untitled'
             : 'soolog'
@@ -251,29 +267,47 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       />
 
       <PageInfoContainer>
-        {pages?.cover?.[pages?.cover?.type]?.url && (
+        {page?.cover?.[page?.cover?.type]?.url && (
           <PageInfoCover>
-            <DatabaseItemCoverImage>
+            <ImageWrapper>
               <Image
                 src={convertAwsImageObjectUrlToNotionUrl({
-                  blockId: pages.id,
-                  s3ObjectUrl: pages?.cover?.[pages?.cover?.type]?.url!
+                  blockId: page.id,
+                  s3ObjectUrl: page?.cover?.[page?.cover?.type]?.url!
                 })}
                 placeholder='blur'
                 blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
                 layout='fill'
                 objectFit='cover'
               />
-            </DatabaseItemCoverImage>
+            </ImageWrapper>
           </PageInfoCover>
         )}
-        <PageInfoInner emoji={`${Boolean(pages.icon?.emoji)}`}>
-          {pages.icon?.emoji && <PageEmoji>{pages.icon?.emoji}</PageEmoji>}
-          <PageTitle emoji={`${Boolean(pages.icon?.emoji)}`}>
-            {pages.parent.type === 'workspace' ? (
-              <Paragraph blockId={pages.id} richText={pages.properties.title?.title} />
-            ) : pages.parent.type === 'database_id' ? (
-              <Paragraph blockId={pages.id} richText={pages.properties?.['이름']?.title} />
+        <PageInfoInner iconType={page.icon.type} cover={`${Boolean(page?.cover)}`}>
+          {page.icon?.file && page.icon.type === 'file' && (
+            <PageImage>
+              <ImageWrapper>
+                <Image
+                  src={convertAwsImageObjectUrlToNotionUrl({
+                    blockId: page.id,
+                    s3ObjectUrl: page.icon.file.url
+                  })}
+                  placeholder='blur'
+                  blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+                  layout='fill'
+                  objectFit='cover'
+                />
+              </ImageWrapper>
+            </PageImage>
+          )}
+          {page.icon?.emoji && page.icon.type === 'emoji' && (
+            <PageEmoji>{page.icon?.emoji}</PageEmoji>
+          )}
+          <PageTitle iconType={page.icon.type} cover={`${Boolean(page?.cover)}`}>
+            {page.parent.type === 'workspace' ? (
+              <Paragraph blockId={page.id} richText={page.properties.title?.title} />
+            ) : page.parent.type === 'database_id' ? (
+              <Paragraph blockId={page.id} richText={page.properties?.['이름']?.title} />
             ) : null}
           </PageTitle>
         </PageInfoInner>
@@ -554,7 +588,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
               <a>
                 <DatabaseItemCover className='page-cover'>
                   {database?.cover && (
-                    <DatabaseItemCoverImage>
+                    <ImageWrapper>
                       <Image
                         src={convertAwsImageObjectUrlToNotionUrl({
                           blockId: database.id,
@@ -565,7 +599,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
                         layout='fill'
                         objectFit='cover'
                       />
-                    </DatabaseItemCoverImage>
+                    </ImageWrapper>
                   )}
                 </DatabaseItemCover>
                 <DatabaseDescriptionBox>
