@@ -16,6 +16,7 @@ import { NextSeo } from 'next-seo';
 import { useRef } from 'react';
 import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
+import Head from 'next/head';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -265,6 +266,23 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             : 'soolog'
         }
       />
+      <Head>
+        {page.icon?.file && page.icon.type === 'file' && (
+          <link
+            rel='shortcut icon'
+            href={convertAwsImageObjectUrlToNotionUrl({
+              blockId: page.id,
+              s3ObjectUrl: page.icon.file.url
+            })}
+          />
+        )}
+        {page.icon?.emoji && page.icon.type === 'emoji' && (
+          <link
+            rel='shortcut icon'
+            href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${page.icon?.emoji}</text></svg>`}
+          />
+        )}
+      </Head>
 
       <PageInfoContainer>
         {page?.cover?.[page?.cover?.type]?.url && (
