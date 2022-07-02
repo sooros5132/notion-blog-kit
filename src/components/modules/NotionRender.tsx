@@ -4,12 +4,13 @@ import { NotionBlock, IGetNotion, NotionPagesRetrieve, RichText, Color } from 's
 import useSWR from 'swr';
 import { CircularProgress } from '@mui/material';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image, { ImageProps } from 'next/image';
 import { NextSeo } from 'next-seo';
 import { useRef } from 'react';
 import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
+import { NEXT_IMAGE_DOMAINS } from 'src/lib/constants';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -180,6 +181,7 @@ const ToggleArrowBox = styled(NumberedListItemNumber)<{ toggled: 'true' | 'false
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
+    fontSize: '1.2em',
     transform: toggled === 'true' ? 'rotate(90deg)' : undefined,
     transition: 'transform 0.15s'
   })
@@ -236,7 +238,20 @@ const DatabaseItemCover = styled('div')({
   transition: 'filter 0.2s Linear'
 });
 
-const ImageWrapper = styled('div')({
+const DefaultImageWrapper = styled('div')({
+  width: '100%',
+  height: '100%',
+  position: 'relative',
+  // zIndex: -1,
+  '& > img': {
+    // width: '100%',
+    // height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'center center'
+  }
+});
+
+const NextImageWrapper = styled(DefaultImageWrapper)({
   width: '100%',
   height: '100%',
   position: 'relative',
@@ -299,35 +314,13 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       <PageInfoContainer>
         {page?.cover?.[page?.cover?.type]?.url && (
           <PageInfoCover>
-            <ImageWrapper>
-              <Image
-                src={convertAwsImageObjectUrlToNotionUrl({
-                  blockId: page.id,
-                  s3ObjectUrl: page?.cover?.[page?.cover?.type]?.url!
-                })}
-                placeholder='blur'
-                blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-                layout='fill'
-                objectFit='cover'
-              />
-            </ImageWrapper>
+            <NotionSecureImage blockId={page.id} src={page?.cover?.[page?.cover?.type]?.url!} />
           </PageInfoCover>
         )}
         <PageInfoInner icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
           {page.icon?.file && page.icon?.type === 'file' && (
             <PageImage>
-              <ImageWrapper>
-                <Image
-                  src={convertAwsImageObjectUrlToNotionUrl({
-                    blockId: page.id,
-                    s3ObjectUrl: page.icon.file.url
-                  })}
-                  placeholder='blur'
-                  blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-                  layout='fill'
-                  objectFit='cover'
-                />
-              </ImageWrapper>
+              <NotionSecureImage blockId={page.id} src={page.icon.file.url} />
             </PageImage>
           )}
           {page.icon?.emoji && page.icon?.type === 'emoji' && (
@@ -446,6 +439,19 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                     />
                   </NumberedListItemInner>
                 </NumberedListItemContainer>
+              </NotionBlockRender>
+            );
+          }
+          case 'image': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <Paragraph blockId={block.id} richText={block.image.caption} />
+                <NotionSecureImage blockId={block.id} src={block.image.external.url} />
               </NotionBlockRender>
             );
           }
@@ -661,18 +667,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
               <a>
                 <DatabaseItemCover className='page-cover'>
                   {database?.cover && (
-                    <ImageWrapper>
-                      <Image
-                        src={convertAwsImageObjectUrlToNotionUrl({
-                          blockId: database.id,
-                          s3ObjectUrl: database?.cover?.file?.url
-                        })}
-                        placeholder='blur'
-                        blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-                        layout='fill'
-                        objectFit='cover'
-                      />
-                    </ImageWrapper>
+                    <NotionSecureImage src={database?.cover?.file?.url} blockId={database.id} />
                   )}
                 </DatabaseItemCover>
                 <DatabaseDescriptionBox>
@@ -687,6 +682,51 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
         ))}
       </DatabaseContainer>
     </div>
+  );
+};
+
+interface NotionSecureImageProps extends ImageProps {
+  src: string;
+  table?: string;
+  blockId: string;
+}
+
+const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
+  children,
+  src: srcProp,
+  blockId,
+  table = 'block',
+  placeholder = 'blur',
+  blurDataURL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+  layout = 'fill',
+  objectFit = 'cover',
+  ...props
+}) => {
+  // src: https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8f7f9f31-56f7-49c3-a05f-d15ac4a722ca/qemu.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220702%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220702T053925Z&X-Amz-Expires=3600&X-Amz-Signature=050701d9bc05ec877366b066584240a31a4b5d2459fe6b7f39243e90d479addd&X-Amz-SignedHeaders=host&x-id=GetObject
+  // pageId: 12345678-abcd-1234-abcd-123456789012
+  const { host } = new URL(srcProp);
+
+  if (NEXT_IMAGE_DOMAINS.includes(host)) {
+    const src = convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
+
+    return (
+      <NextImageWrapper>
+        <Image
+          {...props}
+          placeholder={placeholder}
+          blurDataURL={blurDataURL}
+          layout={layout}
+          objectFit={objectFit}
+          src={src}
+        />
+      </NextImageWrapper>
+    );
+  }
+
+  return (
+    <DefaultImageWrapper>
+      <img {...props} src={srcProp}></img>
+    </DefaultImageWrapper>
   );
 };
 

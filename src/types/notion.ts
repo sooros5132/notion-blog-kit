@@ -124,7 +124,16 @@ export declare type MentionObject = {
   type: 'user' | 'page' | 'database' | 'date' | 'link_preview';
 };
 
-export interface NotionBlockItem extends Record<BlockType, RichTextObject | RichTextTitle> {
+interface ImageObject {
+  caption: Array<RichText>;
+  type: 'external';
+  external: {
+    url: string;
+  };
+}
+
+export interface NotionBlockItem
+  extends Record<BlockType, RichTextObject | RichTextTitle | ImageObject> {
   paragraph: RichTextObject;
   heading_1: RichTextObject;
   heading_2: RichTextObject;
@@ -136,7 +145,7 @@ export interface NotionBlockItem extends Record<BlockType, RichTextObject | Rich
   child_page: RichTextObject;
   child_database: RichTextTitle;
   embed: RichTextObject;
-  image: RichTextObject;
+  image: ImageObject;
   video: RichTextObject;
   file: RichTextObject;
   pdf: RichTextObject;
