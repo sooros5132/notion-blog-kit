@@ -201,21 +201,6 @@ export interface NotionBlocksChildrenList {
   block: {};
 }
 
-export interface FileObject {
-  type: 'file';
-  file: {
-    url: string;
-    expiry_time: string;
-  };
-}
-
-export interface ExternalObject {
-  type: 'external';
-  external: {
-    url: string | null;
-  };
-}
-
 export interface TimeObject {
   object: string;
   id: string;
@@ -224,6 +209,17 @@ export interface TimeObject {
 export interface Properties extends Partial<Record<PropertyType | string, any>> {
   id: string;
   type: string;
+}
+
+export interface DatabaseCover {
+  type: 'external' | 'file';
+  external?: {
+    url: string | null;
+  };
+  file?: {
+    url: string;
+    expiry_time: string;
+  };
 }
 
 export interface NotionDatabases {
@@ -235,8 +231,8 @@ export interface NotionDatabases {
   last_edited_by: TimeObject;
   // title?: RichText;
   // description?: RichText;
-  icon?: FileObject | null;
-  cover?: FileObject | null;
+  icon?: DatabaseCover | null;
+  cover?: DatabaseCover | null;
   properties: Properties & {
     created_time?: string;
     multi_select?: any;
@@ -280,7 +276,7 @@ export interface ParentObject {
 
 export interface IconObject {
   type: 'emoji' | 'file';
-  file?: FileObject['file'];
+  file?: DatabaseCover['file'];
   emoji?: EmojiObject['emoji'];
 }
 
@@ -291,7 +287,7 @@ export interface NotionPagesRetrieve {
   last_edited_time: string;
   created_by: TimeObject;
   last_edited_by: TimeObject;
-  cover: ExternalObject;
+  cover: DatabaseCover;
   icon: IconObject;
   parent: ParentObject;
   archived: false;
