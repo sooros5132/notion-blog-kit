@@ -38,14 +38,14 @@ const PageInfoCover = styled('div')(({ theme }) => ({
 }));
 
 const PageInfoInner = styled('div')<{
-  iconType?: NotionPagesRetrieve['icon']['type'];
+  icontype?: NotionPagesRetrieve['icon']['type'];
   cover?: 'true' | 'false';
-}>(({ iconType, theme, cover }) => ({
+}>(({ icontype, theme, cover }) => ({
   maxWidth: theme.size.desktopWidth,
   margin: '0 auto',
-  marginTop: cover === 'true' && iconType === 'emoji' ? `-${theme.size.px50}` : undefined,
+  marginTop: cover === 'true' && icontype === 'emoji' ? `-${theme.size.px50}` : undefined,
   paddingTop:
-    iconType === 'file' || (cover === 'false' && iconType === 'emoji')
+    icontype === 'file' || (cover === 'false' && icontype === 'emoji')
       ? theme.size.px50
       : undefined,
   [theme.mediaQuery.mobile]: {
@@ -76,10 +76,10 @@ const PageEmoji = styled('span')(({ theme }) => ({
 }));
 
 const PageTitle = styled('div')<{
-  iconType?: NotionPagesRetrieve['icon']['type'];
+  icontype?: NotionPagesRetrieve['icon']['type'];
   cover?: 'true' | 'false';
-}>(({ iconType, theme, cover }) => ({
-  marginTop: iconType === 'emoji' ? theme.size.px10 : theme.size.px50,
+}>(({ icontype, theme, cover }) => ({
+  marginTop: icontype === 'emoji' ? theme.size.px10 : theme.size.px50,
   fontSize: theme.size.px40,
   fontWeight: 'bold',
   lineHeight: '1'
@@ -267,7 +267,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         }
       />
       <Head>
-        {page.icon?.file && page.icon.type === 'file' && (
+        {page.icon?.file && page.icon?.type === 'file' && (
           <link
             rel='shortcut icon'
             href={convertAwsImageObjectUrlToNotionUrl({
@@ -276,7 +276,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             })}
           />
         )}
-        {page.icon?.emoji && page.icon.type === 'emoji' && (
+        {page.icon?.emoji && page.icon?.type === 'emoji' && (
           <link
             rel='shortcut icon'
             href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${page.icon?.emoji}</text></svg>`}
@@ -301,8 +301,8 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             </ImageWrapper>
           </PageInfoCover>
         )}
-        <PageInfoInner iconType={page.icon.type} cover={`${Boolean(page?.cover)}`}>
-          {page.icon?.file && page.icon.type === 'file' && (
+        <PageInfoInner icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
+          {page.icon?.file && page.icon?.type === 'file' && (
             <PageImage>
               <ImageWrapper>
                 <Image
@@ -318,10 +318,10 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
               </ImageWrapper>
             </PageImage>
           )}
-          {page.icon?.emoji && page.icon.type === 'emoji' && (
+          {page.icon?.emoji && page.icon?.type === 'emoji' && (
             <PageEmoji>{page.icon?.emoji}</PageEmoji>
           )}
-          <PageTitle iconType={page.icon.type} cover={`${Boolean(page?.cover)}`}>
+          <PageTitle icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
             {page.parent.type === 'workspace' ? (
               <Paragraph blockId={page.id} richText={page.properties.title?.title} />
             ) : page.parent.type === 'database_id' ? (
