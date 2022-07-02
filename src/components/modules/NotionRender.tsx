@@ -28,7 +28,17 @@ const PageInfoContainer = styled('div')();
 
 const PageInfoCover = styled('div')({
   width: '100%',
-  height: '30vh'
+  height: '30vh',
+  '& > div': {
+    width: '100%',
+    height: '100%',
+    '& img': {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      objectPosition: 'center center'
+    }
+  }
 });
 
 const PageInfoInner = styled('div')<{
@@ -235,17 +245,24 @@ const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
 
 const DatabaseItemCover = styled('div')({
   height: 200,
-  transition: 'filter 0.2s Linear'
+  transition: 'filter 0.2s Linear',
+  '& img': {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'center center'
+  }
 });
 
 const DefaultImageWrapper = styled('div')({
-  width: '100%',
-  height: '100%',
+  maxWidth: '100%',
+  maxHeight: '100%',
   position: 'relative',
-  // zIndex: -1,
+  overflow: 'hidden',
+  zIndex: -1,
   '& > img': {
-    // width: '100%',
-    // height: '100%',
+    maxWidth: '100%',
+    maxHeight: '100%',
     objectFit: 'cover',
     objectPosition: 'center center'
   }
@@ -258,6 +275,12 @@ const NextImageWrapper = styled(DefaultImageWrapper)({
   zIndex: -1
   // objectFit: 'cover',
   // objectPosition: 'center center',
+});
+
+const ImageBlockContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
 });
 
 const Heading = styled('div')({
@@ -450,8 +473,10 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <Paragraph blockId={block.id} richText={block.image.caption} />
-                <NotionSecureImage blockId={block.id} src={block.image.external.url} />
+                <ImageBlockContainer>
+                  <NotionSecureImage blockId={block.id} src={block.image.external.url} />
+                  <Paragraph blockId={block.id} richText={block.image.caption} color={'gray'} />
+                </ImageBlockContainer>
               </NotionBlockRender>
             );
           }
@@ -704,24 +729,25 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
 }) => {
   // src: https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8f7f9f31-56f7-49c3-a05f-d15ac4a722ca/qemu.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220702%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220702T053925Z&X-Amz-Expires=3600&X-Amz-Signature=050701d9bc05ec877366b066584240a31a4b5d2459fe6b7f39243e90d479addd&X-Amz-SignedHeaders=host&x-id=GetObject
   // pageId: 12345678-abcd-1234-abcd-123456789012
-  const { host } = new URL(srcProp);
 
-  if (NEXT_IMAGE_DOMAINS.includes(host)) {
-    const src = convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
+  // const { host } = new URL(srcProp);
 
-    return (
-      <NextImageWrapper>
-        <Image
-          {...props}
-          placeholder={placeholder}
-          blurDataURL={blurDataURL}
-          layout={layout}
-          objectFit={objectFit}
-          src={src}
-        />
-      </NextImageWrapper>
-    );
-  }
+  // if ( NEXT_IMAGE_DOMAINS.includes(host)) {
+  //   const src = convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
+
+  //   return (
+  //     <NextImageWrapper>
+  //       <Image
+  //         {...props}
+  //         placeholder={placeholder}
+  //         blurDataURL={blurDataURL}
+  //         layout={layout}
+  //         objectFit={objectFit}
+  //         src={src}
+  //       />
+  //     </NextImageWrapper>
+  //   );
+  // }
 
   return (
     <DefaultImageWrapper>
