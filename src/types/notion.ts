@@ -272,7 +272,7 @@ export interface EmojiObject {
 }
 
 export interface ParentObject {
-  type: 'workspace' | 'database_id' | 'page_id';
+  type: 'workspace' | 'database_id' | 'page_id' | 'block_id';
   workspace?: boolean; // workspace의 경우 Always true.
   database_id?: string;
   page_id?: string;

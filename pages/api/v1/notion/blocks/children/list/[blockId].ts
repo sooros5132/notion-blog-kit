@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { ListBlockChildrenResponse } from '@notionhq/client/build/src/api-endpoints';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { notion } from 'src-server/lib/notion';
@@ -40,21 +41,15 @@ const handler = nc<NextApiRequest, NextApiResponse>({
     })) as NotionBlocksChildrenList;
 
     const databaseBlocks: Record<string, NotionDatabasesQuery> = {};
-    const childrenBlocks: Record<string, NotionBlocksChildrenList> = {};
+    let childrenBlocks: Record<string, NotionBlocksChildrenList> = {};
     const moreFetch: Array<any> = [];
 
     for (const block of blocks.results) {
       if (block.has_children) {
         moreFetch.push(
-          notion.blocks.children
-            .list({
-              block_id: block.id,
-              page_size: page_size ?? undefined, // Default: 100, Maximum: 100
-              start_cursor: start_cursor
-            })
-            .then((res) => {
-              childrenBlocks[block.id] = res as NotionBlocksChildrenList;
-            })
+          hasChildrenFetch({ block_id: block.id }).then((result) => {
+            childrenBlocks = { ...childrenBlocks, ...result };
+          })
         );
         continue;
       }
@@ -87,5 +82,24 @@ const handler = nc<NextApiRequest, NextApiResponse>({
     throw e;
   }
 });
+
+async function hasChildrenFetch({ ...args }: Parameters<typeof notion.blocks.children.list>[0]) {
+  let result: Record<string, NotionBlocksChildrenList> = {};
+
+  await notion.blocks.children.list(args).then(async (res) => {
+    for (const block of res.results) {
+      const { has_children } = block as NotionBlocksChildrenList['results'][number];
+      if (has_children) {
+        await hasChildrenFetch({ block_id: block.id }).then((children) => {
+          result = { ...result, ...children };
+        });
+      }
+    }
+    result[args.block_id] = res as NotionBlocksChildrenList;
+  });
+  console.log(result);
+
+  return result;
+}
 
 export default handler;

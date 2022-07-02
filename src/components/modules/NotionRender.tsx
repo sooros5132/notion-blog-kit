@@ -352,7 +352,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
 
   return (
     <div>
-      {blocks.blocks.results.map((block, i) => {
+      {blocks.blocks?.results.map((block, i) => {
         numberOfSameTag.current =
           blocks.blocks.results?.[i - 1]?.type === block.type ? numberOfSameTag.current + 1 : 0;
 
