@@ -1,12 +1,12 @@
 import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { IGetNotion } from 'src/types/notion';
+import { IGetNotion, NotionDatabasesQuery } from 'src/types/notion';
 import { SWRConfig } from 'swr';
-import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
+import { BASE_API_ORIGIN, BASE_API_PATH, NOTION_BASE_DATABASE } from '../src/lib/constants';
 
 interface SlugProps {
   slug: string;
@@ -43,7 +43,37 @@ const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
   // return <NotionRender blocks={blocks.results} key={`notion-render`} />;
 };
 
-export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    const databases = await fetch(
+      BASE_API_ORIGIN + BASE_API_PATH + '/notion/databases/' + NOTION_BASE_DATABASE
+    ).then(async (res) => (await res.json()) as IResponseSuccess<NotionDatabasesQuery>);
+
+    // axios
+    // .get<IResponseSuccess<NotionDatabasesQuery>>(BASE_API_PATH + '/notion/databases/' + NOTION_BASE_DATABASE)
+    // .then((res) => res.data?.result?.results);
+
+    if (!Array.isArray(databases)) {
+      throw 'type error databases';
+    }
+
+    const paths = databases.map((page) => ({
+      params: { slug: page?.id }
+    }));
+
+    return {
+      paths,
+      fallback: 'blocking'
+    };
+  } catch (e) {
+    return {
+      paths: [],
+      fallback: 'blocking'
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
   try {
     const slug = params?.slug;
     if (typeof slug !== 'string') {
@@ -52,14 +82,20 @@ export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ params
 
     const [blocks, pageInfo] = await Promise.all([
       axios
-        .get<IResponseSuccess<IGetNotion>>(BASE_API_PATH + '/notion/blocks/children/list/' + slug, {
-          params
-        })
+        .get<IResponseSuccess<IGetNotion>>(
+          BASE_API_ORIGIN + BASE_API_PATH + '/notion/blocks/children/list/' + slug,
+          {
+            params
+          }
+        )
         .then((res) => res.data),
       axios
-        .get<IResponseSuccess<GetPageResponse>>(BASE_API_PATH + '/notion/pages/' + slug, {
-          params
-        })
+        .get<IResponseSuccess<GetPageResponse>>(
+          BASE_API_ORIGIN + BASE_API_PATH + '/notion/pages/' + slug,
+          {
+            params
+          }
+        )
         .then((res) => res.data)
     ]);
 
@@ -73,7 +109,8 @@ export const getServerSideProps: GetServerSideProps<SlugProps> = async ({ params
           '/notion/blocks/children/list': blocks.result,
           '/notion/pages': pageInfo.result
         }
-      }
+      },
+      revalidate: 60
     };
   } catch (e) {
     return {
