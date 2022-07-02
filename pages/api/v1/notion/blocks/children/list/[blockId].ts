@@ -97,7 +97,6 @@ async function hasChildrenFetch({ ...args }: Parameters<typeof notion.blocks.chi
     }
     result[args.block_id] = res as NotionBlocksChildrenList;
   });
-  console.log(result);
 
   return result;
 }
