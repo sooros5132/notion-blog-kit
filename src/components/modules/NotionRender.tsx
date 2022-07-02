@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
 import { NEXT_IMAGE_DOMAINS } from 'src/lib/constants';
+import { Flex11AutoBox, FullWidthBox } from './Box';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -475,7 +476,9 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               >
                 <ImageBlockContainer>
                   <NotionSecureImage blockId={block.id} src={block.image.external.url} />
-                  <Paragraph blockId={block.id} richText={block.image.caption} color={'gray'} />
+                  <FullWidthBox>
+                    <Paragraph blockId={block.id} richText={block.image.caption} color={'gray'} />
+                  </FullWidthBox>
                 </ImageBlockContainer>
               </NotionBlockRender>
             );
