@@ -4,6 +4,7 @@ import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import Layout from 'src/components/Layout';
 import { CommonCustomTheme } from 'src/styles/CommomTheme';
+import Script from 'next/script';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -74,6 +75,17 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='msapplication-TileImage' content='/ms-icon-144x144.png' />
         <meta name='theme-color' content='#151a19' />
       </Head>
+      <Script
+        src='https://www.googletagmanager.com/gtag/js?id=G-ERREE02BX9'
+        strategy='beforeInteractive'
+      />
+      <Script id='google-analytics' strategy='afterInteractive'>
+        {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-ERREE02BX9');`}
+      </Script>
       <Layout>
         <Component {...pageProps} />
       </Layout>
