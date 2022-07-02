@@ -1,13 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import {
-  NotionBlock,
-  IGetNotion,
-  NotionPagesRetrieve,
-  RichText,
-  NotionBlocksChildrenList,
-  Color
-} from 'src/types/notion';
+import { NotionBlock, IGetNotion, NotionPagesRetrieve, RichText, Color } from 'src/types/notion';
 import useSWR from 'swr';
 import { CircularProgress } from '@mui/material';
 import Link from 'next/link';
@@ -30,12 +23,12 @@ const NotionContainer = styled('div')(({ theme }) => ({
   color: theme.color.textDefaultBlack
 }));
 
-const PageInfoContainer = styled('div')(({ theme }) => ({}));
+const PageInfoContainer = styled('div')();
 
-const PageInfoCover = styled('div')(({ theme }) => ({
+const PageInfoCover = styled('div')({
   width: '100%',
   height: '30vh'
-}));
+});
 
 const PageInfoInner = styled('div')<{
   icontype?: NotionPagesRetrieve['icon']['type'];
@@ -49,8 +42,8 @@ const PageInfoInner = styled('div')<{
       ? theme.size.px50
       : undefined,
   [theme.mediaQuery.mobile]: {
-    paddingRight: theme.size.px12,
-    paddingLeft: theme.size.px12
+    paddingRight: theme.size.px18,
+    paddingLeft: theme.size.px18
   },
   [theme.mediaQuery.tablet]: {
     paddingRight: theme.size.px24,
@@ -62,11 +55,11 @@ const PageInfoInner = styled('div')<{
   }
 }));
 
-const PageImage = styled('div')(({ theme }) => ({
+const PageImage = styled('div')({
   position: 'relative',
   width: 70,
   height: 70
-}));
+});
 
 const PageEmoji = styled('span')(({ theme }) => ({
   padding: `0 ${theme.size.px12}`,
@@ -88,10 +81,9 @@ const PageTitle = styled('div')<{
 const NotionContent = styled('div')(({ theme }) => ({
   maxWidth: theme.size.desktopWidth,
   margin: '0 auto',
-  lineHeight: '1.2',
   [theme.mediaQuery.mobile]: {
-    paddingRight: theme.size.px12,
-    paddingLeft: theme.size.px12
+    paddingRight: theme.size.px18,
+    paddingLeft: theme.size.px18
   },
   [theme.mediaQuery.tablet]: {
     paddingRight: theme.size.px24,
@@ -104,7 +96,7 @@ const NotionContent = styled('div')(({ theme }) => ({
 }));
 
 const Block = styled('div')(({ theme }) => ({
-  margin: theme.size.px6 + ' 0'
+  margin: theme.size.px2 + ' 0'
 }));
 
 const DepthBlock = styled('div')(({ theme }) => ({
@@ -115,12 +107,22 @@ const HorizontalRule = styled('hr')(({ theme }) => ({
   borderColor: theme.color.gray50
 }));
 
-const RichTextContainer = styled('div')(({ theme }) => ({
-  lineHeight: 'inherit',
-  minHeight: '1.25em',
-  whiteSpace: 'break-spaces',
-  wordBreak: 'break-all'
-}));
+const RichTextContainer = styled('div')<{
+  color?: Color;
+}>(({ theme, color }) => {
+  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const backgroundColor =
+    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
+
+  return {
+    padding: theme.size.px2,
+    minHeight: '1.25em',
+    whiteSpace: 'break-spaces',
+    wordBreak: 'break-all',
+    color: fontColor ? fontColor : undefined,
+    backgroundColor: backgroundColor ? backgroundColor : undefined
+  };
+});
 
 const ParagraphText = styled('span')<{
   bold?: string;
@@ -157,15 +159,15 @@ const ParagraphText = styled('span')<{
   };
 });
 
-const NumberedListItemContainer = styled('div')(({}) => ({
+const NumberedListItemContainer = styled('div')({
   display: 'flex'
-}));
+});
 const NumberedListItemNumber = styled('div')(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
   justifyContent: 'flex-end',
   flex: `0 0 ${theme.size.px26}`,
   textAlign: 'right',
+  padding: theme.size.px2 + ' 0',
   paddingRight: theme.size.px4
 }));
 
@@ -242,6 +244,16 @@ const ImageWrapper = styled('div')({
   // objectFit: 'cover',
   // objectPosition: 'center center',
 });
+
+const Heading = styled('div')({
+  marginTop: '1.4em'
+});
+
+const Heading1 = styled('h1')({ margin: 0 });
+
+const Heading2 = styled('h2')({ margin: 0 });
+
+const Heading3 = styled('h3')({ margin: 0 });
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
@@ -373,7 +385,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <Heading block={block} />
+                <HeadingBlock block={block} />
               </NotionBlockRender>
             );
           }
@@ -385,7 +397,11 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <Paragraph blockId={block.id} richText={block.paragraph.rich_text} />
+                <Paragraph
+                  blockId={block.id}
+                  richText={block.paragraph.rich_text}
+                  color={block.paragraph.color}
+                />
               </NotionBlockRender>
             );
           }
@@ -423,7 +439,11 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 <NumberedListItemContainer>
                   <NumberedListItemNumber>{numberOfSameTag.current + 1}.</NumberedListItemNumber>
                   <NumberedListItemInner>
-                    <Paragraph blockId={block.id} richText={block.numbered_list_item.rich_text} />
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block.numbered_list_item.rich_text}
+                      color={block.numbered_list_item.color}
+                    />
                   </NumberedListItemInner>
                 </NumberedListItemContainer>
               </NotionBlockRender>
@@ -469,23 +489,50 @@ const NotionBlockRender: React.FC<NotionBlockProps> = ({
 };
 
 type NotionChildrenRenderProps = { block: NotionBlock };
-const Heading: React.FC<NotionChildrenRenderProps> = ({ block }) => {
+const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
   return (
     <RichTextContainer>
       {block[type].rich_text.map((text, i) => {
         switch (type) {
           case 'heading_1': {
-            return <h1 key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</h1>;
+            return (
+              <Heading1 key={`block-${block.id}-${type}-${i}`}>
+                <Heading>
+                  <Paragraph
+                    blockId={block.id}
+                    richText={block[type].rich_text}
+                    color={block[type].color}
+                  />
+                </Heading>
+              </Heading1>
+            );
           }
           case 'heading_2': {
-            return <h2 key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</h2>;
+            return (
+              <Heading2 key={`block-${block.id}-${type}-${i}`}>
+                <Heading>
+                  <Paragraph
+                    blockId={block.id}
+                    richText={block[type].rich_text}
+                    color={block[type].color}
+                  />
+                </Heading>
+              </Heading2>
+            );
           }
           case 'heading_3': {
-            return <h3 key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</h3>;
-          }
-          default: {
-            return <span key={`block-${block.id}-${type}-${i}`}>{text.plain_text}</span>;
+            return (
+              <Heading3 key={`block-${block.id}-${type}-${i}`}>
+                <Heading>
+                  <Paragraph
+                    blockId={block.id}
+                    richText={block[type].rich_text}
+                    color={block[type].color}
+                  />
+                </Heading>
+              </Heading3>
+            );
           }
         }
       })}
@@ -496,11 +543,12 @@ const Heading: React.FC<NotionChildrenRenderProps> = ({ block }) => {
 interface ParagraphProps {
   blockId: string;
   richText: Array<RichText>;
+  color?: Color;
 }
 
-const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText }) => {
+const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
   return (
-    <RichTextContainer>
+    <RichTextContainer color={color}>
       {richText.map((text, i) => {
         if (text.type === 'mention') {
           return (
@@ -583,7 +631,11 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
           <TiChevronRight />
         </ToggleArrowBox>
         <NumberedListItemInner>
-          <Paragraph blockId={block.id} richText={block.toggle.rich_text} />
+          <Paragraph
+            blockId={block.id}
+            richText={block.toggle.rich_text}
+            color={block.toggle.color}
+          />
         </NumberedListItemInner>
       </NumberedListItemContainer>
     </NotionBlockRender>
@@ -598,7 +650,10 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
   const database = databases[block.id];
   return (
     <div>
-      <h1>{block.child_database.title}</h1>
+      <Heading>
+        <Heading1>{block.child_database.title}</Heading1>
+      </Heading>
+
       <DatabaseContainer>
         {database.results.map((database) => (
           <DatabaseFlexItem key={`database-${database.id}`}>
