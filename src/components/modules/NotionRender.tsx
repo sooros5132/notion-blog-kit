@@ -27,9 +27,8 @@ const NotionContainer = styled('div')(({ theme }) => ({
 
 const PageInfoContainer = styled('div')();
 
-const PageInfoCover = styled('div')({
+const ImageCover = styled('div')({
   width: '100%',
-  height: '30vh',
   '& > div': {
     width: '100%',
     height: '100%',
@@ -40,6 +39,10 @@ const PageInfoCover = styled('div')({
       objectPosition: 'center center'
     }
   }
+});
+
+const PageInfoCover = styled(ImageCover)({
+  height: '30vh'
 });
 
 const PageInfoInner = styled('div')<{
@@ -244,34 +247,34 @@ const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
   padding: theme.size.px8
 }));
 
-const DatabaseItemCover = styled('div')({
+const DatabaseItemCover = styled(ImageCover)({
   height: 200,
-  transition: 'filter 0.2s Linear',
-  '& img': {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    objectPosition: 'center center'
-  }
+  transition: 'filter 0.2s Linear'
 });
 
 const DefaultImageWrapper = styled('div')({
   position: 'relative',
   overflow: 'hidden',
-  zIndex: -1
+  fontSize: 0,
+  zIndex: -1,
+  '& > img': {
+    position: 'relative',
+    maxWidth: '100%'
+  }
 });
 
 const NextImageWrapper = styled(DefaultImageWrapper)({
+  position: 'relative',
   width: '100%',
-  height: '100%'
+  height: '100%',
+  fontSize: 0
   // objectFit: 'cover',
   // objectPosition: 'center center',
 });
 
 const ImageBlockContainer = styled('div')({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
+  justifyContent: 'center'
 });
 
 const Heading = styled('div')({
@@ -470,10 +473,21 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <ImageBlockContainer>
-                  <NotionSecureImage blockId={block.id} src={block.image.external.url} />
-                  <FullWidthBox>
-                    <Paragraph blockId={block.id} richText={block.image.caption} color={'gray'} />
-                  </FullWidthBox>
+                  <div>
+                    <NotionSecureImage
+                      blockId={block.id}
+                      src={block.image?.file?.url ?? block.image?.external?.url ?? ''}
+                    />
+                    {Array.isArray(block?.image?.caption) && block?.image?.caption?.length > 0 && (
+                      <FullWidthBox>
+                        <Paragraph
+                          blockId={block.id}
+                          richText={block.image.caption}
+                          color={'gray'}
+                        />
+                      </FullWidthBox>
+                    )}
+                  </div>
                 </ImageBlockContainer>
               </NotionBlockRender>
             );
@@ -726,44 +740,40 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   table = 'block',
   placeholder = 'blur',
   blurDataURL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-  width = '100%',
-  height = '100%',
-  layout = 'responsive',
-  objectFit = 'contain',
+  layout = 'fill',
+  objectFit = 'cover',
   ...props
 }) => {
-  // src: https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8f7f9f31-56f7-49c3-a05f-d15ac4a722ca/qemu.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220702%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220702T053925Z&X-Amz-Expires=3600&X-Amz-Signature=050701d9bc05ec877366b066584240a31a4b5d2459fe6b7f39243e90d479addd&X-Amz-SignedHeaders=host&x-id=GetObject
-  // pageId: 12345678-abcd-1234-abcd-123456789012
+  // try {
+  // // src: https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8f7f9f31-56f7-49c3-a05f-d15ac4a722ca/qemu.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220702%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220702T053925Z&X-Amz-Expires=3600&X-Amz-Signature=050701d9bc05ec877366b066584240a31a4b5d2459fe6b7f39243e90d479addd&X-Amz-SignedHeaders=host&x-id=GetObject
+  // // pageId: 12345678-abcd-1234-abcd-123456789012
+  // const { host } = new URL(srcProp);
 
-  try {
-    const { host } = new URL(srcProp);
+  // if (NEXT_IMAGE_DOMAINS.includes(host)) {
+  //   const src = convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
 
-    if (NEXT_IMAGE_DOMAINS.includes(host)) {
-      const src = convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
-
-      return (
-        <NextImageWrapper>
-          <Image
-            {...props}
-            placeholder={placeholder}
-            blurDataURL={blurDataURL}
-            width={width}
-            height={height}
-            layout={layout}
-            objectFit={objectFit}
-            src={src}
-          />
-        </NextImageWrapper>
-      );
-    }
-    throw '';
-  } catch (e) {
-    return (
-      <DefaultImageWrapper>
-        <img {...props} src={srcProp}></img>
-      </DefaultImageWrapper>
-    );
-  }
+  //   return (
+  //     <NextImageWrapper>
+  //       <Image
+  //         className={'image'}
+  //         {...props}
+  //         placeholder={placeholder}
+  //         blurDataURL={blurDataURL}
+  //         layout={layout}
+  //         objectFit={objectFit}
+  //         src={src}
+  //       />
+  //     </NextImageWrapper>
+  //   );
+  // }
+  //   throw '';
+  // } catch (e) {
+  // }
+  return (
+    <DefaultImageWrapper>
+      <img className={'image'} {...props} src={srcProp} loading='lazy' />
+    </DefaultImageWrapper>
+  );
 };
 
 function convertAwsImageObjectUrlToNotionUrl({

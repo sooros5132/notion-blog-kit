@@ -126,9 +126,13 @@ export declare type MentionObject = {
 
 interface ImageObject {
   caption: Array<RichText>;
-  type: 'external';
-  external: {
+  type: 'external' | 'file';
+  external?: {
     url: string;
+  };
+  file?: {
+    url: string;
+    expiry_time: string;
   };
 }
 
@@ -211,17 +215,6 @@ export interface Properties extends Partial<Record<PropertyType | string, any>> 
   type: string;
 }
 
-export interface DatabaseCover {
-  type: 'external' | 'file';
-  external?: {
-    url: string | null;
-  };
-  file?: {
-    url: string;
-    expiry_time: string;
-  };
-}
-
 export interface NotionDatabases {
   object: string; // Always "database"
   id: string; // uuid
@@ -231,8 +224,8 @@ export interface NotionDatabases {
   last_edited_by: TimeObject;
   // title?: RichText;
   // description?: RichText;
-  icon?: DatabaseCover | null;
-  cover?: DatabaseCover | null;
+  icon?: ImageObject | null;
+  cover?: ImageObject | null;
   properties: Properties & {
     created_time?: string;
     multi_select?: any;
@@ -276,7 +269,7 @@ export interface ParentObject {
 
 export interface IconObject {
   type: 'emoji' | 'file';
-  file?: DatabaseCover['file'];
+  file?: ImageObject['file'];
   emoji?: EmojiObject['emoji'];
 }
 
@@ -287,7 +280,7 @@ export interface NotionPagesRetrieve {
   last_edited_time: string;
   created_by: TimeObject;
   last_edited_by: TimeObject;
-  cover: DatabaseCover;
+  cover: ImageObject;
   icon: IconObject;
   parent: ParentObject;
   archived: false;
