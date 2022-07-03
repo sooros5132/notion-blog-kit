@@ -34,54 +34,72 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       }
     }
 
-    const blocks = (await notion.blocks.children.list({
-      block_id: blockId,
-      page_size: page_size ?? undefined, // Default: 100, Maximum: 100
-      start_cursor: start_cursor
-    })) as NotionBlocksChildrenList;
-
-    const databaseBlocks: Record<string, NotionDatabasesQuery> = {};
-    let childrenBlocks: Record<string, NotionBlocksChildrenList> = {};
-    const moreFetch: Array<any> = [];
-
-    for (const block of blocks.results) {
-      if (block.has_children) {
-        moreFetch.push(
-          hasChildrenFetch({ block_id: block.id }).then((result) => {
-            childrenBlocks = { ...childrenBlocks, ...result };
-          })
-        );
-        continue;
-      }
-      switch (block.type) {
-        case 'child_database': {
-          moreFetch.push(
-            notion.databases
-              .query({
-                database_id: block.id
-              })
-              .then((database) => {
-                databaseBlocks[block.id] = database as NotionDatabasesQuery;
-              })
-          );
-          continue;
-        }
-      }
-    }
-    await Promise.all(moreFetch);
+    const result = await fetchBlocks({ block_id: blockId, page_size, start_cursor });
 
     res.status(200).json({
       success: true,
-      result: {
-        blocks,
-        databaseBlocks,
-        childrenBlocks
-      }
+      result
     });
   } catch (e) {
     throw e;
   }
 });
+
+async function fetchBlocks({
+  block_id,
+  page_size,
+  start_cursor
+}: Parameters<typeof notion.blocks.children.list>[0]) {
+  const blocks = (await notion.blocks.children.list({
+    block_id,
+    page_size: page_size ?? undefined, // Default: 100, Maximum: 100
+    start_cursor: start_cursor
+  })) as NotionBlocksChildrenList;
+  const databaseBlocks: Record<string, NotionDatabasesQuery> = {};
+  let childrenBlocks: Record<string, NotionBlocksChildrenList> = {};
+  const moreFetch: Array<any> = [];
+
+  if (blocks.has_more && blocks.next_cursor) {
+    // 재귀함수
+    await fetchBlocks({ block_id, start_cursor: blocks.next_cursor! }).then((res) => {
+      blocks.results.push(...res.blocks.results);
+    });
+    blocks.has_more = false;
+    blocks.next_cursor = null;
+  }
+  for (const block of blocks.results) {
+    if (block.has_children) {
+      // 재귀함수
+      moreFetch.push(
+        hasChildrenFetch({ block_id: block.id }).then((result) => {
+          childrenBlocks = { ...childrenBlocks, ...result };
+        })
+      );
+      continue;
+    }
+    switch (block.type) {
+      case 'child_database': {
+        moreFetch.push(
+          notion.databases
+            .query({
+              database_id: block.id
+            })
+            .then((database) => {
+              databaseBlocks[block.id] = database as NotionDatabasesQuery;
+            })
+        );
+        continue;
+      }
+    }
+  }
+  await Promise.all(moreFetch);
+
+  return {
+    blocks,
+    databaseBlocks,
+    childrenBlocks
+  };
+}
 
 async function hasChildrenFetch({ ...args }: Parameters<typeof notion.blocks.children.list>[0]) {
   let result: Record<string, NotionBlocksChildrenList> = {};
