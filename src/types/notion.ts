@@ -215,7 +215,7 @@ export interface Properties extends Partial<Record<PropertyType | string, any>> 
   type: string;
 }
 
-export interface NotionDatabases {
+export interface NotionDatabase {
   object: string; // Always "database"
   id: string; // uuid
   created_time: string;
@@ -226,11 +226,14 @@ export interface NotionDatabases {
   // description?: RichText;
   icon?: ImageObject | null;
   cover?: ImageObject | null;
-  properties: Properties & {
-    created_time?: string;
-    multi_select?: any;
-    title?: Array<RichText>;
-  };
+  properties: Record<
+    string,
+    Properties & {
+      id: 'title';
+      type: 'title';
+      title: Array<RichText>;
+    }
+  >;
   parent?: {
     type: 'database_id' | string;
     database_id: string;
@@ -241,7 +244,7 @@ export interface NotionDatabases {
 }
 export interface NotionDatabasesQuery {
   object: 'list'; // Always "list".
-  results: Array<NotionDatabases>;
+  results: Array<NotionDatabase>;
   next_cursor?: string | null; // Only available when "has_more" is true.
   has_more: boolean;
   type: NotionBlockTypes;
@@ -249,7 +252,7 @@ export interface NotionDatabasesQuery {
 }
 export interface NotionDatabasesQuery {
   object: 'list'; // Always "list".
-  results: Array<NotionDatabases>;
+  results: Array<NotionDatabase>;
   next_cursor?: string | null; // Only available when "has_more" is true.
   has_more: boolean;
   type: NotionBlockTypes;

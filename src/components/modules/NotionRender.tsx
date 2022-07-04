@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { styled } from '@mui/material/styles';
-import { NotionBlock, IGetNotion, NotionPagesRetrieve, RichText, Color } from 'src/types/notion';
+import {
+  NotionBlock,
+  IGetNotion,
+  NotionPagesRetrieve,
+  RichText,
+  Color,
+  NotionDatabase
+} from 'src/types/notion';
 import useSWR from 'swr';
-import { CircularProgress } from '@mui/material';
+import { Button, CircularProgress, Menu, MenuItem, Typography } from '@mui/material';
 import Link from 'next/link';
-import Image, { ImageProps } from 'next/image';
+import { ImageProps } from 'next/image';
 import { NextSeo } from 'next-seo';
 import { useRef } from 'react';
 import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
-import { NEXT_IMAGE_DOMAINS } from 'src/lib/constants';
-import { Flex11AutoBox, FullWidthBox } from './Box';
+import { FlexSpaceBetweenCenterBox, FullWidthBox } from './Box';
+import { sortBy } from 'lodash';
+import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
+import isEqual from 'react-fast-compare';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -214,6 +223,7 @@ const DatabaseContainer = styled('div')(({ theme }) => ({
   display: 'grid',
   gap: 20,
   textAlign: 'center',
+  marginBottom: 20,
   [theme.mediaQuery.mobile]: {
     gridTemplateColumns: '1fr'
   },
@@ -303,10 +313,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         title={
           page.parent.type === 'workspace' && page.properties.title?.title
             ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
-            : page.parent.type === 'database_id' && page.properties?.['이름']?.title
-            ? page.properties?.['이름']?.title
-                ?.map((text: RichText) => text?.plain_text)
-                .join('') || 'untitled'
+            : page.parent.type === 'database_id' && page.properties?.title?.title
+            ? page.properties?.title?.title?.map((text: RichText) => text?.plain_text).join('') ||
+              'untitled'
             : 'soolog'
         }
       />
@@ -352,7 +361,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             {page.parent.type === 'workspace' ? (
               <Paragraph blockId={page.id} richText={page.properties.title?.title} />
             ) : page.parent.type === 'database_id' ? (
-              <Paragraph blockId={page.id} richText={page.properties?.['이름']?.title} />
+              <Paragraph blockId={page.id} richText={page.properties?.title?.title} />
             ) : null}
           </PageTitle>
         </PageInfoInner>
@@ -690,42 +699,139 @@ interface ChildDatabaseProps extends NotionChildrenRenderProps {
 }
 
 const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
-  const database = databases[block.id];
+  const [blocks, setBlocks] = useState(
+    sortBy(
+      databases[block.id]?.results
+        .filter((b) => b.properties?.['isPublished']?.checkbox)
+        .map((block) => {
+          const title =
+            block.properties?.['title']?.title?.map((title) => title.plain_text).join() ??
+            '제목 없음';
+          const newBlock = {
+            ...block,
+            title
+          };
+          return newBlock;
+        }) || [],
+      'created_time'
+    ).reverse()
+  );
+  const [accountEl, setAccountEl] = React.useState<null | HTMLElement>(null);
+  const [sortKey, setSortKey] = useState<'created_time' | 'last_edited_time' | 'title'>(
+    'created_time'
+  );
+  const [isOrderAsc, setIsOrderAsc] = useState(true);
+  const KorKeyRecord = useMemo<Record<typeof sortKey, string>>(
+    () => ({
+      created_time: '생성일',
+      last_edited_time: '수정일',
+      title: '이름'
+    }),
+    []
+  );
+
+  const handleClickSortMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAccountEl(event.currentTarget);
+  };
+
+  const handleCloseSortMenu = (prop?: typeof sortKey) => () => {
+    switch (prop) {
+      // 시간은 반대 개념 나머지는 정상
+      case 'last_edited_time':
+      case 'created_time': {
+        if (prop === sortKey) {
+          const newIsOrderAsc = !isOrderAsc;
+          setBlocks((prevBlocks) =>
+            newIsOrderAsc ? sortBy(prevBlocks, prop).reverse() : sortBy(prevBlocks, prop)
+          );
+          setSortKey(prop);
+          setIsOrderAsc(newIsOrderAsc);
+        } else {
+          setBlocks((prevBlocks) => sortBy(prevBlocks, prop).reverse());
+          setSortKey(prop);
+          setIsOrderAsc(true);
+        }
+        break;
+      }
+      case 'title': {
+        if (prop === sortKey) {
+          const newIsOrderAsc = !isOrderAsc;
+          setBlocks((prevBlocks) =>
+            newIsOrderAsc ? sortBy(prevBlocks, prop) : sortBy(prevBlocks, prop).reverse()
+          );
+          setSortKey(prop);
+          setIsOrderAsc(newIsOrderAsc);
+        } else {
+          setBlocks((prevBlocks) => sortBy(prevBlocks, prop));
+          setSortKey(prop);
+          setIsOrderAsc(true);
+        }
+      }
+    }
+    setAccountEl(null);
+  };
+
   return (
     <div>
       <Heading>
-        <Heading1>{block.child_database.title}</Heading1>
+        <FlexSpaceBetweenCenterBox>
+          <Heading1>{block.child_database.title}</Heading1>
+          <Button color='inherit' size='large' onClick={handleClickSortMenu}>
+            {KorKeyRecord[sortKey]}
+            {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
+          </Button>
+          <Menu
+            anchorEl={accountEl}
+            keepMounted
+            open={Boolean(accountEl)}
+            onClose={handleCloseSortMenu()}
+          >
+            <MenuItem onClick={handleCloseSortMenu('title')}>
+              <Typography>이름</Typography>
+            </MenuItem>
+            <MenuItem onClick={handleCloseSortMenu('created_time')}>
+              <Typography>생성일</Typography>
+            </MenuItem>
+            <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
+              <Typography>수정일</Typography>
+            </MenuItem>
+          </Menu>
+        </FlexSpaceBetweenCenterBox>
       </Heading>
 
       <DatabaseContainer>
-        {database.results.map((database) => (
-          <DatabaseFlexItem key={`database-${database.id}`}>
-            <Link href={`/${database.id}`}>
-              <a>
-                <DatabaseItemCover className='page-cover'>
-                  {database?.cover && (
-                    <NotionSecureImage
-                      src={database?.cover?.file?.url ?? database?.cover?.external?.url ?? ''}
-                      blockId={database.id}
-                      layout='fill'
-                      objectFit='cover'
-                    />
-                  )}
-                </DatabaseItemCover>
-                <DatabaseDescriptionBox>
-                  <Paragraph
-                    blockId={database.id}
-                    richText={database?.properties?.['이름']?.title}
-                  />
-                </DatabaseDescriptionBox>
-              </a>
-            </Link>
-          </DatabaseFlexItem>
+        {blocks.map((block) => (
+          <ChildDatabaseBlock key={`database-${block.id}`} block={block} />
         ))}
       </DatabaseContainer>
     </div>
   );
 };
+
+const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block }) => {
+  return (
+    <DatabaseFlexItem>
+      <Link href={`/${block.id}`}>
+        <a>
+          <DatabaseItemCover className='page-cover'>
+            {block?.cover && (
+              <NotionSecureImage
+                src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
+                blockId={block.id}
+                layout='fill'
+                objectFit='cover'
+              />
+            )}
+          </DatabaseItemCover>
+          <DatabaseDescriptionBox>
+            <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+          </DatabaseDescriptionBox>
+        </a>
+      </Link>
+    </DatabaseFlexItem>
+  );
+}, isEqual);
+ChildDatabaseBlock.displayName = 'ChildDatabaseBlock';
 
 interface NotionSecureImageProps extends ImageProps {
   src: string;
@@ -771,7 +877,12 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   // }
   return (
     <DefaultImageWrapper>
-      <img className={'image'} {...props} src={convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table })} loading='lazy' />
+      <img
+        className={'image'}
+        {...props}
+        src={convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table })}
+        loading='lazy'
+      />
     </DefaultImageWrapper>
   );
 };
