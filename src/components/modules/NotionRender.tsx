@@ -771,7 +771,7 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   // }
   return (
     <DefaultImageWrapper>
-      <img className={'image'} {...props} src={srcProp} loading='lazy' />
+      <img className={'image'} {...props} src={convertAwsImageObjectUrlToNotionUrl(srcProp)} loading='lazy' />
     </DefaultImageWrapper>
   );
 };
