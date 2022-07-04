@@ -361,7 +361,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             {page.parent.type === 'workspace' ? (
               <Paragraph blockId={page.id} richText={page.properties.title?.title} />
             ) : page.parent.type === 'database_id' ? (
-              <Paragraph blockId={page.id} richText={page.properties?.title?.title} />
+              page.properties?.title?.title && (
+                <Paragraph blockId={page.id} richText={page.properties?.title?.title} />
+              )
             ) : null}
           </PageTitle>
         </PageInfoInner>
@@ -824,7 +826,9 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
             )}
           </DatabaseItemCover>
           <DatabaseDescriptionBox>
-            <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+            {block?.properties?.title?.title && (
+              <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+            )}
           </DatabaseDescriptionBox>
         </a>
       </Link>
