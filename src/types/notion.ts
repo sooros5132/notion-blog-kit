@@ -159,7 +159,7 @@ export interface NotionBlockItem
   file: RichTextObject;
   pdf: RichTextObject;
   bookmark: RichTextObject;
-  callout: RichTextObject;
+  callout: RichTextObject & { icon: IconObject };
   quote: RichTextObject;
   equation: RichTextObject;
   divider: RichTextObject;

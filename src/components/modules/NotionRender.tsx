@@ -314,6 +314,32 @@ const Heading3 = styled('h3')({ margin: 0 });
 
 const CodeBlock = styled('div')(({ theme }) => ({
   fontFamily: theme.font.code,
+// const CodeBlock = styled('div')(({ theme }) => ({
+//   fontFamily: theme.font.code,
+//   backgroundColor: theme.color.cardBackground,
+//   padding: `${theme.size.px6} ${theme.size.px12}`
+// }));
+const CalloutBlockContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
+  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const backgroundColor =
+    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
+
+  return {
+    color: fontColor ? fontColor : undefined,
+    backgroundColor: backgroundColor ? backgroundColor : undefined,
+    padding: `${theme.size.px6} ${theme.size.px12}`,
+    margin: theme.size.px2 + ' 0'
+  };
+});
+
+const CalloutBlockHeading = styled(FlexAlignItemsCenterBox)(({ theme }) => ({}));
+
+const CalloutIcon = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
+  width: theme.size.px22,
+  fontSize: theme.size.px22,
+  marginRight: theme.size.px12
+}));
+
   backgroundColor: theme.color.cardBackground,
   padding: `${theme.size.px6} ${theme.size.px12}`
 }));
@@ -549,11 +575,49 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               </NotionBlockRender>
             );
           }
+          case 'callout': {
+            return (
+              <CalloutBlock
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              />
+            );
+          }
         }
 
         return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
       })}
     </div>
+  );
+};
+
+interface CalloutBlockProps {
+  block: NotionBlock;
+  blocks: IGetNotion;
+  chilrenBlockDepth?: number;
+}
+
+const CalloutBlock: React.FC<CalloutBlockProps> = ({ block, blocks, chilrenBlockDepth }) => {
+  console.log(chilrenBlockDepth);
+
+  return (
+    <CalloutBlockContainer color={block.callout.color}>
+      <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth}>
+        <CalloutBlockHeading>
+          <CalloutIcon>
+            {block.callout?.icon?.file && block.callout?.icon?.type === 'file' && (
+              <NotionSecureImage blockId={block.id} src={block.callout?.icon.file.url} />
+            )}
+            {block.callout?.icon?.emoji &&
+              block.callout?.icon?.type === 'emoji' &&
+              block.callout?.icon?.emoji}
+          </CalloutIcon>
+          <Paragraph blockId={block.id} richText={block.callout.rich_text} />
+        </CalloutBlockHeading>
+      </NotionBlockRender>
+    </CalloutBlockContainer>
   );
 };
 
