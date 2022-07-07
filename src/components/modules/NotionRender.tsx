@@ -25,7 +25,7 @@ import {
   NoWrapBox
 } from './Box';
 import { sortBy } from 'lodash';
-import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
+import { BsArrowDownShort, BsArrowUpShort, BsDot } from 'react-icons/bs';
 import isEqual from 'react-fast-compare';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
@@ -600,6 +600,33 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                     color={block.quote.color}
                   />
                 </QuoteContainer>
+              </NotionBlockRender>
+            );
+          }
+          case 'bulleted_list_item': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <NumberedListItemContainer>
+                  <NumberedListItemNumber>
+                    <Block>
+                      <FlexAlignItemsCenterBox>
+                        <BsDot />
+                      </FlexAlignItemsCenterBox>
+                    </Block>
+                  </NumberedListItemNumber>
+                  <NumberedListItemInner>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block.bulleted_list_item.rich_text}
+                      color={block.bulleted_list_item.color}
+                    />
+                  </NumberedListItemInner>
+                </NumberedListItemContainer>
               </NotionBlockRender>
             );
           }
