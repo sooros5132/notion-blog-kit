@@ -21,13 +21,15 @@ import {
   CursorPointerBox,
   FlexAlignItemsCenterBox,
   FlexSpaceBetweenCenterBox,
-  FullWidthBox
+  FullWidthBox,
+  NoWrapBox
 } from './Box';
 import { sortBy } from 'lodash';
 import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
 import isEqual from 'react-fast-compare';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { BreakAllTypography } from './Typography';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -823,11 +825,15 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     <div>
       <Heading>
         <FlexSpaceBetweenCenterBox>
-          <Heading1>{block.child_database.title}</Heading1>
-          <Button color='inherit' size='large' onClick={handleClickSortMenu}>
-            {KorKeyRecord[sortKey]}
-            {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
-          </Button>
+          <Heading1>
+            <BreakAllTypography>{block.child_database.title}</BreakAllTypography>
+          </Heading1>
+          <NoWrapBox>
+            <Button color='inherit' size='large' onClick={handleClickSortMenu}>
+              {KorKeyRecord[sortKey]}
+              {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
+            </Button>
+          </NoWrapBox>
           <Menu
             anchorEl={accountEl}
             keepMounted
