@@ -69,6 +69,7 @@ export declare type BlockType =
   | 'toggle'
   | 'child_page'
   | 'child_database'
+  | 'code'
   | 'embed'
   | 'image'
   | 'video'
@@ -148,6 +149,7 @@ export interface NotionBlockItem
   toggle: RichTextObject;
   child_page: RichTextObject;
   child_database: RichTextTitle;
+  code: RichTextObject;
   embed: RichTextObject;
   image: ImageObject;
   video: RichTextObject;

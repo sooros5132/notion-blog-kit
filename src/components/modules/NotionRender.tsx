@@ -21,6 +21,17 @@ import { FlexSpaceBetweenCenterBox, FullWidthBox } from './Box';
 import { sortBy } from 'lodash';
 import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
 import isEqual from 'react-fast-compare';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+
+const Component = () => {
+  const codeString = '(num) => num + 1';
+  return (
+    <SyntaxHighlighter language='javascript' style={dark}>
+      {codeString}
+    </SyntaxHighlighter>
+  );
+};
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -297,6 +308,12 @@ const Heading2 = styled('h2')({ margin: 0 });
 
 const Heading3 = styled('h3')({ margin: 0 });
 
+const CodeBlock = styled('div')(({ theme }) => ({
+  fontFamily: theme.font.code,
+  backgroundColor: theme.color.cardBackground,
+  padding: `${theme.size.px6} ${theme.size.px12}`
+}));
+
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
   const { data: page } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
@@ -500,6 +517,20 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                     )}
                   </div>
                 </ImageBlockContainer>
+              </NotionBlockRender>
+            );
+          }
+          case 'code': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <SyntaxHighlighter language='typescript' style={vscDarkPlus} showLineNumbers>
+                  {block?.code?.rich_text?.map((text) => text?.plain_text)}
+                </SyntaxHighlighter>
               </NotionBlockRender>
             );
           }
