@@ -251,7 +251,10 @@ const DatabaseFlexItem = styled('div')(({ theme }) => ({
   isolation: 'isolate',
   overflow: 'hidden',
   '&:hover .page-cover': {
-    filter: 'brightness(0.75)'
+    filter: 'brightness(0.75)',
+    '& .image': {
+      transform: 'scale(1.05)'
+    }
   }
 }));
 
@@ -261,7 +264,10 @@ const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
 
 const DatabaseItemCover = styled(ImageCover)({
   height: 200,
-  transition: 'filter 0.2s Linear'
+  transition: 'filter 0.2s Linear',
+  '& .image': {
+    transition: 'transform 0.2s Linear'
+  }
 });
 
 const DefaultImageWrapper = styled('div')({
