@@ -312,8 +312,6 @@ const Heading2 = styled('h2')({ margin: 0 });
 
 const Heading3 = styled('h3')({ margin: 0 });
 
-const CodeBlock = styled('div')(({ theme }) => ({
-  fontFamily: theme.font.code,
 // const CodeBlock = styled('div')(({ theme }) => ({
 //   fontFamily: theme.font.code,
 //   backgroundColor: theme.color.cardBackground,
@@ -340,8 +338,10 @@ const CalloutIcon = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
   marginRight: theme.size.px12
 }));
 
+const QuoteContainer = styled('div')(({ theme }) => ({
   backgroundColor: theme.color.cardBackground,
-  padding: `${theme.size.px6} ${theme.size.px12}`
+  padding: `${theme.size.px6} ${theme.size.px12}`,
+  borderLeft: `${theme.size.px3} solid ${theme.color.textDefaultBlack}`
 }));
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
@@ -583,6 +583,24 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               />
+            );
+          }
+          case 'quote': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <QuoteContainer>
+                  <Paragraph
+                    blockId={block.id}
+                    richText={block.quote.rich_text}
+                    color={block.quote.color}
+                  />
+                </QuoteContainer>
+              </NotionBlockRender>
             );
           }
         }
