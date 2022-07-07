@@ -126,7 +126,6 @@ export declare type MentionObject = {
 };
 
 interface ImageObject {
-  caption: Array<RichText>;
   type: 'external' | 'file';
   external?: {
     url: string;
@@ -135,6 +134,10 @@ interface ImageObject {
     url: string;
     expiry_time: string;
   };
+}
+
+interface CaptionObject {
+  caption: Array<RichText>;
 }
 
 export interface NotionBlockItem
@@ -149,9 +152,9 @@ export interface NotionBlockItem
   toggle: RichTextObject;
   child_page: RichTextObject;
   child_database: RichTextTitle;
-  code: RichTextObject;
+  code: RichTextObject & CaptionObject;
   embed: RichTextObject;
-  image: ImageObject;
+  image: ImageObject & CaptionObject;
   video: RichTextObject;
   file: RichTextObject;
   pdf: RichTextObject;

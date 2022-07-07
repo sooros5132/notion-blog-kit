@@ -24,15 +24,6 @@ import isEqual from 'react-fast-compare';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
-const Component = () => {
-  const codeString = '(num) => num + 1';
-  return (
-    <SyntaxHighlighter language='javascript' style={dark}>
-      {codeString}
-    </SyntaxHighlighter>
-  );
-};
-
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
   readonly slug: string;
@@ -528,9 +519,20 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <SyntaxHighlighter language='typescript' style={vscDarkPlus} showLineNumbers>
+                <SyntaxHighlighter
+                  language='typescript'
+                  style={vscDarkPlus}
+                  showLineNumbers
+                  lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}
+                  wrapLines={true}
+                >
                   {block?.code?.rich_text?.map((text) => text?.plain_text)}
                 </SyntaxHighlighter>
+                {Array.isArray(block?.code?.caption) && block?.code?.caption?.length > 0 && (
+                  <FullWidthBox>
+                    <Paragraph blockId={block.id} richText={block.code.caption} color={'gray'} />
+                  </FullWidthBox>
+                )}
               </NotionBlockRender>
             );
           }
