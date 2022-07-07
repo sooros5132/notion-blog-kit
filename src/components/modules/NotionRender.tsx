@@ -60,7 +60,10 @@ const ImageCover = styled('div')({
 });
 
 const PageInfoCover = styled(ImageCover)({
-  height: '30vh'
+  height: '30vh',
+  '& img.image': {
+    zIndex: -1
+  }
 });
 
 const PageInfoInner = styled('div')<{
@@ -281,7 +284,6 @@ const DefaultImageWrapper = styled('div')({
   position: 'relative',
   overflow: 'hidden',
   fontSize: 0,
-  zIndex: -1,
   '& > img': {
     position: 'relative',
     maxWidth: '100%'
