@@ -110,7 +110,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
           '/notion/pages': pageInfo.result
         }
       },
-      revalidate: 60
+      revalidate: 600
     };
   } catch (e) {
     return {

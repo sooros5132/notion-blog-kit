@@ -55,7 +55,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
         notionBlocksChildrenList: blocks.result,
         pageInfo: pageInfo.result
       },
-      revalidate: 60
+      revalidate: 600
     };
   } catch (e) {
     return {
