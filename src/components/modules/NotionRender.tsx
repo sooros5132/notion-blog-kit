@@ -328,6 +328,7 @@ const CalloutBlockContainer = styled('div')<{ color: Color }>(({ color, theme })
     color: fontColor ? fontColor : undefined,
     backgroundColor: backgroundColor ? backgroundColor : undefined,
     padding: `${theme.size.px6} ${theme.size.px12}`,
+    paddingLeft: theme.size.px6,
     margin: theme.size.px2 + ' 0'
   };
 });
@@ -335,15 +336,23 @@ const CalloutBlockContainer = styled('div')<{ color: Color }>(({ color, theme })
 const CalloutBlockHeading = styled(FlexAlignItemsCenterBox)(({ theme }) => ({}));
 
 const CalloutIcon = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
-  width: theme.size.px22,
-  fontSize: theme.size.px22,
-  marginRight: theme.size.px12
+  width: theme.size.px18,
+  margin: `0 ${theme.size.px3}`,
+  textAlign: 'center',
+  fontSize: theme.size.px18
 }));
 
 const QuoteContainer = styled('div')(({ theme }) => ({
   backgroundColor: theme.color.cardBackground,
   padding: `${theme.size.px6} ${theme.size.px12}`,
   borderLeft: `${theme.size.px3} solid ${theme.color.textDefaultBlack}`
+}));
+
+const BulletedListItemDot = styled('div')(({ theme }) => ({
+  flex: `0 0 ${theme.size.px26}`,
+  paddingTop: theme.size.px2,
+  paddingRight: theme.size.px4,
+  fontSize: theme.size.px20
 }));
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
@@ -614,13 +623,9 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NumberedListItemContainer>
-                  <NumberedListItemNumber>
-                    <Block>
-                      <FlexAlignItemsCenterBox>
-                        <BsDot />
-                      </FlexAlignItemsCenterBox>
-                    </Block>
-                  </NumberedListItemNumber>
+                  <BulletedListItemDot>
+                    <BsDot />
+                  </BulletedListItemDot>
                   <NumberedListItemInner>
                     <Paragraph
                       blockId={block.id}
