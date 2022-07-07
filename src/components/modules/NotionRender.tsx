@@ -652,8 +652,6 @@ interface CalloutBlockProps {
 }
 
 const CalloutBlock: React.FC<CalloutBlockProps> = ({ block, blocks, chilrenBlockDepth }) => {
-  console.log(chilrenBlockDepth);
-
   return (
     <CalloutBlockContainer color={block.callout.color}>
       <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth}>
