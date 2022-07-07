@@ -17,7 +17,12 @@ import { useRef } from 'react';
 import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
-import { FlexSpaceBetweenCenterBox, FullWidthBox } from './Box';
+import {
+  CursorPointerBox,
+  FlexAlignItemsCenterBox,
+  FlexSpaceBetweenCenterBox,
+  FullWidthBox
+} from './Box';
 import { sortBy } from 'lodash';
 import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
 import isEqual from 'react-fast-compare';
@@ -719,18 +724,20 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
       blocks={blocks}
       chilrenBlockDepth={isOpen ? chilrenBlockDepth : undefined}
     >
-      <NumberedListItemContainer>
-        <ToggleArrowBox onClick={handleClickToggleButton} toggled={`${isOpen}`}>
-          <TiChevronRight />
-        </ToggleArrowBox>
-        <NumberedListItemInner>
-          <Paragraph
-            blockId={block.id}
-            richText={block.toggle.rich_text}
-            color={block.toggle.color}
-          />
-        </NumberedListItemInner>
-      </NumberedListItemContainer>
+      <CursorPointerBox>
+        <FlexAlignItemsCenterBox onClick={handleClickToggleButton}>
+          <ToggleArrowBox toggled={`${isOpen}`}>
+            <TiChevronRight />
+          </ToggleArrowBox>
+          <NumberedListItemInner>
+            <Paragraph
+              blockId={block.id}
+              richText={block.toggle.rich_text}
+              color={block.toggle.color}
+            />
+          </NumberedListItemInner>
+        </FlexAlignItemsCenterBox>
+      </CursorPointerBox>
     </NotionBlockRender>
   );
 };
