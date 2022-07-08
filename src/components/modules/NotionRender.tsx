@@ -20,6 +20,7 @@ import Head from 'next/head';
 import {
   CursorPointerBox,
   FlexAlignItemsCenterBox,
+  FlexCenterCenterBox,
   FlexSpaceBetweenCenterBox,
   FullWidthBox,
   NoWrapBox
@@ -30,6 +31,7 @@ import isEqual from 'react-fast-compare';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BreakAllTypography } from './Typography';
+import { SiNotion } from 'react-icons/si';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -272,13 +274,14 @@ const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
   padding: theme.size.px8
 }));
 
-const DatabaseItemCover = styled(ImageCover)({
+const DatabaseItemCover = styled(ImageCover)(({ theme }) => ({
   height: 200,
   transition: 'filter 0.2s Linear',
+  backgroundColor: theme.color.cardBackground,
   '& .image': {
     transition: 'transform 0.2s Linear'
   }
-});
+}));
 
 const DefaultImageWrapper = styled('div')({
   position: 'relative',
@@ -940,7 +943,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
       <Heading>
         <FlexSpaceBetweenCenterBox>
           <Heading1>
-            <BreakAllTypography>{block.child_database.title}</BreakAllTypography>
+            <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
           </Heading1>
           <NoWrapBox>
             <Button color='inherit' size='large' onClick={handleClickSortMenu}>
@@ -982,13 +985,17 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
       <Link href={`/${block.id}`}>
         <a>
           <DatabaseItemCover className='page-cover'>
-            {block?.cover && (
+            {block?.cover ? (
               <NotionSecureImage
                 src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
                 blockId={block.id}
                 layout='fill'
                 objectFit='cover'
               />
+            ) : (
+              <FlexCenterCenterBox sx={{ fontSize: '8em', color: (theme) => theme.color.gray15 }}>
+                <SiNotion />
+              </FlexCenterCenterBox>
             )}
           </DatabaseItemCover>
           <DatabaseDescriptionBox>
