@@ -358,6 +358,11 @@ const BulletedListItemDot = styled('div')(({ theme }) => ({
   fontSize: theme.size.px20
 }));
 
+const DatabaseItemEmptyCover = styled(FlexCenterCenterBox)(({ theme }) => ({
+  fontSize: '8em',
+  color: theme.color.gray15
+}));
+
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
   const { data: page } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
@@ -867,18 +872,20 @@ interface ChildDatabaseProps extends NotionChildrenRenderProps {
 const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
   const [blocks, setBlocks] = useState(
     sortBy(
-      databases[block.id]?.results
-        .filter((b) => b.properties?.['isPublished']?.checkbox)
-        .map((block) => {
-          const title =
-            block.properties?.['title']?.title?.map((title) => title.plain_text).join() ??
-            '제목 없음';
-          const newBlock = {
-            ...block,
-            title
-          };
-          return newBlock;
-        }) || [],
+      databases[block.id]?.results?.[0]?.properties?.isPublished?.type === 'checkbox'
+        ? databases[block.id]?.results
+            .filter((b) => b.properties?.['isPublished']?.checkbox)
+            .map((block) => {
+              const title =
+                block.properties?.['title']?.title?.map((title) => title.plain_text).join() ??
+                '제목 없음';
+              const newBlock = {
+                ...block,
+                title
+              };
+              return newBlock;
+            }) || []
+        : databases[block.id]?.results || [],
       'created_time'
     ).reverse()
   );
@@ -992,9 +999,9 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
                 objectFit='cover'
               />
             ) : (
-              <FlexCenterCenterBox sx={{ fontSize: '8em', color: (theme) => theme.color.gray15 }}>
+              <DatabaseItemEmptyCover>
                 <SiNotion />
-              </FlexCenterCenterBox>
+              </DatabaseItemEmptyCover>
             )}
           </DatabaseItemCover>
           <DatabaseDescriptionBox>

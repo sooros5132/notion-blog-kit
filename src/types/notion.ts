@@ -307,9 +307,9 @@ export interface NotionDatabase {
   properties: Record<
     string,
     Properties & {
-      id: 'title';
-      type: 'title';
-      title: Array<RichText>;
+      id: PropertyType;
+      type: PropertyType;
+      title?: Array<RichText>;
     }
   >;
   parent?: {
