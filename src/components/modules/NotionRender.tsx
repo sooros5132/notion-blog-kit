@@ -311,11 +311,26 @@ const Heading = styled('div')({
   marginTop: '1.4em'
 });
 
-const Heading1 = styled('h1')({ margin: 0 });
+const Heading1 = styled('h1')({
+  margin: 0,
+  '&:hover': {
+    textDecoration: 'underline'
+  }
+});
 
-const Heading2 = styled('h2')({ margin: 0 });
+const Heading2 = styled('h2')({
+  margin: 0,
+  '&:hover': {
+    textDecoration: 'underline'
+  }
+});
 
-const Heading3 = styled('h3')({ margin: 0 });
+const Heading3 = styled('h3')({
+  margin: 0,
+  '&:hover': {
+    textDecoration: 'underline'
+  }
+});
 
 // const CodeBlock = styled('div')(({ theme }) => ({
 //   fontFamily: theme.font.code,
@@ -718,40 +733,46 @@ const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
         switch (type) {
           case 'heading_1': {
             return (
-              <Heading1 key={`block-${block.id}-${type}-${i}`}>
-                <Heading>
-                  <Paragraph
-                    blockId={block.id}
-                    richText={block[type].rich_text}
-                    color={block[type].color}
-                  />
-                </Heading>
+              <Heading1 key={`block-${block.id}-${type}-${i}`} id={block.id}>
+                <a href={'#' + block.id}>
+                  <Heading>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block[type].rich_text}
+                      color={block[type].color}
+                    />
+                  </Heading>
+                </a>
               </Heading1>
             );
           }
           case 'heading_2': {
             return (
-              <Heading2 key={`block-${block.id}-${type}-${i}`}>
-                <Heading>
-                  <Paragraph
-                    blockId={block.id}
-                    richText={block[type].rich_text}
-                    color={block[type].color}
-                  />
-                </Heading>
+              <Heading2 key={`block-${block.id}-${type}-${i}`} id={block.id}>
+                <a href={'#' + block.id}>
+                  <Heading>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block[type].rich_text}
+                      color={block[type].color}
+                    />
+                  </Heading>
+                </a>
               </Heading2>
             );
           }
           case 'heading_3': {
             return (
-              <Heading3 key={`block-${block.id}-${type}-${i}`}>
-                <Heading>
-                  <Paragraph
-                    blockId={block.id}
-                    richText={block[type].rich_text}
-                    color={block[type].color}
-                  />
-                </Heading>
+              <Heading3 key={`block-${block.id}-${type}-${i}`} id={block.id}>
+                <a href={'#' + block.id}>
+                  <Heading>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block[type].rich_text}
+                      color={block[type].color}
+                    />
+                  </Heading>
+                </a>
               </Heading3>
             );
           }
@@ -948,9 +969,11 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     <div>
       <Heading>
         <FlexSpaceBetweenCenterBox>
-          <Heading1>
-            <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
-          </Heading1>
+          <a href={'#' + block.id}>
+            <Heading1 id={block.id}>
+              <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
+            </Heading1>
+          </a>
           <NoWrapBox>
             <Button color='inherit' size='large' onClick={handleClickSortMenu}>
               {KorKeyRecord[sortKey]}
