@@ -378,6 +378,17 @@ const DatabaseItemEmptyCover = styled(FlexCenterCenterBox)(({ theme }) => ({
   color: theme.color.gray15
 }));
 
+const NotionColorBox = styled('div')<{ color: Color }>(({ color, theme }) => {
+  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const backgroundColor =
+    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
+
+  return {
+    color: fontColor ? fontColor : undefined,
+    backgroundColor: backgroundColor ? backgroundColor : undefined
+  };
+});
+
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
   const { data: page } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
@@ -863,26 +874,24 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
     setOpen((prev) => !prev);
   };
   return (
-    <NotionBlockRender
-      block={block}
-      blocks={blocks}
-      chilrenBlockDepth={isOpen ? chilrenBlockDepth : undefined}
-    >
-      <CursorPointerBox>
-        <FlexAlignItemsCenterBox onClick={handleClickToggleButton}>
-          <ToggleArrowBox toggled={`${isOpen}`}>
-            <TiChevronRight />
-          </ToggleArrowBox>
-          <NumberedListItemInner>
-            <Paragraph
-              blockId={block.id}
-              richText={block.toggle.rich_text}
-              color={block.toggle.color}
-            />
-          </NumberedListItemInner>
-        </FlexAlignItemsCenterBox>
-      </CursorPointerBox>
-    </NotionBlockRender>
+    <NotionColorBox color={block.toggle.color}>
+      <NotionBlockRender
+        block={block}
+        blocks={blocks}
+        chilrenBlockDepth={isOpen ? chilrenBlockDepth : undefined}
+      >
+        <CursorPointerBox>
+          <FlexAlignItemsCenterBox onClick={handleClickToggleButton}>
+            <ToggleArrowBox toggled={`${isOpen}`}>
+              <TiChevronRight />
+            </ToggleArrowBox>
+            <NumberedListItemInner>
+              <Paragraph blockId={block.id} richText={block.toggle.rich_text} />
+            </NumberedListItemInner>
+          </FlexAlignItemsCenterBox>
+        </CursorPointerBox>
+      </NotionBlockRender>
+    </NotionColorBox>
   );
 };
 
