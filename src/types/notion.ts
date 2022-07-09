@@ -213,8 +213,13 @@ interface CaptionObject {
   caption: Array<RichText>;
 }
 
+interface BookmarkObject {
+  caption: RichTextObject[];
+  url: 'https://developer.mozilla.org/ko/docs/Web/CSS/-webkit-line-clamp';
+}
+
 export interface NotionBlockItem
-  extends Record<BlockType, RichTextObject | RichTextTitle | ImageObject> {
+  extends Record<BlockType, RichTextObject | RichTextTitle | ImageObject | BookmarkObject> {
   paragraph: RichTextObject;
   heading_1: RichTextObject;
   heading_2: RichTextObject;
@@ -231,7 +236,7 @@ export interface NotionBlockItem
   video: RichTextObject;
   file: RichTextObject;
   pdf: RichTextObject;
-  bookmark: RichTextObject;
+  bookmark: BookmarkObject;
   callout: RichTextObject & { icon: IconObject };
   quote: RichTextObject;
   equation: RichTextObject;

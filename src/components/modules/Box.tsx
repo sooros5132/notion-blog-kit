@@ -278,3 +278,7 @@ export const FlexHoverUnderlineBox = styled('div')`
     text-decoration: underline;
   }
 `;
+
+export const MarginRightPx4 = styled('div')(({ theme }) => ({
+  marginRight: theme.size.px4
+}));

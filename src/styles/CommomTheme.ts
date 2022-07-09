@@ -201,7 +201,8 @@ const CommonTheme: ThemeOptions = {
           // WebkitFontSmoothing: 'antialiased',
           // MozOsxFontSmoothing: 'grayscale',
           backgroundColor: CommonCustomTheme.color.htmlBackground,
-          color: CommonCustomTheme.color.textDefaultBlack
+          color: CommonCustomTheme.color.textDefaultBlack,
+          whiteSpace: 'break-spaces'
         },
         code: {
           fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace"

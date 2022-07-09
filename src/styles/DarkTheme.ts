@@ -43,7 +43,7 @@ export const DarkColor: typeof CommonCustomTheme['color'] = {
   gray01: '#030303',
   redBackgroundLight: 'rgb(154 50 38 / 63%)',
   cardBackground: 'rgba(255, 255, 255, 0.05)',
-  notionColor_default: '#fffff',
+  notionColor_default: '#ffffff',
   notionColor_gray: 'rgba(155, 155, 155, 1)',
   notionColor_brown: 'rgba(186, 133, 111, 1)',
   notionColor_orange: 'rgba(199, 125, 72, 1)',

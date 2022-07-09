@@ -19,10 +19,13 @@ import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
 import {
   CursorPointerBox,
+  Flex11AutoBox,
   FlexAlignItemsCenterBox,
+  FlexBox,
   FlexCenterCenterBox,
   FlexSpaceBetweenCenterBox,
   FullWidthBox,
+  MarginRightPx4,
   NoWrapBox
 } from './Box';
 import { sortBy } from 'lodash';
@@ -32,10 +35,11 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
-import { OpenGraphMedia } from 'next-seo/lib/types';
 import config from 'site-setting';
 import { formatDistance } from 'date-fns';
 import { ko as koLocale } from 'date-fns/locale';
+import { copyTextAtClipBoard } from 'src/lib/utils';
+import { useRouter } from 'next/router';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -152,14 +156,17 @@ const HorizontalRule = styled('hr')(({ theme }) => ({
 const RichTextContainer = styled('div')<{
   color?: Color;
 }>(({ theme, color }) => {
-  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const fontColor =
+    color &&
+    color !== 'default' &&
+    !color.match(/_background$/) &&
+    theme.color[`notionColor_${color}`];
   const backgroundColor =
     color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
 
   return {
     padding: theme.size.px2,
     minHeight: '1.25em',
-    whiteSpace: 'break-spaces',
     wordBreak: 'break-all',
     color: fontColor ? fontColor : undefined,
     backgroundColor: backgroundColor ? backgroundColor : undefined
@@ -187,7 +194,11 @@ const ParagraphText = styled('span')<{
     paddingRight: code === 'once' || code === 'end' ? theme.size.px4 : undefined
   };
 
-  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const fontColor =
+    color &&
+    color !== 'default' &&
+    !color.match(/_background$/) &&
+    theme.color[`notionColor_${color}`];
   const backgroundColor =
     color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
 
@@ -312,43 +323,36 @@ const ImageBlockContainer = styled('div')({
   justifyContent: 'center'
 });
 
-const Heading = styled('div')({
-  marginTop: '1.4em'
-});
-
-const Heading1 = styled('h1')({
-  margin: 0,
-  '&:hover': {
-    textDecoration: 'underline'
+const Heading = styled(FlexBox)<{
+  type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database';
+}>(({ type, theme }) => ({
+  marginTop: '1.4em',
+  marginBottom: theme.size.px4,
+  fontWeight: 'bold',
+  fontSize:
+    type === 'heading_1'
+      ? '2em'
+      : type === 'heading_2' || type === 'child_database'
+      ? '1.5em'
+      : '1.2em',
+  '& .heading-link': {
+    display: 'none'
+  },
+  '&:hover .heading-link': {
+    display: 'block'
   }
-});
+}));
 
-const Heading2 = styled('h2')({
-  margin: 0,
-  '&:hover': {
-    textDecoration: 'underline'
-  }
-});
-
-const Heading3 = styled('h3')({
-  margin: 0,
-  '&:hover': {
-    textDecoration: 'underline'
 export const EllipsisWrapperBox = styled('div')({
   overflow: 'hidden',
   whiteSpace: 'nowrap',
+  maxHeight: '3.1em',
   textOverflow: 'ellipsis',
-  WebkitLineClamp: 2,
-  '& *': {
-    overflow: 'hidden',
-    whiteSpace: 'normal',
-    textOverflow: 'ellipsis'
-  },
   '& p, a, span': {
     display: '-webkit-box',
+    whiteSpace: 'normal',
     WebkitBoxOrient: 'vertical',
-    lineClamp: 2,
-    WebkitLineClamp: 2
+    WebkitLineClamp: '2'
   }
 });
 
@@ -358,7 +362,11 @@ export const EllipsisWrapperBox = styled('div')({
 //   padding: `${theme.size.px6} ${theme.size.px12}`
 // }));
 const CalloutBlockContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
-  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const fontColor =
+    color &&
+    color !== 'default' &&
+    !color.match(/_background$/) &&
+    theme.color[`notionColor_${color}`];
   const backgroundColor =
     color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
 
@@ -399,7 +407,11 @@ const DatabaseItemEmptyCover = styled(FlexCenterCenterBox)(({ theme }) => ({
 }));
 
 const NotionColorBox = styled('div')<{ color: Color }>(({ color, theme }) => {
-  const fontColor = color && !color.match(/_background$/) && theme.color[`notionColor_${color}`];
+  const fontColor =
+    color &&
+    color !== 'default' &&
+    !color.match(/_background$/) &&
+    theme.color[`notionColor_${color}`];
   const backgroundColor =
     color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
 
@@ -567,6 +579,31 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                   richText={block.paragraph.rich_text}
                   color={block.paragraph.color}
                 />
+              </NotionBlockRender>
+            );
+          }
+          case 'bookmark': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <RichTextContainer>
+                  <ParagraphAnchor
+                    key={`block-${block.id}-${i}`}
+                    href={
+                      block.bookmark.url.charAt(0) === '/'
+                        ? `https://notion.so${block.bookmark.url}`
+                        : block.bookmark.url
+                    }
+                    rel='noreferrer'
+                    target='_blank'
+                  >
+                    {block.bookmark.url}
+                  </ParagraphAnchor>
+                </RichTextContainer>
               </NotionBlockRender>
             );
           }
@@ -784,59 +821,41 @@ const NotionBlockRender: React.FC<NotionBlockProps> = ({
 
 type NotionChildrenRenderProps = { block: NotionBlock };
 const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
+  const router = useRouter();
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
+  const href = useMemo(
+    () =>
+      `${router.asPath.replace(/\#.*/, '')}#${block[type].rich_text
+        .map((text) => text.plain_text)
+        .join('')
+        .slice(0, 155)}-${block.id.slice(0, 8)}`,
+    [router]
+  );
   return (
-    <RichTextContainer>
-      {block[type].rich_text.map((text, i) => {
-        switch (type) {
-          case 'heading_1': {
-            return (
-              <Heading1 key={`block-${block.id}-${type}-${i}`} id={block.id}>
-                <a href={'#' + block.id}>
-                  <Heading>
-                    <Paragraph
-                      blockId={block.id}
-                      richText={block[type].rich_text}
-                      color={block[type].color}
-                    />
-                  </Heading>
-                </a>
-              </Heading1>
-            );
-          }
-          case 'heading_2': {
-            return (
-              <Heading2 key={`block-${block.id}-${type}-${i}`} id={block.id}>
-                <a href={'#' + block.id}>
-                  <Heading>
-                    <Paragraph
-                      blockId={block.id}
-                      richText={block[type].rich_text}
-                      color={block[type].color}
-                    />
-                  </Heading>
-                </a>
-              </Heading2>
-            );
-          }
-          case 'heading_3': {
-            return (
-              <Heading3 key={`block-${block.id}-${type}-${i}`} id={block.id}>
-                <a href={'#' + block.id}>
-                  <Heading>
-                    <Paragraph
-                      blockId={block.id}
-                      richText={block[type].rich_text}
-                      color={block[type].color}
-                    />
-                  </Heading>
-                </a>
-              </Heading3>
-            );
-          }
-        }
-      })}
-    </RichTextContainer>
+    <Heading id={block.id} type={type}>
+      <FlexAlignItemsCenterBox>
+        <CopyHeadingLink href={href}>
+          <a href={href}>🔗</a>
+        </CopyHeadingLink>
+      </FlexAlignItemsCenterBox>
+      <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
+    </Heading>
+  );
+};
+
+const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode }> = ({
+  href,
+  children
+}) => {
+  const handleClick = (url: string) => () => {
+    const href = new URL(url, config.origin).href;
+
+    href && copyTextAtClipBoard(href);
+  };
+  return (
+    <MarginRightPx4 className='heading-link' onClick={handleClick(href)}>
+      {children}
+    </MarginRightPx4>
   );
 };
 
@@ -947,6 +966,7 @@ interface ChildDatabaseProps extends NotionChildrenRenderProps {
 }
 
 const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
+  const router = useRouter();
   const [blocks, setBlocks] = useState(
     sortBy(
       databases[block.id]?.results?.[0]?.properties?.isPublished?.type === 'checkbox'
@@ -1020,39 +1040,46 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     }
     setAccountEl(null);
   };
+  const href = useMemo(
+    () => `#${block?.child_database?.title.slice(0, 155) || ''}-${block.id.slice(0, 8)}`,
+    [router]
+  );
 
   return (
     <div>
-      <Heading>
-        <FlexSpaceBetweenCenterBox>
-          <a href={'#' + block.id}>
-            <Heading1 id={block.id}>
-              <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
-            </Heading1>
-          </a>
-          <NoWrapBox>
-            <Button color='inherit' size='large' onClick={handleClickSortMenu}>
-              {KorKeyRecord[sortKey]}
-              {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
-            </Button>
-          </NoWrapBox>
-          <Menu
-            anchorEl={accountEl}
-            keepMounted
-            open={Boolean(accountEl)}
-            onClose={handleCloseSortMenu()}
-          >
-            <MenuItem onClick={handleCloseSortMenu('title')}>
-              <Typography>이름</Typography>
-            </MenuItem>
-            <MenuItem onClick={handleCloseSortMenu('created_time')}>
-              <Typography>생성일</Typography>
-            </MenuItem>
-            <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
-              <Typography>수정일</Typography>
-            </MenuItem>
-          </Menu>
-        </FlexSpaceBetweenCenterBox>
+      <Heading type={block.type as 'child_database'} id={block.id}>
+        <FlexAlignItemsCenterBox>
+          <CopyHeadingLink href={href}>
+            <a href={href}>🔗</a>
+          </CopyHeadingLink>
+        </FlexAlignItemsCenterBox>
+        <Flex11AutoBox>
+          <FlexSpaceBetweenCenterBox>
+            <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
+            <NoWrapBox>
+              <Button color='inherit' size='large' onClick={handleClickSortMenu}>
+                {KorKeyRecord[sortKey]}
+                {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
+              </Button>
+            </NoWrapBox>
+            <Menu
+              anchorEl={accountEl}
+              keepMounted
+              open={Boolean(accountEl)}
+              onClose={handleCloseSortMenu()}
+            >
+              <MenuItem onClick={handleCloseSortMenu('title')}>
+                <Typography>이름</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseSortMenu('created_time')}>
+                <Typography>생성일</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
+                <Typography>수정일</Typography>
+              </MenuItem>
+            </Menu>
+          </FlexSpaceBetweenCenterBox>
+        </Flex11AutoBox>
       </Heading>
 
       <DatabaseContainer>
