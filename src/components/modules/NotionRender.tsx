@@ -33,7 +33,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
 import { OpenGraphMedia } from 'next-seo/lib/types';
-import { BASE_API_ORIGIN } from 'src/lib/constants';
+import config from 'site-setting';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -430,7 +430,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         title={title?.slice(0, 60) || undefined}
         description={description?.slice(0, 155) || undefined}
         openGraph={{
-          url: BASE_API_ORIGIN + slug?.charAt(0) === '/' ? slug : '/' + slug,
+          url: config.origin + slug?.charAt(0) === '/' ? slug : '/' + slug,
           images: url
             ? [
                 {

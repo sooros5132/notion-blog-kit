@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Layout from 'src/components/Layout';
 import { CommonCustomTheme } from 'src/styles/CommomTheme';
 import Script from 'next/script';
+import config from 'site-setting';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -36,7 +37,7 @@ declare global {
   }
 }
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_API_ORIGIN;
+axios.defaults.baseURL = config.origin;
 axios.defaults.withCredentials = true;
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -50,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           title: 'soolog',
           locale: 'ko_KR',
           type: 'website',
-          url: 'https://blog.sooros.com',
+          url: config.origin,
           description: 'sooros 블로그입니다.'
         }}
         description='sooros 블로그입니다.'

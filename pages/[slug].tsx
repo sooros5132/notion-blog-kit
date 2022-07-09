@@ -2,11 +2,11 @@ import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import axios from 'axios';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
+import config from 'site-setting';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
 import { IGetNotion, NotionDatabasesQuery } from 'src/types/notion';
 import { SWRConfig } from 'swr';
-import { BASE_API_ORIGIN, BASE_API_PATH, NOTION_BASE_DATABASE } from '../src/lib/constants';
 
 interface SlugProps {
   slug: string;
@@ -46,11 +46,11 @@ const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
     const databases = await fetch(
-      BASE_API_ORIGIN + BASE_API_PATH + '/notion/databases/' + NOTION_BASE_DATABASE
+      config.origin + config.path + '/notion/databases/' + config.notion.baseDatabase
     ).then(async (res) => (await res.json()) as IResponseSuccess<NotionDatabasesQuery>);
 
     // axios
-    // .get<IResponseSuccess<NotionDatabasesQuery>>(BASE_API_PATH + '/notion/databases/' + NOTION_BASE_DATABASE)
+    // .get<IResponseSuccess<NotionDatabasesQuery>>(config.path + '/notion/databases/' + config.notion.baseDatabase)
     // .then((res) => res.data?.result?.results);
 
     if (!Array.isArray(databases)) {
@@ -83,7 +83,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     const [blocks, pageInfo] = await Promise.all([
       axios
         .get<IResponseSuccess<IGetNotion>>(
-          BASE_API_ORIGIN + BASE_API_PATH + '/notion/blocks/children/list/' + slug,
+          config.origin + config.path + '/notion/blocks/children/list/' + slug,
           {
             params
           }
@@ -91,7 +91,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         .then((res) => res.data),
       axios
         .get<IResponseSuccess<GetPageResponse>>(
-          BASE_API_ORIGIN + BASE_API_PATH + '/notion/pages/' + slug,
+          config.origin + config.path + '/notion/pages/' + slug,
           {
             params
           }

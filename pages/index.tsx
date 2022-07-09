@@ -1,10 +1,10 @@
 import axios from 'axios';
 import type { GetStaticProps, NextPage } from 'next';
+import config from 'site-setting';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
 import { IGetNotion, NotionPagesRetrieve } from 'src/types/notion';
 import { SWRConfig } from 'swr';
-import { BASE_API_PATH, NOTION_BASE_BLOCK } from '../src/lib/constants';
 
 interface HomeProps {
   slug: string;
@@ -36,12 +36,12 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     const [blocks, pageInfo] = await Promise.all([
       axios
         .get<IResponseSuccess<IGetNotion>>(
-          BASE_API_PATH + '/notion/blocks/children/list/' + NOTION_BASE_BLOCK
+          config.path + '/notion/blocks/children/list/' + config.notion.baseBlock
         )
         .then((res) => res.data),
       axios
         .get<IResponseSuccess<NotionPagesRetrieve>>(
-          BASE_API_PATH + '/notion/pages/' + NOTION_BASE_BLOCK
+          config.path + '/notion/pages/' + config.notion.baseBlock
         )
         .then((res) => res.data)
     ]);
@@ -51,7 +51,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     }
     return {
       props: {
-        slug: NOTION_BASE_BLOCK,
+        slug: config.notion.baseBlock,
         notionBlocksChildrenList: blocks.result,
         pageInfo: pageInfo.result
       },
