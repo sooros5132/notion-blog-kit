@@ -330,9 +330,9 @@ const Heading = styled(FlexBox)<{
   marginBottom: theme.size.px4,
   fontWeight: 'bold',
   fontSize:
-    type === 'heading_1'
+    type === 'heading_1' || type === 'child_database'
       ? '2em'
-      : type === 'heading_2' || type === 'child_database'
+      : type === 'heading_2'
       ? '1.5em'
       : '1.2em',
   '& .heading-link': {
