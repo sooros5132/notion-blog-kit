@@ -34,6 +34,8 @@ import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
 import { OpenGraphMedia } from 'next-seo/lib/types';
 import config from 'site-setting';
+import { formatDistance } from 'date-fns';
+import { ko as koLocale } from 'date-fns/locale';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -272,8 +274,9 @@ const DatabaseFlexItem = styled('div')(({ theme }) => ({
   }
 }));
 
-const DatabaseDescriptionBox = styled('div')(({ theme }) => ({
-  padding: theme.size.px8
+const DatabaseDescriptionBox = styled(FlexSpaceBetweenCenterBox)(({ theme }) => ({
+  columnGap: theme.size.px8,
+  padding: `${theme.size.px8} ${theme.size.px12}`
 }));
 
 const DatabaseItemCover = styled(ImageCover)(({ theme }) => ({
@@ -331,6 +334,21 @@ const Heading3 = styled('h3')({
   margin: 0,
   '&:hover': {
     textDecoration: 'underline'
+export const EllipsisWrapperBox = styled('div')({
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  WebkitLineClamp: 2,
+  '& *': {
+    overflow: 'hidden',
+    whiteSpace: 'normal',
+    textOverflow: 'ellipsis'
+  },
+  '& p, a, span': {
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    lineClamp: 2,
+    WebkitLineClamp: 2
   }
 });
 
@@ -1067,7 +1085,19 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
           </DatabaseItemCover>
           <DatabaseDescriptionBox>
             {block?.properties?.title?.title && (
-              <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+              <EllipsisWrapperBox>
+                <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+              </EllipsisWrapperBox>
+            )}
+            {block?.created_time && (
+              <NoWrapBox>
+                <Typography>
+                  {formatDistance(new Date(block.created_time), new Date(), {
+                    locale: koLocale,
+                    addSuffix: true
+                  })}
+                </Typography>
+              </NoWrapBox>
             )}
           </DatabaseDescriptionBox>
         </a>
