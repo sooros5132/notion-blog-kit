@@ -32,6 +32,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
+import { OpenGraphMedia } from 'next-seo/lib/types';
+import { BASE_API_ORIGIN } from 'src/lib/constants';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -398,18 +400,45 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   if (!blocks?.blocks?.results || !page) {
     return <CircularProgress size={20} />;
   }
+  const title =
+    page.parent.type === 'workspace' && page.properties.title?.title
+      ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
+      : page.parent.type === 'database_id' && page.properties?.title?.title
+      ? page.properties?.title?.title?.map((text: RichText) => text?.plain_text).join('') ||
+        'untitled'
+      : 'soolog';
+
+  const description = blocks?.blocks?.results
+    ?.slice(0, 10)
+    ?.map((block) => block?.paragraph?.rich_text?.map((text) => text?.plain_text).join(''))
+    .join(' ');
+
+  const url = page?.cover
+    ? page?.cover?.type === 'external'
+      ? page.cover.external?.url ?? ''
+      : page?.cover?.type === 'file'
+      ? convertAwsImageObjectUrlToNotionUrl({
+          blockId: page.id,
+          s3ObjectUrl: page.cover.file?.url || ''
+        })
+      : ''
+    : '';
 
   return (
     <NotionContainer>
       <NextSeo
-        title={
-          page.parent.type === 'workspace' && page.properties.title?.title
-            ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
-            : page.parent.type === 'database_id' && page.properties?.title?.title
-            ? page.properties?.title?.title?.map((text: RichText) => text?.plain_text).join('') ||
-              'untitled'
-            : 'soolog'
-        }
+        title={title?.slice(0, 60) || undefined}
+        description={description?.slice(0, 155) || undefined}
+        openGraph={{
+          url: BASE_API_ORIGIN + slug?.charAt(0) === '/' ? slug : '/' + slug,
+          images: url
+            ? [
+                {
+                  url: url
+                }
+              ]
+            : undefined
+        }}
       />
       <Head>
         {page.icon?.file && page.icon?.type === 'file' && (
