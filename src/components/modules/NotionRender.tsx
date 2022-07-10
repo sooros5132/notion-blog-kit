@@ -1041,9 +1041,9 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     }
     setAccountEl(null);
   };
-  const hash = block?.child_database?.title.slice(0, 155);
+  const hash = `${block?.child_database?.title.slice(0, 155) || ''}-${block.id.slice(0, 8)}`;
   const href = useMemo(
-    () => `${hash || ''}-${block.id.slice(0, 8)}`,
+    () => `${router.asPath.replace(/\#.*/, '')}#${hash}`,
     [router]
   );
 
