@@ -825,17 +825,17 @@ const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
   const href = useMemo(
     () =>
-      `${router.asPath.replace(/\#.*/, '')}#${block[type].rich_text
+      `${router.asPath.replace(/\#.*/, '')}${block[type].rich_text
         .map((text) => text.plain_text)
         .join('')
         .slice(0, 155)}-${block.id.slice(0, 8)}`,
     [router]
   );
   return (
-    <Heading id={block.id} type={type}>
+    <Heading id={href} type={type}>
       <FlexAlignItemsCenterBox>
         <CopyHeadingLink href={href}>
-          <a href={href}>🔗</a>
+          <a href={'#' + href}>🔗</a>
         </CopyHeadingLink>
       </FlexAlignItemsCenterBox>
       <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
@@ -1041,15 +1041,15 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     setAccountEl(null);
   };
   const href = useMemo(
-    () => `#${block?.child_database?.title.slice(0, 155) || ''}-${block.id.slice(0, 8)}`,
+    () => `${block?.child_database?.title.slice(0, 155) || ''}-${block.id.slice(0, 8)}`,
     [router]
   );
 
   return (
     <div>
-      <Heading type={block.type as 'child_database'} id={block.id}>
+      <Heading type={block.type as 'child_database'} id={href}>
         <FlexAlignItemsCenterBox>
-          <CopyHeadingLink href={href}>
+          <CopyHeadingLink href={"#"+href}>
             <a href={href}>🔗</a>
           </CopyHeadingLink>
         </FlexAlignItemsCenterBox>
