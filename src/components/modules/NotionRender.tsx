@@ -836,7 +836,7 @@ const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
     <Heading id={hash} type={type}>
       <FlexAlignItemsCenterBox>
         <CopyHeadingLink href={href}>
-          <a href="href">🔗</a>
+          <a href={href}>🔗</a>
         </CopyHeadingLink>
       </FlexAlignItemsCenterBox>
       <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
