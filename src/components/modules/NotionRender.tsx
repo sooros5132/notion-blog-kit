@@ -323,11 +323,14 @@ const ImageBlockContainer = styled('div')({
   justifyContent: 'center'
 });
 
+const HeadingContainer = styled('div')(({ theme }) => ({
+  paddingTop: '2.1em',
+  marginBottom: theme.size.px4
+}));
+
 const Heading = styled(FlexBox)<{
   type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database';
 }>(({ type, theme }) => ({
-  paddingTop: '2.1em',
-  marginBottom: theme.size.px4,
   fontWeight: 'bold',
   fontSize:
     type === 'heading_1' || type === 'child_database'
@@ -830,14 +833,16 @@ const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
     .slice(0, 50)}-${block.id.slice(0, 8)}`;
   const href = useMemo(() => `${router.asPath.replace(/\#.*/, '')}#${hash}`, [router]);
   return (
-    <Heading id={hash} type={type}>
-      <FlexAlignItemsCenterBox>
-        <CopyHeadingLink href={href}>
-          <a href={'#' + hash}>🔗</a>
-        </CopyHeadingLink>
-      </FlexAlignItemsCenterBox>
-      <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
-    </Heading>
+    <HeadingContainer id={hash}>
+      <Heading type={type}>
+        <FlexAlignItemsCenterBox>
+          <CopyHeadingLink href={href}>
+            <a href={'#' + hash}>🔗</a>
+          </CopyHeadingLink>
+        </FlexAlignItemsCenterBox>
+        <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
+      </Heading>
+    </HeadingContainer>
   );
 };
 
@@ -1043,40 +1048,42 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
 
   return (
     <div>
-      <Heading type={block.type as 'child_database'} id={hash}>
-        <FlexAlignItemsCenterBox>
-          <CopyHeadingLink href={href}>
-            <a href={'#' + hash}>🔗</a>
-          </CopyHeadingLink>
-        </FlexAlignItemsCenterBox>
-        <Flex11AutoBox>
-          <FlexSpaceBetweenCenterBox>
-            <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
-            <NoWrapBox>
-              <Button color='inherit' size='large' onClick={handleClickSortMenu}>
-                {KorKeyRecord[sortKey]}
-                {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
-              </Button>
-            </NoWrapBox>
-            <Menu
-              anchorEl={accountEl}
-              keepMounted
-              open={Boolean(accountEl)}
-              onClose={handleCloseSortMenu()}
-            >
-              <MenuItem onClick={handleCloseSortMenu('title')}>
-                <Typography>이름</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseSortMenu('created_time')}>
-                <Typography>생성일</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
-                <Typography>수정일</Typography>
-              </MenuItem>
-            </Menu>
-          </FlexSpaceBetweenCenterBox>
-        </Flex11AutoBox>
-      </Heading>
+      <HeadingContainer id={hash}>
+        <Heading type={block.type as 'child_database'}>
+          <FlexAlignItemsCenterBox>
+            <CopyHeadingLink href={href}>
+              <a href={'#' + hash}>🔗</a>
+            </CopyHeadingLink>
+          </FlexAlignItemsCenterBox>
+          <Flex11AutoBox>
+            <FlexSpaceBetweenCenterBox>
+              <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
+              <NoWrapBox>
+                <Button color='inherit' size='large' onClick={handleClickSortMenu}>
+                  {KorKeyRecord[sortKey]}
+                  {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
+                </Button>
+              </NoWrapBox>
+              <Menu
+                anchorEl={accountEl}
+                keepMounted
+                open={Boolean(accountEl)}
+                onClose={handleCloseSortMenu()}
+              >
+                <MenuItem onClick={handleCloseSortMenu('title')}>
+                  <Typography>이름</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleCloseSortMenu('created_time')}>
+                  <Typography>생성일</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
+                  <Typography>수정일</Typography>
+                </MenuItem>
+              </Menu>
+            </FlexSpaceBetweenCenterBox>
+          </Flex11AutoBox>
+        </Heading>
+      </HeadingContainer>
 
       <DatabaseContainer>
         {blocks.map((block) => (
