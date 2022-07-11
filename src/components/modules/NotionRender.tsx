@@ -326,7 +326,7 @@ const ImageBlockContainer = styled('div')({
 const Heading = styled(FlexBox)<{
   type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database';
 }>(({ type, theme }) => ({
-  marginTop: '1.4em',
+  paddingTop: '2.1em',
   marginBottom: theme.size.px4,
   fontWeight: 'bold',
   fontSize:
