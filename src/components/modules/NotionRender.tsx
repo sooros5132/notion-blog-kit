@@ -563,21 +563,19 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                     locale: koLocale
                   }
                 )}`}
-              <NoSsrWrapper>
-                {typeof page.properties?.updatedAt?.last_edited_time === 'string'
-                  ? `, ${formatDistance(
-                      utcToZonedTime(
-                        new Date(page.properties.updatedAt.last_edited_time),
-                        config.TZ
-                      ),
-                      utcToZonedTime(new Date(), config.TZ),
-                      {
-                        locale: koLocale,
-                        addSuffix: true
-                      }
-                    )} 수정 됨`
-                  : ''}
-              </NoSsrWrapper>
+
+              {typeof page.properties?.updatedAt?.last_edited_time === 'string' ? (
+                <NoSsrWrapper>
+                  {`, ${formatDistance(
+                    utcToZonedTime(new Date(page.properties.updatedAt.last_edited_time), config.TZ),
+                    utcToZonedTime(new Date(), config.TZ),
+                    {
+                      locale: koLocale,
+                      addSuffix: true
+                    }
+                  )} 수정됨`}
+                </NoSsrWrapper>
+              ) : null}
             </Typography>
           ]}
         </PageInfoInner>
