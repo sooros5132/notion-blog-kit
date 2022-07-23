@@ -37,7 +37,8 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
 import config from 'site-setting';
-import { format, formatDistance } from 'date-fns';
+import { formatDistance } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
@@ -553,8 +554,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
               sx={{ color: (theme) => theme.color.gray65 }}
             >
               {typeof page.properties?.createdAt?.created_time === 'string' &&
-                `작성일: ${format(
+                `작성일: ${formatInTimeZone(
                   new Date(page.properties.createdAt.created_time),
+                  config.TZ,
                   'yyyy-MM-dd aaa hh:mm',
                   {
                     locale: koLocale
