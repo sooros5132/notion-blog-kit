@@ -38,10 +38,11 @@ import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
 import config from 'site-setting';
 import { formatDistance } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
+import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
+import NoSsr from '@mui/material/NoSsr';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -561,18 +562,22 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                   {
                     locale: koLocale
                   }
-                )}${
-                  typeof page.properties?.updatedAt?.last_edited_time === 'string'
-                    ? `, ${formatDistance(
+                )}`}
+              <NoSsr>
+                {typeof page.properties?.updatedAt?.last_edited_time === 'string'
+                  ? `, ${formatDistance(
+                      utcToZonedTime(
                         new Date(page.properties.updatedAt.last_edited_time),
-                        new Date(),
-                        {
-                          locale: koLocale,
-                          addSuffix: true
-                        }
-                      )} 수정 됨`
-                    : ''
-                }`}
+                        config.TZ
+                      ),
+                      utcToZonedTime(new Date(), config.TZ),
+                      {
+                        locale: koLocale,
+                        addSuffix: true
+                      }
+                    )} 수정 됨`
+                  : ''}
+              </NoSsr>
             </Typography>
           ]}
         </PageInfoInner>
@@ -1216,10 +1221,14 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
             {block?.created_time && (
               <NoWrapBox>
                 <Typography>
-                  {formatDistance(new Date(block.created_time), new Date(), {
-                    locale: koLocale,
-                    addSuffix: true
-                  })}
+                  {formatDistance(
+                    utcToZonedTime(new Date(block.created_time), config.TZ),
+                    utcToZonedTime(new Date(), config.TZ),
+                    {
+                      locale: koLocale,
+                      addSuffix: true
+                    }
+                  )}
                 </Typography>
               </NoWrapBox>
             )}
