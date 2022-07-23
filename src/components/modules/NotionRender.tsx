@@ -42,7 +42,7 @@ import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
-import NoSsr from '@mui/material/NoSsr';
+import NoSsrWrapper from './NoSsrWrapper';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -563,7 +563,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                     locale: koLocale
                   }
                 )}`}
-              <NoSsr>
+              <NoSsrWrapper>
                 {typeof page.properties?.updatedAt?.last_edited_time === 'string'
                   ? `, ${formatDistance(
                       utcToZonedTime(
@@ -577,7 +577,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                       }
                     )} 수정 됨`
                   : ''}
-              </NoSsr>
+              </NoSsrWrapper>
             </Typography>
           ]}
         </PageInfoInner>
