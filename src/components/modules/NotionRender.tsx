@@ -439,7 +439,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
       : page.parent.type === 'database_id' && page.properties?.title?.title
       ? page.properties?.title?.title?.map((text: RichText) => text?.plain_text).join('') ||
-        'untitled'
+        '제목 없음'
       : 'soolog';
 
   const description = blocks?.blocks?.results
@@ -761,15 +761,20 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
           case 'column_list': {
             return (
               <GridBox
+                key={`block-${block.id}-${i}`}
                 sx={{
                   gridTemplateColumns: `repeat(${
                     blocks['childrenBlocks'][block.id]?.results.length ?? 1
                   }, 1fr)`,
-                  columnGap: (theme) => theme.size.px8
+                  columnGap: (theme) => theme.size.px8,
+                  '& > *': {
+                    overflowX: 'auto'
+                  }
                 }}
               >
-                {blocks['childrenBlocks'][block.id]?.results.map((block) => {
+                {blocks['childrenBlocks'][block.id]?.results.map((block, i) => {
                   return (
+                    <Block key={`block-${block.id}-${i}`}>
                     <NotionContentContainer
                       blocks={{
                         blocks: blocks['childrenBlocks'][block.id],
@@ -777,6 +782,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                         databaseBlocks: blocks.databaseBlocks
                       }}
                     />
+                    </Block>
                   );
                 })}
               </GridBox>
@@ -784,7 +790,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
           }
           case 'column': {
             <NotionBlockRender
-              key={`block-${block.id}-${i}`}
+              key={`block-${block.id}`}
               block={block}
               blocks={blocks}
               chilrenBlockDepth={childrenDepth.current}
@@ -1009,12 +1015,12 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
       databases[block.id]?.results?.[0]?.properties?.isPublished?.type === 'checkbox'
         ? databases[block.id]?.results
             .filter((b) => b.properties?.['isPublished']?.checkbox)
-            .map((block) => {
+            .map((databaseBlock) => {
               const title =
-                block.properties?.['title']?.title?.map((title) => title.plain_text).join() ??
+                databaseBlock.properties?.title?.title?.map((title) => title.plain_text).join() ??
                 '제목 없음';
               const newBlock = {
-                ...block,
+                ...databaseBlock,
                 title
               };
               return newBlock;
