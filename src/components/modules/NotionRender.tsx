@@ -535,21 +535,30 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                 ))}
               </FlexBox>
             ),
-            typeof page.properties?.createdAt?.created_time === 'string' && (
-              <Typography
-                key={'properties-createdAt'}
-                sx={{ color: (theme) => theme.color.gray65 }}
-              >
-                {format(new Date(page.properties.createdAt.created_time), 'yyyy-MM-dd aaa hh:mm', {
-                  locale: koLocale
-                })}
-                {', '}
-                {formatDistance(new Date(page.properties.createdAt.created_time), new Date(), {
-                  locale: koLocale,
-                  addSuffix: true
-                })}
-              </Typography>
-            )
+            <Typography
+              key={'properties-createdAt-and-updatedAt'}
+              sx={{ color: (theme) => theme.color.gray65 }}
+            >
+              {typeof page.properties?.createdAt?.created_time === 'string' &&
+                `작성일: ${format(
+                  new Date(page.properties.createdAt.created_time),
+                  'yyyy-MM-dd aaa hh:mm',
+                  {
+                    locale: koLocale
+                  }
+                )}${
+                  typeof page.properties?.updatedAt?.last_edited_time === 'string'
+                    ? `, ${formatDistance(
+                        new Date(page.properties.updatedAt.last_edited_time),
+                        new Date(),
+                        {
+                          locale: koLocale,
+                          addSuffix: true
+                        }
+                      )} 수정 됨`
+                    : ''
+                }`}
+            </Typography>
           ]}
         </PageInfoInner>
       </PageInfoContainer>

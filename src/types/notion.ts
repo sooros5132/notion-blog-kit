@@ -305,14 +305,17 @@ export interface Property {
 }
 
 export interface Properties extends Partial<Record<PropertyType | string, any>> {
-  tags: Property & {
+  tags?: Property & {
     multi_select?: Array<MultiSelect>;
   };
-  title: Property & {
+  title?: Property & {
     title?: Array<RichText>;
   };
-  createdAt: Property & {
+  createdAt?: Property & {
     created_time?: string;
+  };
+  updatedAt?: Property & {
+    last_edited_time?: string;
   };
 }
 
