@@ -288,14 +288,32 @@ export interface NotionBlocksChildrenList {
   block: {};
 }
 
+interface MultiSelect {
+  id: string;
+  name: string;
+  color: Color;
+}
+
 export interface TimeObject {
   object: string;
   id: string;
 }
 
-export interface Properties extends Partial<Record<PropertyType | string, any>> {
+export interface Property {
   id: string;
-  type: string;
+  type: PropertyType;
+}
+
+export interface Properties extends Partial<Record<PropertyType | string, any>> {
+  tags: Property & {
+    multi_select?: Array<MultiSelect>;
+  };
+  title: Property & {
+    title?: Array<RichText>;
+  };
+  createdAt: Property & {
+    created_time?: string;
+  };
 }
 
 export interface NotionDatabase {
@@ -309,14 +327,7 @@ export interface NotionDatabase {
   // description?: RichText;
   icon?: ImageObject | null;
   cover?: ImageObject | null;
-  properties: Record<
-    string,
-    Properties & {
-      id: PropertyType;
-      type: PropertyType;
-      title?: Array<RichText>;
-    }
-  >;
+  properties: Properties;
   parent?: {
     type: 'database_id' | string;
     database_id: string;
@@ -370,12 +381,6 @@ export interface NotionPagesRetrieve {
   icon: IconObject;
   parent: ParentObject;
   archived: false;
-  properties: Properties & {
-    title: {
-      id: 'title';
-      type: 'title';
-      title: Array<RichText>;
-    };
-  };
+  properties: Properties;
   url: string;
 }

@@ -37,7 +37,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
 import config from 'site-setting';
-import { formatDistance } from 'date-fns';
+import { format, formatDistance } from 'date-fns';
 import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
@@ -425,6 +425,16 @@ const NotionColorBox = styled('div')<{ color: Color }>(({ color, theme }) => {
   };
 });
 
+const TagContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
+  const backgroundColor =
+    color && theme.color[`notionColor_${color}_background` as keyof typeof theme.color];
+  return {
+    backgroundColor: backgroundColor ? backgroundColor : undefined,
+    padding: `0 ${theme.size.px6}`,
+    borderRadius: theme.size.px6
+  };
+});
+
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
   const { data: page } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
@@ -513,14 +523,34 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             <PageEmoji>{page.icon?.emoji}</PageEmoji>
           )}
           <PageTitle icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
-            {page.parent.type === 'workspace' ? (
-              <Paragraph blockId={page.id} richText={page.properties.title?.title} />
-            ) : page.parent.type === 'database_id' ? (
-              page.properties?.title?.title && (
-                <Paragraph blockId={page.id} richText={page.properties?.title?.title} />
-              )
-            ) : null}
+            <Paragraph blockId={page.id} richText={page.properties?.title?.title! ?? '제목 없음'} />
           </PageTitle>
+          {page.parent.type === 'database_id' && [
+            Array.isArray(page.properties?.tags?.multi_select) && (
+              <FlexBox key={'properties-tags'} sx={{ columnGap: 1 }}>
+                {page.properties?.tags?.multi_select?.map((select) => (
+                  <TagContainer color={select.color} key={`multi-select-${page.id}-${select.id}`}>
+                    <Typography>{select.name}</Typography>
+                  </TagContainer>
+                ))}
+              </FlexBox>
+            ),
+            typeof page.properties?.createdAt?.created_time === 'string' && (
+              <Typography
+                key={'properties-createdAt'}
+                sx={{ color: (theme) => theme.color.gray65 }}
+              >
+                {format(new Date(page.properties.createdAt.created_time), 'yyyy-MM-dd aaa hh:mm', {
+                  locale: koLocale
+                })}
+                {', '}
+                {formatDistance(new Date(page.properties.createdAt.created_time), new Date(), {
+                  locale: koLocale,
+                  addSuffix: true
+                })}
+              </Typography>
+            )
+          ]}
         </PageInfoInner>
       </PageInfoContainer>
       <NotionContent>
@@ -775,13 +805,13 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 {blocks['childrenBlocks'][block.id]?.results.map((block, i) => {
                   return (
                     <Block key={`block-${block.id}-${i}`}>
-                    <NotionContentContainer
-                      blocks={{
-                        blocks: blocks['childrenBlocks'][block.id],
-                        childrenBlocks: blocks.childrenBlocks,
-                        databaseBlocks: blocks.databaseBlocks
-                      }}
-                    />
+                      <NotionContentContainer
+                        blocks={{
+                          blocks: blocks['childrenBlocks'][block.id],
+                          childrenBlocks: blocks.childrenBlocks,
+                          databaseBlocks: blocks.databaseBlocks
+                        }}
+                      />
                     </Block>
                   );
                 })}
