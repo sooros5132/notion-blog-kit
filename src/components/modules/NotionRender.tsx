@@ -393,13 +393,16 @@ const CalloutBlockContainer = styled('div')<{ color: Color }>(({ color, theme })
   };
 });
 
-const CalloutBlockHeading = styled(FlexAlignItemsCenterBox)(({ theme }) => ({}));
+const CalloutBlockHeading = styled(FlexBox)();
 
-const CalloutIcon = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
+const CalloutIcon = styled('div')(({ theme }) => ({
   width: theme.size.px18,
+  minHeight: '1.25em',
   margin: `0 ${theme.size.px3}`,
+  paddingTop: theme.size.px3,
   textAlign: 'center',
-  fontSize: theme.size.px18
+  fontSize: theme.size.px18,
+  fontFamily: 'emoji'
 }));
 
 const QuoteContainer = styled('div')(({ theme }) => ({
