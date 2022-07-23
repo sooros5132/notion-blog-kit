@@ -25,6 +25,7 @@ import {
   FlexCenterCenterBox,
   FlexSpaceBetweenCenterBox,
   FullWidthBox,
+  GridBox,
   MarginRightPx4,
   NoWrapBox
 } from './Box';
@@ -756,6 +757,39 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 </NumberedListItemContainer>
               </NotionBlockRender>
             );
+          }
+          case 'column_list': {
+            return (
+              <GridBox
+                sx={{
+                  gridTemplateColumns: `repeat(${
+                    blocks['childrenBlocks'][block.id]?.results.length ?? 1
+                  }, 1fr)`,
+                  columnGap: (theme) => theme.size.px8
+                }}
+              >
+                {blocks['childrenBlocks'][block.id]?.results.map((block) => {
+                  return (
+                    <NotionContentContainer
+                      blocks={{
+                        blocks: blocks['childrenBlocks'][block.id],
+                        childrenBlocks: blocks.childrenBlocks,
+                        databaseBlocks: blocks.databaseBlocks
+                      }}
+                    />
+                  );
+                })}
+              </GridBox>
+            );
+          }
+          case 'column': {
+            <NotionBlockRender
+              key={`block-${block.id}-${i}`}
+              block={block}
+              blocks={blocks}
+              chilrenBlockDepth={childrenDepth.current}
+            />;
+            break;
           }
         }
 
