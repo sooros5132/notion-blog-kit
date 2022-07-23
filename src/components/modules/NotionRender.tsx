@@ -83,11 +83,15 @@ const PageInfoInner = styled('div')<{
 }>(({ icontype, theme, cover }) => ({
   maxWidth: theme.size.desktopWidth,
   margin: '0 auto',
-  marginTop: cover === 'true' && icontype === 'emoji' ? `-${theme.size.px50}` : undefined,
-  paddingTop:
-    icontype === 'file' || (cover === 'false' && icontype === 'emoji')
-      ? theme.size.px50
+  marginTop:
+    cover === 'true'
+      ? icontype === 'emoji'
+        ? `-${theme.size.px50}`
+        : icontype === 'file'
+        ? `-${theme.size.px34}`
+        : undefined
       : undefined,
+  paddingTop: icontype === 'file' && cover === 'false' ? theme.size.px50 : undefined,
   [theme.mediaQuery.mobile]: {
     paddingRight: theme.size.px18,
     paddingLeft: theme.size.px18
@@ -119,7 +123,10 @@ const PageTitle = styled('div')<{
   icontype?: NotionPagesRetrieve['icon']['type'];
   cover?: 'true' | 'false';
 }>(({ icontype, theme, cover }) => ({
-  marginTop: icontype === 'emoji' ? theme.size.px10 : theme.size.px50,
+  marginTop:
+    cover === 'true' && (icontype === 'emoji' || icontype === 'file')
+      ? theme.size.px20
+      : theme.size.px50,
   fontSize: theme.size.px40,
   fontWeight: 'bold',
   lineHeight: '1'
@@ -278,8 +285,11 @@ const DatabaseFlexItem = styled('div')(({ theme }) => ({
    */
   isolation: 'isolate',
   overflow: 'hidden',
+  '& .page-cover': {
+    filter: 'brightness(0.75)'
+  },
   '&:hover .page-cover': {
-    filter: 'brightness(0.75)',
+    filter: 'brightness(1)',
     '& .image': {
       transform: 'scale(1.05)'
     }
