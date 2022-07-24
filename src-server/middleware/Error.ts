@@ -13,16 +13,16 @@ export class Error {
   ) {
     console.error(err);
     if (typeof err === 'string') {
-      res.status(500).json({
-        status: 500,
+      res.status(400).json({
+        status: 400,
         error: err || 'Something broke!',
         success: false
       });
       res.end();
       return;
     }
-    res.status(err.status || 500).json({
-      status: err?.status || 500,
+    res.status(err.status || 400).json({
+      status: err?.status || 400,
       error: err.error || 'Something broke!',
       success: err?.success || false,
       code: err?.code
