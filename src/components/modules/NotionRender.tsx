@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from 'react';
+import React, { useMemo, memo, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   NotionBlock,
@@ -43,6 +43,7 @@ import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
 import NoSsrWrapper from './NoSsrWrapper';
+import { useBrowserLayoutEffect } from 'src/lib/useBrowserLayoutEffect';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -1035,7 +1036,6 @@ interface ToggleProps {
 
 const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => {
   const [isOpen, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
   const handleClickToggleButton = () => {
     setOpen((prev) => !prev);
   };
@@ -1192,6 +1192,29 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
 };
 
 const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block }) => {
+  const [createdAt, setCreatedAt] = useState(
+    block?.created_time
+      ? formatInTimeZone(new Date(block.created_time), config.TZ, 'yyyy-MM-dd', {
+          locale: koLocale
+        })
+      : undefined
+  );
+
+  useEffect(() => {
+    if (block?.created_time) {
+      setCreatedAt(
+        formatDistance(
+          utcToZonedTime(new Date(block.created_time), config.TZ),
+          utcToZonedTime(new Date(), config.TZ),
+          {
+            locale: koLocale,
+            addSuffix: true
+          }
+        )
+      );
+    }
+  }, []);
+
   return (
     <DatabaseFlexItem>
       <Link href={`/${block.id}`}>
@@ -1211,25 +1234,14 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
             )}
           </DatabaseItemCover>
           <DatabaseDescriptionBox>
-            {block?.properties?.title?.title && (
-              <EllipsisWrapperBox>
+            <EllipsisWrapperBox>
+              {block?.properties?.title?.title && (
                 <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
-              </EllipsisWrapperBox>
-            )}
-            {block?.created_time && (
-              <NoWrapBox>
-                <Typography>
-                  {formatDistance(
-                    utcToZonedTime(new Date(block.created_time), config.TZ),
-                    utcToZonedTime(new Date(), config.TZ),
-                    {
-                      locale: koLocale,
-                      addSuffix: true
-                    }
-                  )}
-                </Typography>
-              </NoWrapBox>
-            )}
+              )}
+            </EllipsisWrapperBox>
+            <NoWrapBox>
+              <Typography>{createdAt}</Typography>
+            </NoWrapBox>
           </DatabaseDescriptionBox>
         </a>
       </Link>
