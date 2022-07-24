@@ -755,7 +755,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                   showLineNumbers
                   lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}
                 >
-                  {block?.code?.rich_text?.map((text) => text?.plain_text)}
+                  {block?.code?.rich_text?.map((text) => text?.plain_text ?? '').join('')}
                 </SyntaxHighlighter>
                 {Array.isArray(block?.code?.caption) && block?.code?.caption?.length > 0 && (
                   <FullWidthBox>
