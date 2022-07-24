@@ -1,20 +1,25 @@
-import { GetPageResponse } from '@notionhq/client/build/src/api-endpoints';
 import axios from 'axios';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
 import config from 'site-setting';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { IGetNotion, NotionDatabasesQuery } from 'src/types/notion';
+import {
+  IGetNotion,
+  INotionSearch,
+  INotionSearchObject,
+  NotionDatabasesQuery
+} from 'src/types/notion';
 import { SWRConfig } from 'swr';
 
 interface SlugProps {
   slug: string;
   fallback: {
     '/notion/blocks/children/list': IGetNotion;
-    '/notion/pages': GetPageResponse;
+    '/notion/pages': INotionSearchObject;
   };
 }
+const uuidRegex = /^[0-9a-f]{8}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{12}$/;
 
 const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
   const [query, setQuery] = useState<{
@@ -58,7 +63,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }
 
     const paths = databases.map((page) => ({
-      params: { slug: page?.id }
+      params: { slug: uuidRegex.test(page?.id) ? page.id.replaceAll('-', '') : page?.id }
     }));
 
     return {
@@ -75,33 +80,78 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
   try {
-    const slug = params?.slug;
-    if (typeof slug !== 'string') {
+    if (typeof params?.slug !== 'string') {
       throw 'type error "slug"';
     }
+    const slug = encodeURIComponent(
+      uuidRegex.test(params.slug) ? params.slug.replaceAll('-', '') : params.slug
+    );
 
-    const [blocks, pageInfo] = await Promise.all([
-      axios
-        .get<IResponseSuccess<IGetNotion>>(
-          config.origin + config.path + '/notion/blocks/children/list/' + slug,
-          {
-            params
-          }
-        )
-        .then((res) => res.data),
-      axios
-        .get<IResponseSuccess<GetPageResponse>>(
-          config.origin + config.path + '/notion/pages/' + slug,
-          {
-            params
-          }
-        )
-        .then((res) => res.data)
-    ]);
+    const pageInfo = await axios
+      .get<IResponseSuccess<INotionSearch>>(
+        `${config.origin}${config.path}/notion/search/${slug}?filterType=page`
+      )
+      .then(async ({ data }) => {
+        const result = data?.result?.results?.[0];
 
-    if (!blocks?.success || !pageInfo?.success) {
+        if (!result) {
+          return await axios
+            .get<IResponseSuccess<INotionSearch>>(
+              `${config.origin}${config.path}/notion/search/${slug}?filterType=database`
+            )
+            .then(({ data }) => {
+              const result = data?.result?.results?.[0];
+              if (!result) {
+                throw {
+                  success: false
+                };
+              }
+              return {
+                success: true,
+                result: result
+              };
+            });
+        }
+
+        return {
+          success: true,
+          result: result
+        };
+      });
+
+    if (!pageInfo?.success || !pageInfo?.result?.id) {
       throw '';
     }
+
+    const blocks = await (async function () {
+      switch (pageInfo?.result?.object) {
+        case 'database': {
+          return await axios
+            .get<IResponseSuccess<IGetNotion>>(
+              config.origin + config.path + '/notion/databases/' + pageInfo.result.id,
+              {
+                params
+              }
+            )
+            .then((res) => res.data);
+        }
+        case 'page': {
+          return await axios
+            .get<IResponseSuccess<IGetNotion>>(
+              config.origin + config.path + '/notion/blocks/children/list/' + pageInfo.result.id,
+              {
+                params
+              }
+            )
+            .then((res) => res.data);
+        }
+      }
+    })();
+
+    if (!blocks?.success) {
+      throw '';
+    }
+
     return {
       props: {
         slug,

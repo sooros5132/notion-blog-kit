@@ -6,7 +6,9 @@ import {
   NotionPagesRetrieve,
   RichText,
   Color,
-  NotionDatabase
+  NotionDatabase,
+  INotionSearchObject,
+  NotionDatabasesQuery
 } from 'src/types/notion';
 import useSWR from 'swr';
 import { Button, CircularProgress, Menu, MenuItem, Typography } from '@mui/material';
@@ -343,7 +345,7 @@ const HeadingContainer = styled('div')(({ theme }) => ({
 }));
 
 const Heading = styled(FlexBox)<{
-  type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database';
+  type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database' | 'normal';
 }>(({ type, theme }) => ({
   fontWeight: 'bold',
   fontSize:
@@ -351,6 +353,8 @@ const Heading = styled(FlexBox)<{
       ? '2em'
       : type === 'heading_2'
       ? '1.5em'
+      : type === 'normal'
+      ? undefined
       : '1.2em',
   '& .heading-link': {
     display: 'none'
@@ -453,7 +457,7 @@ const TagContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
-  const { data: page } = useSWR<NotionPagesRetrieve>('/notion/pages/' + slug);
+  const { data: page } = useSWR<INotionSearchObject>('/notion/pages/' + slug);
 
   // const { data, error } = useSWR("/key", fetch);
 
@@ -465,13 +469,11 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
     );
   }
   const title =
-    page.parent.type === 'workspace' && page.properties.title?.title
-      ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || 'soolog'
-      : page.parent.type === 'database_id' && page.properties?.title?.title
-      ? page.properties?.title?.title?.map((text: RichText) => text?.plain_text).join('') ||
-        '제목 없음'
-      : 'soolog';
-
+    page.object === 'page'
+      ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || null
+      : page.object === 'database'
+      ? page.title?.map((text) => text?.plain_text).join('') || null
+      : null;
   const description = blocks?.blocks?.results
     ?.slice(0, 10)
     ?.map((block) => block?.paragraph?.rich_text?.map((text) => text?.plain_text).join(''))
@@ -491,7 +493,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   return (
     <NotionContainer>
       <NextSeo
-        title={title?.slice(0, 60) || undefined}
+        title={title?.slice(0, 60) || '제목 없음'}
         description={description?.slice(0, 155) || undefined}
         openGraph={{
           url: config.origin + slug?.charAt(0) === '/' ? slug : '/' + slug,
@@ -525,12 +527,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       <PageInfoContainer>
         {page?.cover?.[page?.cover?.type]?.url && (
           <PageInfoCover>
-            <NotionSecureImage
-              blockId={page.id}
-              src={page?.cover?.[page?.cover?.type]?.url!}
-              layout='fill'
-              objectFit='cover'
-            />
+            <NotionSecureImage blockId={page.id} src={page?.cover?.[page?.cover?.type]?.url!} />
           </PageInfoCover>
         )}
         <PageInfoInner icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
@@ -543,18 +540,16 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             <PageEmoji>{page.icon?.emoji}</PageEmoji>
           )}
           <PageTitle icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
-            <Paragraph blockId={page.id} richText={page.properties?.title?.title! ?? '제목 없음'} />
+            <Heading type={'normal'}>
+              <CopyHeadingLink href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+                <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+                  <a>🔗</a>
+                </Link>
+              </CopyHeadingLink>
+              <ParagraphText>{title || '제목 없음'}</ParagraphText>
+            </Heading>
           </PageTitle>
           {page.parent.type === 'database_id' && [
-            Array.isArray(page.properties?.tags?.multi_select) && (
-              <FlexBox key={'properties-tags'} sx={{ columnGap: 1 }}>
-                {page.properties?.tags?.multi_select?.map((select) => (
-                  <TagContainer color={select.color} key={`multi-select-${page.id}-${select.id}`}>
-                    <Typography>{select.name}</Typography>
-                  </TagContainer>
-                ))}
-              </FlexBox>
-            ),
             <Typography
               key={'properties-createdAt-and-updatedAt'}
               sx={{ color: (theme) => theme.color.gray65 }}
@@ -581,12 +576,35 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                   )} 수정됨`}
                 </NoSsrWrapper>
               ) : null}
-            </Typography>
+            </Typography>,
+            Array.isArray(page.properties?.tags?.multi_select) && (
+              <FlexBox key={'properties-tags'} sx={{ columnGap: 1 }}>
+                {page.properties?.tags?.multi_select?.map((select) => (
+                  <TagContainer color={select.color} key={`multi-select-${page.id}-${select.id}`}>
+                    <Typography>{select.name}</Typography>
+                  </TagContainer>
+                ))}
+              </FlexBox>
+            )
           ]}
         </PageInfoInner>
       </PageInfoContainer>
       <NotionContent>
-        <NotionContentContainer blocks={blocks} />
+        {page.object === 'page' ? (
+          <NotionContentContainer blocks={blocks} />
+        ) : page.object === 'database' ? (
+          <ChildDatabase
+            block={
+              {
+                ...page,
+                child_database: {
+                  title: title
+                }
+              } as unknown as NotionBlock
+            }
+            databases={{ [page.id]: blocks.blocks as unknown as NotionDatabasesQuery }}
+          />
+        ) : null}
       </NotionContent>
     </NotionContainer>
   );
@@ -971,6 +989,10 @@ interface ParagraphProps {
 }
 
 const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
+  if (!Array.isArray(richText)) {
+    return null;
+  }
+
   return (
     <RichTextContainer color={color}>
       {richText.map((text, i) => {
@@ -1203,6 +1225,10 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
         })
       : undefined
   );
+  const title = useMemo(
+    () => block?.properties?.title?.title?.map((t) => t?.plain_text).join('') || null,
+    []
+  );
 
   useEffect(() => {
     if (block?.created_time) {
@@ -1221,7 +1247,7 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
 
   return (
     <DatabaseFlexItem>
-      <Link href={`/${block.id}`}>
+      <Link href={title ? `/${title}-${block.id.slice(0, 8)}` : `/${block.id}`}>
         <a>
           <DatabaseItemCover className='page-cover'>
             {block?.cover ? (
