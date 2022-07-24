@@ -3,13 +3,13 @@ import type { GetStaticProps, NextPage } from 'next';
 import config from 'site-setting';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/modules/NotionRender';
-import { IGetNotion, NotionPagesRetrieve } from 'src/types/notion';
+import { IGetNotion, INotionSearch, INotionSearchObject } from 'src/types/notion';
 import { SWRConfig } from 'swr';
 
 interface HomeProps {
   slug: string;
   notionBlocksChildrenList: IGetNotion;
-  pageInfo: NotionPagesRetrieve;
+  pageInfo: INotionSearchObject;
 }
 const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo }) => {
   // const [query, setQuery] = useState<{
@@ -40,7 +40,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
         )
         .then((res) => res.data),
       axios
-        .get<IResponseSuccess<NotionPagesRetrieve>>(
+        .get<IResponseSuccess<INotionSearchObject>>(
           config.path + '/notion/pages/' + config.notion.baseBlock
         )
         .then((res) => res.data)

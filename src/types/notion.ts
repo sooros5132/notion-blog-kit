@@ -288,6 +288,11 @@ export interface NotionBlocksChildrenList {
   block: {};
 }
 
+export interface IGetSearchNotion extends NotionBlocksChildrenList {
+  type: 'page_or_database';
+  page_or_database: {};
+}
+
 interface MultiSelect {
   id: string;
   name: string;
@@ -347,14 +352,7 @@ export interface NotionDatabasesQuery {
   type: NotionBlockTypes;
   page: {};
 }
-export interface NotionDatabasesQuery {
-  object: 'list'; // Always "list".
-  results: Array<NotionDatabase>;
-  next_cursor?: string | null; // Only available when "has_more" is true.
-  has_more: boolean;
-  type: NotionBlockTypes;
-  page: {};
-}
+
 export interface EmojiObject {
   type: 'emoji';
   emoji: string;
@@ -375,7 +373,7 @@ export interface IconObject {
 
 export interface NotionPagesRetrieve {
   object: 'page'; // Always "page"
-  id: string;
+  id: ID;
   created_time: string;
   last_edited_time: string;
   created_by: TimeObject;
@@ -386,4 +384,20 @@ export interface NotionPagesRetrieve {
   archived: false;
   properties: Properties;
   url: string;
+}
+
+export interface INotionSearchObject extends Omit<NotionPagesRetrieve, 'object'> {
+  object: 'page' | 'database';
+  description?: Array<RichText>;
+  is_inline?: boolean;
+  title?: Array<RichText>;
+}
+
+export interface INotionSearch {
+  object: 'list';
+  results: Array<INotionSearchObject>;
+  next_cursor: string | null;
+  has_more: boolean;
+  type: 'page_or_database';
+  page_or_database: {};
 }
