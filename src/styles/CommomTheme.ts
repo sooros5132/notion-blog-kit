@@ -34,7 +34,7 @@ const size = {
   px100: '7.142857142857143rem',
   px130: '9.285714285714286rem',
   maxWidth: 1980,
-  desktopWidth: 1200
+  desktopWidth: 980
 };
 
 export const CommonCustomTheme = {

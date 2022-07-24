@@ -43,7 +43,6 @@ import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
 import NoSsrWrapper from './NoSsrWrapper';
-import { useBrowserLayoutEffect } from 'src/lib/useBrowserLayoutEffect';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -400,9 +399,8 @@ const CalloutBlockHeading = styled(FlexBox)();
 
 const CalloutIcon = styled('div')(({ theme }) => ({
   width: theme.size.px18,
-  minHeight: '1.25em',
+  lineHeight: theme.size.px32,
   margin: `0 ${theme.size.px3}`,
-  paddingTop: theme.size.px3,
   textAlign: 'center',
   fontSize: theme.size.px18,
   fontFamily: 'emoji'
