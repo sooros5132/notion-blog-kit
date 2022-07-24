@@ -476,7 +476,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       : null;
   const description = blocks?.blocks?.results
     ?.slice(0, 10)
-    ?.map((block) => block?.paragraph?.rich_text?.map((text) => text?.plain_text).join(''))
+    ?.map((block: any) =>
+      block?.[block.type]?.rich_text?.map((text: RichText) => text?.plain_text).join('')
+    )
     .join(' ');
 
   const url = page?.cover
