@@ -479,7 +479,8 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
     ?.map((block: any) =>
       block?.[block.type]?.rich_text?.map((text: RichText) => text?.plain_text).join('')
     )
-    .join(' ');
+    .join(' ')
+    .replaceAll('\n', '');
 
   const url = page?.cover
     ? page?.cover?.type === 'external'
