@@ -129,6 +129,7 @@ const PageTitle = styled('div')<{
     cover === 'true' && (icontype === 'emoji' || icontype === 'file')
       ? theme.size.px20
       : theme.size.px50,
+  marginBottom: theme.size.px12,
   fontSize: theme.size.px40,
   fontWeight: 'bold',
   lineHeight: '1'
@@ -421,7 +422,8 @@ const BulletedListItemDot = styled('div')(({ theme }) => ({
 
 const DatabaseItemEmptyCover = styled(FlexCenterCenterBox)(({ theme }) => ({
   fontSize: '8em',
-  color: theme.color.gray15
+  color: theme.color.gray15,
+  overflow: 'hidden'
 }));
 
 const NotionColorBox = styled('div')<{ color: Color }>(({ color, theme }) => {
@@ -456,7 +458,11 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   // const { data, error } = useSWR("/key", fetch);
 
   if (!blocks?.blocks?.results || !page) {
-    return <CircularProgress size={20} />;
+    return (
+      <FlexCenterCenterBox>
+        <CircularProgress size={40} />
+      </FlexCenterCenterBox>
+    );
   }
   const title =
     page.parent.type === 'workspace' && page.properties.title?.title
@@ -1222,9 +1228,25 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
               <NotionSecureImage
                 src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
                 blockId={block.id}
-                layout='fill'
-                objectFit='cover'
               />
+            ) : block?.icon ? (
+              block?.icon?.emoji ? (
+                <DatabaseItemEmptyCover>{block?.icon?.emoji}</DatabaseItemEmptyCover>
+              ) : block?.icon?.file ? (
+                <NotionSecureImage
+                  src={
+                    convertAwsImageObjectUrlToNotionUrl({
+                      blockId: block.id,
+                      s3ObjectUrl: block?.icon.file?.url
+                    }) ?? ''
+                  }
+                  blockId={block.id}
+                />
+              ) : (
+                <DatabaseItemEmptyCover>
+                  <SiNotion />
+                </DatabaseItemEmptyCover>
+              )
             ) : (
               <DatabaseItemEmptyCover>
                 <SiNotion />

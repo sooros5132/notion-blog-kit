@@ -328,7 +328,7 @@ export interface NotionDatabase {
   last_edited_by: TimeObject;
   // title?: RichText;
   // description?: RichText;
-  icon?: ImageObject | null;
+  icon?: IconObject | null;
   cover?: ImageObject | null;
   properties: Properties;
   parent?: {
