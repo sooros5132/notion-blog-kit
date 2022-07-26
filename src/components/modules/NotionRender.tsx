@@ -881,13 +881,27 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
             );
           }
           case 'column': {
-            <NotionBlockRender
-              key={`block-${block.id}`}
-              block={block}
-              blocks={blocks}
-              chilrenBlockDepth={childrenDepth.current}
-            />;
-            break;
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              />
+            );
+          }
+          case 'link_preview': {
+            const href = block.link_preview.url;
+            return (
+              <ParagraphAnchor
+                key={`block-anchor-${block.id}-${i}`}
+                href={href.charAt(0) === '/' ? `https://notion.so${href}` : href}
+                rel='noreferrer'
+                target='_blank'
+              >
+                <ParagraphText>{href}</ParagraphText>
+              </ParagraphAnchor>
+            );
           }
         }
 

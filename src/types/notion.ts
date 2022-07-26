@@ -215,7 +215,7 @@ interface CaptionObject {
 
 interface BookmarkObject {
   caption: RichTextObject[];
-  url: 'https://developer.mozilla.org/ko/docs/Web/CSS/-webkit-line-clamp';
+  url: string;
 }
 
 export interface NotionBlockItem
@@ -244,7 +244,7 @@ export interface NotionBlockItem
   table_of_contents: RichTextObject;
   column: RichTextObject;
   column_list: RichTextObject;
-  link_preview: RichTextObject;
+  link_preview: { url: string };
   synced_block: RichTextObject;
   template: RichTextObject;
   link_to_page: RichTextObject;
