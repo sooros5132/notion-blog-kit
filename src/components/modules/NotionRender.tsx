@@ -1310,9 +1310,16 @@ ChildDatabaseBlock.displayName = 'ChildDatabaseBlock';
 
 const VideoBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   return (
-    <NoSsrWrapper>
-      <VideoBlockInner block={block}></VideoBlockInner>
-    </NoSsrWrapper>
+    <>
+      <NoSsrWrapper>
+        <VideoBlockInner block={block}></VideoBlockInner>
+      </NoSsrWrapper>
+      {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
+        <FullWidthBox>
+          <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
+        </FullWidthBox>
+      )}
+    </>
   );
 };
 
@@ -1340,11 +1347,6 @@ const VideoBlockInner: React.FC<NotionChildrenRenderProps> = ({ block }) => {
           &nbsp;
           <Typography>비디오 정보를 불러올 수 없습니다.</Typography>
         </FlexCenterCenterBox>
-        {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
-          <FullWidthBox>
-            <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
-          </FullWidthBox>
-        )}
       </FullWidthBox>
     );
   }
@@ -1370,11 +1372,6 @@ const VideoBlockInner: React.FC<NotionChildrenRenderProps> = ({ block }) => {
       }}
     >
       <video controls src={data?.video.file?.url} />
-      {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
-        <FullWidthBox>
-          <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
-        </FullWidthBox>
-      )}
     </FullWidthBox>
   );
 };
