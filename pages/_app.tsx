@@ -21,21 +21,6 @@ declare module '@mui/material/styles' {
     mediaQuery?: typeof CommonCustomTheme.mediaQuery;
   }
 }
-declare module '@mui/material/Button' {
-  interface ButtonPropsVariantOverrides {
-    containedGray: true;
-    outlinedGray: true;
-    textGray: true;
-    containedDisable: true;
-    outlinedDisable: true;
-    textDisable: true;
-  }
-}
-declare global {
-  interface Window {
-    TradingView?: any;
-  }
-}
 
 axios.defaults.baseURL = config.origin;
 axios.defaults.withCredentials = true;
