@@ -184,103 +184,10 @@ const DarkTheme: ThemeOptions = {
           }
         },
         {
-          props: { variant: 'outlined', color: 'error' },
-          style: {}
-        },
-        {
           props: { variant: 'outlined', color: 'info' },
           style: {
             borderColor: DarkColor.blueMain,
             backgroundColor: DarkColor.blueDark
-          }
-        },
-        {
-          props: { variant: 'outlined', color: 'primary' },
-          style: {}
-        },
-        {
-          props: { variant: 'outlined', color: 'secondary' },
-          style: {}
-        },
-        {
-          props: { variant: 'outlined', color: 'success' },
-          style: {}
-        },
-        {
-          props: { variant: 'outlined', color: 'warning' },
-          style: {}
-        },
-        {
-          props: { variant: 'containedDisable' },
-          style: {
-            color: DarkColor.gray40,
-            backgroundColor: DarkColor.gray20,
-            '&:hover': {
-              color: DarkColor.gray50,
-              backgroundColor: DarkColor.gray30
-            }
-          }
-        },
-        {
-          props: { variant: 'outlinedDisable' },
-          style: {
-            color: DarkColor.gray30,
-            borderStyle: 'solid',
-            borderColor: DarkColor.gray15,
-            borderWidth: 1,
-            borderRadius: 4,
-            '&:hover': {
-              borderColor: DarkColor.gray20,
-              backgroundColor: DarkColor.gray05
-            }
-          }
-        },
-        {
-          props: { variant: 'textDisable' },
-          style: {
-            border: 0,
-            color: DarkColor.gray40,
-            '&:hover': {
-              color: DarkColor.gray50,
-              backgroundColor: DarkColor.gray20
-            }
-          }
-        },
-        {
-          props: { variant: 'containedGray' },
-          style: {
-            color: DarkColor.gray50,
-            borderColor: CommonCustomTheme.color.gray70,
-            backgroundColor: DarkColor.gray85,
-            '&:hover': {
-              color: DarkColor.gray65,
-              borderColor: CommonCustomTheme.color.gray65,
-              backgroundColor: DarkColor.gray80
-            }
-          }
-        },
-        {
-          props: { variant: 'outlinedGray' },
-          style: {
-            color: DarkColor.gray50,
-            borderStyle: 'solid',
-            borderColor: DarkColor.gray20,
-            borderWidth: 1,
-            borderRadius: 4,
-            '&:hover': {
-              borderColor: DarkColor.gray30,
-              backgroundColor: DarkColor.gray10
-            }
-          }
-        },
-        {
-          props: { variant: 'textGray' },
-          style: {
-            color: DarkColor.gray50,
-            '&:hover': {
-              color: DarkColor.gray50,
-              backgroundColor: DarkColor.gray10
-            }
           }
         }
       ]
