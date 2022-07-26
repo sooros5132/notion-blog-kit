@@ -198,7 +198,7 @@ export declare type MentionObject = {
   type: 'user' | 'page' | 'database' | 'date' | 'link_preview';
 };
 
-interface ImageObject {
+interface FileObject {
   type: 'external' | 'file';
   external?: {
     url: string;
@@ -219,7 +219,7 @@ interface BookmarkObject {
 }
 
 export interface NotionBlockItem
-  extends Record<BlockType, RichTextObject | RichTextTitle | ImageObject | BookmarkObject> {
+  extends Record<BlockType, RichTextObject | RichTextTitle | FileObject | BookmarkObject> {
   paragraph: RichTextObject;
   heading_1: RichTextObject;
   heading_2: RichTextObject;
@@ -232,8 +232,8 @@ export interface NotionBlockItem
   child_database: RichTextTitle;
   code: RichTextObject & CaptionObject & { language: Code };
   embed: RichTextObject;
-  image: ImageObject & CaptionObject;
-  video: RichTextObject;
+  image: FileObject & CaptionObject;
+  video: FileObject & CaptionObject;
   file: RichTextObject;
   pdf: RichTextObject;
   bookmark: BookmarkObject;
@@ -334,7 +334,7 @@ export interface NotionDatabase {
   // title?: RichText;
   // description?: RichText;
   icon?: IconObject | null;
-  cover?: ImageObject | null;
+  cover?: FileObject | null;
   properties: Properties;
   parent?: {
     type: 'database_id' | string;
@@ -367,7 +367,7 @@ export interface ParentObject {
 
 export interface IconObject {
   type: 'emoji' | 'file';
-  file?: ImageObject['file'];
+  file?: FileObject['file'];
   emoji?: EmojiObject['emoji'];
 }
 
@@ -378,7 +378,7 @@ export interface NotionPagesRetrieve {
   last_edited_time: string;
   created_by: TimeObject;
   last_edited_by: TimeObject;
-  cover: ImageObject;
+  cover: FileObject;
   icon: IconObject;
   parent: ParentObject;
   archived: false;

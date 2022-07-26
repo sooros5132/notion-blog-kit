@@ -45,6 +45,8 @@ import { ko as koLocale } from 'date-fns/locale';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import { useRouter } from 'next/router';
 import NoSsrWrapper from './NoSsrWrapper';
+import { fetcher } from 'src/lib/swr';
+import { IoClose } from 'react-icons/io5';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -733,6 +735,18 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               </NotionBlockRender>
             );
           }
+          case 'video': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <VideoBlock block={block} />
+              </NotionBlockRender>
+            );
+          }
           case 'image': {
             return (
               <NotionBlockRender
@@ -1293,6 +1307,77 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
   );
 }, isEqual);
 ChildDatabaseBlock.displayName = 'ChildDatabaseBlock';
+
+const VideoBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
+  return (
+    <NoSsrWrapper>
+      <VideoBlockInner block={block}></VideoBlockInner>
+    </NoSsrWrapper>
+  );
+};
+
+const VideoBlockInner: React.FC<NotionChildrenRenderProps> = ({ block }) => {
+  const { data, error, isValidating } = useSWR<NotionBlock>(
+    `${config.path}/notion/blocks/${block.id}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 55 * 60 * 1000 // 55분
+    }
+  );
+  if (error) {
+    return (
+      <FullWidthBox>
+        <FlexCenterCenterBox
+          sx={{
+            py: 2,
+            backgroundColor: (theme) => theme.color.gray20
+          }}
+        >
+          <FlexAlignItemsCenterBox sx={{ color: (theme) => theme.color.notionColor_red }}>
+            <IoClose />
+          </FlexAlignItemsCenterBox>
+          &nbsp;
+          <Typography>비디오 정보를 불러올 수 없습니다.</Typography>
+        </FlexCenterCenterBox>
+        {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
+          <FullWidthBox>
+            <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
+          </FullWidthBox>
+        )}
+      </FullWidthBox>
+    );
+  }
+
+  if (isValidating || !data?.video?.file?.url) {
+    return (
+      <FullWidthBox>
+        <FlexCenterCenterBox>
+          <CircularProgress size={30} />
+          &nbsp;
+          <Typography>비디오 정보를 불러오고 있습니다.</Typography>
+        </FlexCenterCenterBox>
+      </FullWidthBox>
+    );
+  }
+
+  return (
+    <FullWidthBox
+      sx={{
+        '& > video': {
+          width: '100%'
+        }
+      }}
+    >
+      <video controls src={data?.video.file?.url} />
+      {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
+        <FullWidthBox>
+          <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
+        </FullWidthBox>
+      )}
+    </FullWidthBox>
+  );
+};
 
 interface NotionSecureImageProps extends ImageProps {
   src: string;
