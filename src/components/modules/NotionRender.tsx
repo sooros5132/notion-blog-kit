@@ -552,44 +552,39 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
               <ParagraphText>{title || '제목 없음'}</ParagraphText>
             </Heading>
           </PageTitle>
-          {page.parent.type === 'database_id' && [
-            <Typography
-              key={'properties-createdAt-and-updatedAt'}
-              sx={{ color: (theme) => theme.color.gray65 }}
-            >
-              {typeof page.properties?.createdAt?.created_time === 'string' &&
-                `작성일: ${formatInTimeZone(
-                  new Date(page.properties.createdAt.created_time),
-                  config.TZ,
-                  'yyyy-MM-dd aaa hh:mm',
-                  {
-                    locale: koLocale
-                  }
-                )}`}
+          <Typography sx={{ color: (theme) => theme.color.gray65 }}>
+            {typeof page?.created_time === 'string' &&
+              `작성일: ${formatInTimeZone(
+                new Date(page.created_time),
+                config.TZ,
+                'yyyy-MM-dd aaa hh:mm',
+                {
+                  locale: koLocale
+                }
+              )}`}
 
-              {typeof page.properties?.updatedAt?.last_edited_time === 'string' ? (
-                <NoSsrWrapper>
-                  {`, ${formatDistance(
-                    utcToZonedTime(new Date(page.properties.updatedAt.last_edited_time), config.TZ),
-                    utcToZonedTime(new Date(), config.TZ),
-                    {
-                      locale: koLocale,
-                      addSuffix: true
-                    }
-                  )} 수정됨`}
-                </NoSsrWrapper>
-              ) : null}
-            </Typography>,
-            Array.isArray(page.properties?.tags?.multi_select) && (
-              <FlexBox key={'properties-tags'} sx={{ columnGap: 1 }}>
-                {page.properties?.tags?.multi_select?.map((select) => (
-                  <TagContainer color={select.color} key={`multi-select-${page.id}-${select.id}`}>
-                    <Typography>{select.name}</Typography>
-                  </TagContainer>
-                ))}
-              </FlexBox>
-            )
-          ]}
+            {typeof page?.last_edited_time === 'string' ? (
+              <NoSsrWrapper>
+                {`, ${formatDistance(
+                  utcToZonedTime(new Date(page.last_edited_time), config.TZ),
+                  utcToZonedTime(new Date(), config.TZ),
+                  {
+                    locale: koLocale,
+                    addSuffix: true
+                  }
+                )} 수정됨`}
+              </NoSsrWrapper>
+            ) : null}
+          </Typography>
+          {Array.isArray(page.properties?.tags?.multi_select) && (
+            <FlexBox sx={{ columnGap: 1 }}>
+              {page.properties?.tags?.multi_select?.map((select) => (
+                <TagContainer color={select.color} key={`multi-select-${page.id}-${select.id}`}>
+                  <Typography>{select.name}</Typography>
+                </TagContainer>
+              ))}
+            </FlexBox>
+          )}
         </PageInfoInner>
       </PageInfoContainer>
       <NotionContent>
