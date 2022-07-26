@@ -219,7 +219,10 @@ interface BookmarkObject {
 }
 
 export interface NotionBlockItem
-  extends Record<BlockType, RichTextObject | RichTextTitle | FileObject | BookmarkObject> {
+  extends Record<
+    BlockType,
+    RichTextObject | RichTextTitle | FileObject | BookmarkObject | Record<string, string>
+  > {
   paragraph: RichTextObject;
   heading_1: RichTextObject;
   heading_2: RichTextObject;
