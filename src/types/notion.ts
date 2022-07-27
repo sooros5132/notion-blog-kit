@@ -218,10 +218,26 @@ interface BookmarkObject {
   url: string;
 }
 
+interface TableObject {
+  table_width: number;
+  has_column_header: boolean;
+  has_row_header: boolean;
+}
+
+interface TableRowObject {
+  cells: Array<Array<RichText>>;
+}
+
 export interface NotionBlockItem
   extends Record<
     BlockType,
-    RichTextObject | RichTextTitle | FileObject | BookmarkObject | Record<string, string>
+    | RichTextObject
+    | RichTextTitle
+    | FileObject
+    | BookmarkObject
+    | TableObject
+    | TableRowObject
+    | Record<string, string>
   > {
   paragraph: RichTextObject;
   heading_1: RichTextObject;
@@ -251,8 +267,8 @@ export interface NotionBlockItem
   synced_block: RichTextObject;
   template: RichTextObject;
   link_to_page: RichTextObject;
-  table: RichTextObject;
-  table_row: RichTextObject;
+  table: TableObject;
+  table_row: TableRowObject;
   unsupported: RichTextObject;
 }
 

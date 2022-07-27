@@ -457,6 +457,33 @@ const TagContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
   };
 });
 
+const Table = styled('table')<{ has_column_header?: boolean; has_row_header?: boolean }>`
+  border-collapse: collapse;
+  & th,
+  td {
+    border: 1px solid ${({ theme }) => theme.color.gray20};
+  }
+  & td {
+    padding: ${({ theme }) => `${theme.size.px2} ${theme.size.px4}`};
+  }
+  ${({ theme, has_row_header }) =>
+    has_row_header
+      ? {
+          '& tbody > tr > td:first-of-type': {
+            backgroundColor: theme.color.gray15
+          }
+        }
+      : null}
+  ${({ theme, has_column_header }) =>
+    has_column_header
+      ? {
+          '& tbody > tr:first-of-type': {
+            backgroundColor: theme.color.gray15
+          }
+        }
+      : null}
+`;
+
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
   const { data: page } = useSWR<INotionSearchObject>('/notion/pages/' + slug);
@@ -903,11 +930,56 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               </ParagraphAnchor>
             );
           }
+          case 'table': {
+            return (
+              <TableBlock block={block} blocks={blocks} chilrenBlockDepth={childrenDepth.current} />
+            );
+          }
         }
 
         return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
       })}
     </div>
+  );
+};
+
+interface TableBlockProps {
+  block: NotionBlock;
+  blocks: IGetNotion;
+  chilrenBlockDepth?: number;
+}
+
+const TableBlock: React.FC<TableBlockProps> = ({ block, blocks, chilrenBlockDepth }) => {
+  const tbodyBlock = blocks.childrenBlocks[block.id];
+
+  if (!block?.table || !tbodyBlock) {
+    return null;
+  }
+
+  return (
+    <Table
+      has_column_header={block.table.has_column_header}
+      has_row_header={block.table.has_row_header}
+    >
+      {/* <thead>
+        <tr>
+          {[...new Array(block.table.table_width)].map((i) => (
+            <th key={`table-head-th-${i}`}></th>
+          ))}
+        </tr>
+      </thead> */}
+      <tbody>
+        {tbodyBlock.results.map((rowBlock, rowIdx) => (
+          <tr key={`table-row-${rowBlock.id}`}>
+            {rowBlock.table_row.cells.map((cellBlocks, cellIdx) => (
+              <td key={`table-row-${rowBlock.id}-cell-${cellIdx}`}>
+                <Paragraph blockId={rowBlock.id} richText={cellBlocks} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 };
 
