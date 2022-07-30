@@ -457,7 +457,10 @@ const TagContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
   };
 });
 
-const Table = styled('table')<{ has_column_header?: boolean; has_row_header?: boolean }>`
+const Table = styled('table')<{
+  has_column_header?: 'true' | 'false';
+  has_row_header?: 'true' | 'false';
+}>`
   border-collapse: collapse;
   & th,
   td {
@@ -954,8 +957,8 @@ const TableBlock: React.FC<TableBlockProps> = ({ block, blocks, chilrenBlockDept
 
   return (
     <Table
-      has_column_header={block.table.has_column_header}
-      has_row_header={block.table.has_row_header}
+      has_column_header={`${Boolean(block.table.has_column_header)}`}
+      has_row_header={`${Boolean(block.table.has_row_header)}`}
     >
       {/* <thead>
         <tr>
