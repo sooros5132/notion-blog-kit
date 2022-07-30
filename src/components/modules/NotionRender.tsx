@@ -515,7 +515,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
     ? page?.cover?.type === 'external'
       ? page.cover.external?.url ?? ''
       : page?.cover?.type === 'file'
-      ? convertAwsImageObjectUrlToNotionUrl({
+      ? awsImageObjectUrlToNotionUrl({
           blockId: page.id,
           s3ObjectUrl: page.cover.file?.url || ''
         })
@@ -542,7 +542,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         {page.icon?.file && page.icon?.type === 'file' && (
           <link
             rel='shortcut icon'
-            href={convertAwsImageObjectUrlToNotionUrl({
+            href={awsImageObjectUrlToNotionUrl({
               blockId: page.id,
               s3ObjectUrl: page.icon.file.url
             })}
@@ -704,11 +704,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 <RichTextContainer>
                   <ParagraphAnchor
                     key={`block-${block.id}-${i}`}
-                    href={
-                      block.bookmark.url.charAt(0) === '/'
-                        ? `https://notion.so${block.bookmark.url}`
-                        : block.bookmark.url
-                    }
+                    href={notionBlockUrlToRelativePath(block.bookmark.url)}
                     rel='noreferrer'
                     target='_blank'
                   >
@@ -922,7 +918,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
             return (
               <ParagraphAnchor
                 key={`block-anchor-${block.id}-${i}`}
-                href={href.charAt(0) === '/' ? `https://notion.so${href}` : href}
+                href={notionBlockUrlToRelativePath(href)}
                 rel='noreferrer'
                 target='_blank'
               >
@@ -1134,7 +1130,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
           return (
             <ParagraphAnchor
               key={`block-anchor-${blockId}-${i}`}
-              href={href.charAt(0) === '/' ? `https://notion.so${href}` : href}
+              href={notionBlockUrlToRelativePath(href)}
               rel='noreferrer'
               target='_blank'
             >
@@ -1359,7 +1355,7 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
               ) : block?.icon?.file ? (
                 <NotionSecureImage
                   src={
-                    convertAwsImageObjectUrlToNotionUrl({
+                    awsImageObjectUrlToNotionUrl({
                       blockId: block.id,
                       s3ObjectUrl: block?.icon.file?.url
                     }) ?? ''
@@ -1485,7 +1481,7 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   // const { host } = new URL(srcProp);
 
   // if (NEXT_IMAGE_DOMAINS.includes(host)) {
-  //   const src = convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
+  //   const src = awsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
 
   //   return (
   //     <NextImageWrapper>
@@ -1509,14 +1505,29 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
       <img
         className={'image'}
         {...props}
-        src={convertAwsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table })}
+        src={awsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table })}
         loading='lazy'
       />
     </DefaultImageWrapper>
   );
 };
 
-function convertAwsImageObjectUrlToNotionUrl({
+function notionBlockUrlToRelativePath(url: string): string {
+  const { customDomain, notionSoRegExp, notionSiteRegExp } = config?.notion;
+
+  if (!url || !customDomain || !notionSoRegExp || !notionSiteRegExp) {
+    return url;
+  }
+  if (notionSoRegExp.test(url)) {
+    return url.replace(notionSoRegExp, '/');
+  }
+  if (notionSiteRegExp.test(url)) {
+    return url.replace(notionSiteRegExp, '/');
+  }
+  return url;
+}
+
+function awsImageObjectUrlToNotionUrl({
   blockId,
   s3ObjectUrl,
   table = 'block'
