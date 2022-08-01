@@ -1,67 +1,59 @@
 import React from 'react';
-import { useTheme, styled } from '@mui/material/styles';
-import { RiCloseFill } from 'react-icons/ri';
-import { FlexAlignItemsCenterBox, FlexBox } from '../modules/Box';
-import { SiNotion, SiNextdotjs, SiGithub } from 'react-icons/si';
+import { SiGithub } from 'react-icons/si';
+import { RiGitRepositoryFill } from 'react-icons/ri';
 
 interface FooterProps {}
 
-const FooterContainer = styled('footer')(({ theme }) => ({
-  backgroundColor: theme.color.footerBackground,
-  padding: theme.size.px8 + ' 0'
-}));
-const FooterInner = styled(FlexAlignItemsCenterBox)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  maxWidth: theme.size.maxWidth,
-  margin: '0 auto',
-  padding: '0 ' + theme.size.px16,
-  color: theme.color.textDefaultBlack,
-  fontSize: theme.size.px20
-}));
-
 const Footer: React.FC = (): JSX.Element => {
-  const theme = useTheme();
-  const [isMounted, setMounted] = React.useState(false);
-  // const { data, error } = useSWR("/key", fetch);
-
   return (
-    <FooterContainer>
-      <FooterInner>
-        <FlexAlignItemsCenterBox>
-          <a href='https://github.com/sooros5132' rel='noreferrer' target='_blank'>
-            SOOROS
-          </a>
-          &nbsp;
-          <a href='https://github.com/sooros5132/soolog' rel='noreferrer' target='_blank'>
-            <FlexAlignItemsCenterBox>
+    <footer className='p-14 footer footer-center bg-neutral text-primary'>
+      <div>
+        <p className='text-6xl font-bold'>soolog</p>
+        <p>
+          Copyright{' '}
+          <a
+            className='underline'
+            href='mailto:sooros5132@gmail.com'
+            rel='noreferrer'
+            target='_blank'
+          >
+            sooros
+          </a>{' '}
+          2022 - All right reserved
+        </p>
+      </div>
+      <div>
+        <div className='grid grid-flow-col gap-4 text-3xl'>
+          <a
+            className='tooltip'
+            data-tip='GitHub'
+            href='https://github.com/sooros5132'
+            rel='noreferrer'
+            target='_blank'
+          >
+            <div>
               <SiGithub />
-            </FlexAlignItemsCenterBox>
+            </div>
           </a>
-        </FlexAlignItemsCenterBox>
-        <FlexAlignItemsCenterBox>
-          {/* {process.env.NODE_ENV === 'production' ? (
-            <img src='https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fblog.sooros.com&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false'></img>
-          ) : (
-            'hits'
-          )} */}
-          <a href='https://nextjs.org/' rel='noreferrer' target='_blank'>
-            <FlexAlignItemsCenterBox>
-              <SiNextdotjs />
-            </FlexAlignItemsCenterBox>
+          <a
+            className='tooltip'
+            data-tip='GitHub Repository'
+            href='https://github.com/sooros5132/soolog'
+            rel='noreferrer'
+            target='_blank'
+          >
+            <div>
+              <RiGitRepositoryFill />
+            </div>
           </a>
-          &nbsp;
-          <RiCloseFill />
-          &nbsp;
-          <a href='https://notion.so/' rel='noreferrer' target='_blank'>
-            <FlexAlignItemsCenterBox>
-              <SiNotion />
-            </FlexAlignItemsCenterBox>
-          </a>
-        </FlexAlignItemsCenterBox>
-      </FooterInner>
-    </FooterContainer>
+        </div>
+      </div>
+      {/* {process.env.NODE_ENV === 'production' ? (
+      <img src='https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fblog.sooros.com&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false'></img>
+    ) : (
+      'hits'
+    )} */}
+    </footer>
   );
 };
 Footer.displayName = 'Footer';

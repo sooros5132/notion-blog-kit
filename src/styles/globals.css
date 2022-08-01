@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  html.nprogress-busy > body > #nprogress > .spinner {
+    display: none;
+  }
+
+  .flex-align-items-center {
+    @apply flex items-center;
+  }
+
+  .flex-justify-content-center {
+    @apply flex justify-center;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .font-emoji {
+    font-family: emoji;
+  }
+
+  .notion-color-default {
+    color: '#080808';
+  }
+  .notion-color-gray {
+    color: 'rgba(120, 119, 116, 1)';
+  }
+  .notion-color-brown {
+    color: 'rgba(159, 107, 83, 1)';
+  }
+  .notion-color-orange {
+    color: 'rgba(217, 115, 13, 1)';
+  }
+  .notion-color-yellow {
+    color: 'rgba(68, 131, 97, 1)';
+  }
+  .notion-color-green {
+    color: 'rgba(68, 131, 97, 1)';
+  }
+  .notion-color-blue {
+    color: 'rgba(51, 126, 169, 1)';
+  }
+  .notion-color-purple {
+    color: 'rgba(144, 101, 176, 1)';
+  }
+  .notion-color-pink {
+    color: 'rgba(212, 76, 71, 1)';
+  }
+  .notion-color-red {
+    color: 'rgba(212, 76, 71, 1)';
+  }
+  .notion-color-gray_background {
+    background-color: 'rgba(241, 241, 239, 1)';
+  }
+  .notion-color-brown_background {
+    background-color: 'rgba(244, 238, 238, 1)';
+  }
+  .notion-color-orange_background {
+    background-color: 'rgba(251, 236, 221, 1)';
+  }
+  .notion-color-yellow_background {
+    background-color: 'rgba(251, 243, 219, 1)';
+  }
+  .notion-color-green_background {
+    background-color: 'rgba(237, 243, 236, 1)';
+  }
+  .notion-color-blue_background {
+    background-color: 'rgba(231, 243, 248, 1)';
+  }
+  .notion-color-purple_background {
+    background-color: 'rgba(244, 240, 247, 0.8)';
+  }
+  .notion-color-pink_background {
+    background-color: 'rgba(244, 240, 247, 0.8)';
+  }
+  .notion-color-red_background {
+    background-color: 'rgba(253, 235, 236, 1)';
+  }
+
+  .notion-database-item-empty-cover {
+    @apply flex-center text-[8em] text-gray-300 overflow-hidden h-full;
+  }
+
+  .image-wrapper {
+    @apply overflow-hidden h-full text-[0px] [&>div>img]:max-w-full;
+  }
+
+  .image-wrapper img {
+    @apply max-w-full h-full object-cover object-center;
+  }
+}

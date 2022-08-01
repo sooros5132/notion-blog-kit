@@ -1,9 +1,8 @@
 import React, { useMemo, memo, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import type { ReactNode, CSSProperties } from 'react';
 import {
   NotionBlock,
   IGetNotion,
-  NotionPagesRetrieve,
   RichText,
   Color,
   NotionDatabase,
@@ -11,7 +10,6 @@ import {
   NotionDatabasesQuery
 } from 'src/types/notion';
 import useSWR from 'swr';
-import { Button, CircularProgress, Menu, MenuItem, Typography } from '@mui/material';
 import Link from 'next/link';
 import { ImageProps } from 'next/image';
 import { NextSeo } from 'next-seo';
@@ -19,24 +17,11 @@ import { useRef } from 'react';
 import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
-import {
-  CursorPointerBox,
-  Flex11AutoBox,
-  FlexAlignItemsCenterBox,
-  FlexBox,
-  FlexCenterCenterBox,
-  FlexSpaceBetweenCenterBox,
-  FullWidthBox,
-  GridBox,
-  MarginRightPx4,
-  NoWrapBox
-} from './Box';
-import { sortBy } from 'lodash';
-import { BsArrowDownShort, BsArrowUpShort, BsDot } from 'react-icons/bs';
+import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
+import { GoPrimitiveDot } from 'react-icons/go';
 import isEqual from 'react-fast-compare';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { BreakAllTypography } from './Typography';
 import { SiNotion } from 'react-icons/si';
 import config from 'site-setting';
 import { formatDistance } from 'date-fns';
@@ -47,445 +32,176 @@ import { useRouter } from 'next/router';
 import NoSsrWrapper from './NoSsrWrapper';
 import { fetcher } from 'src/lib/swr';
 import { IoClose } from 'react-icons/io5';
+import { filter, sortBy } from 'lodash';
+import classnames from 'classnames';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
   readonly slug: string;
 }
 
-const NotionContainer = styled('div')(({ theme }) => ({
-  width: '100%',
-  marginBottom: theme.size.px20,
-  fontSize: theme.size.px16,
-  color: theme.color.textDefaultBlack
-}));
-
-const PageInfoContainer = styled('div')();
-
-const ImageCover = styled('div')({
-  width: '100%',
-  '& > div': {
-    width: '100%',
-    height: '100%',
-    '& img': {
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-      objectPosition: 'center center'
-    }
-  }
-});
-
-const PageInfoCover = styled(ImageCover)({
-  height: '30vh',
-  '& img.image': {
-    zIndex: -1
-  }
-});
-
-const PageInfoInner = styled('div')<{
-  icontype?: NotionPagesRetrieve['icon']['type'];
-  cover?: 'true' | 'false';
-}>(({ icontype, theme, cover }) => ({
-  maxWidth: theme.size.desktopWidth,
-  margin: '0 auto',
-  marginTop:
-    cover === 'true'
-      ? icontype === 'emoji'
-        ? `-${theme.size.px50}`
-        : icontype === 'file'
-        ? `-${theme.size.px34}`
-        : undefined
-      : undefined,
-  paddingTop: icontype === 'file' && cover === 'false' ? theme.size.px50 : undefined,
-  [theme.mediaQuery.mobile]: {
-    paddingRight: theme.size.px18,
-    paddingLeft: theme.size.px18
-  },
-  [theme.mediaQuery.tablet]: {
-    paddingRight: theme.size.px24,
-    paddingLeft: theme.size.px24
-  },
-  [theme.mediaQuery.laptop]: {
-    paddingRight: theme.size.px40,
-    paddingLeft: theme.size.px40
-  }
-}));
-
-const PageImage = styled('div')({
-  position: 'relative',
-  width: 70,
-  height: 70
-});
-
-const PageEmoji = styled('span')(({ theme }) => ({
-  padding: `0 ${theme.size.px12}`,
-  fontSize: theme.size.px70,
-  fontWeight: 'bold',
-  fontFamily: 'emoji'
-}));
-
-const PageTitle = styled('div')<{
-  icontype?: NotionPagesRetrieve['icon']['type'];
-  cover?: 'true' | 'false';
-}>(({ icontype, theme, cover }) => ({
-  marginTop:
-    cover === 'true' && (icontype === 'emoji' || icontype === 'file')
-      ? theme.size.px20
-      : theme.size.px50,
-  marginBottom: theme.size.px12,
-  fontSize: theme.size.px40,
-  fontWeight: 'bold',
-  lineHeight: '1'
-}));
-
-const NotionContent = styled('div')(({ theme }) => ({
-  maxWidth: theme.size.desktopWidth,
-  margin: '0 auto',
-  [theme.mediaQuery.mobile]: {
-    paddingRight: theme.size.px18,
-    paddingLeft: theme.size.px18
-  },
-  [theme.mediaQuery.tablet]: {
-    paddingRight: theme.size.px24,
-    paddingLeft: theme.size.px24
-  },
-  [theme.mediaQuery.laptop]: {
-    paddingRight: theme.size.px40,
-    paddingLeft: theme.size.px40
-  }
-}));
-
-const Block = styled('div')(({ theme }) => ({
-  margin: theme.size.px2 + ' 0'
-}));
-
-const DepthBlock = styled('div')(({ theme }) => ({
-  marginLeft: theme.size.px26
-}));
-
-const HorizontalRule = styled('hr')(({ theme }) => ({
-  borderColor: theme.color.gray50
-}));
-
-const RichTextContainer = styled('div')<{
-  color?: Color;
-}>(({ theme, color }) => {
-  const fontColor =
-    color &&
-    color !== 'default' &&
-    !color.match(/_background$/) &&
-    theme.color[`notionColor_${color}`];
-  const backgroundColor =
-    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
-
-  return {
-    padding: theme.size.px2,
-    minHeight: '1.25em',
-    wordBreak: 'break-all',
-    color: fontColor ? fontColor : undefined,
-    backgroundColor: backgroundColor ? backgroundColor : undefined
-  };
-});
-
-const ParagraphText = styled('span')<{
+interface ParagraphTextProps {
   bold?: string;
   italic?: string;
   strikethrough?: string;
   underline?: string;
-  code?: 'once' | 'first' | 'end' | 'middle';
+  code?: 'once' | 'first' | 'last' | 'middle';
   color?: Color;
-}>(({ theme, bold, italic, strikethrough, underline, code, color }) => {
-  const codeStyle = code && {
-    fontFamily: theme.font.code,
-    backgroundColor: theme.color.redBackgroundLight,
-    borderTopLeftRadius: code === 'once' || code === 'first' ? theme.size.px4 : undefined,
-    borderBottomLeftRadius: code === 'once' || code === 'first' ? theme.size.px4 : undefined,
-    borderTopRightRadius: code === 'once' || code === 'end' ? theme.size.px4 : undefined,
-    borderBottomRightRadius: code === 'once' || code === 'end' ? theme.size.px4 : undefined,
-    paddingTop: theme.size.px2,
-    paddingBottom: theme.size.px2,
-    paddingLeft: code === 'once' || code === 'first' ? theme.size.px4 : undefined,
-    paddingRight: code === 'once' || code === 'end' ? theme.size.px4 : undefined
-  };
+  children?: React.ReactNode;
+}
 
-  const fontColor =
-    color &&
-    color !== 'default' &&
-    !color.match(/_background$/) &&
-    theme.color[`notionColor_${color}`];
-  const backgroundColor =
-    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
-
-  return {
-    fontWeight: bold,
-    fontStyle: italic,
-    textDecoration: `${strikethrough ? strikethrough : ''} ${underline ? underline : ''}`,
-    color: fontColor ? fontColor : undefined,
-    backgroundColor: backgroundColor ? backgroundColor : undefined,
-    ...codeStyle
-  };
-});
-
-const NumberedListItemContainer = styled('div')({
-  display: 'flex'
-});
-const NumberedListItemNumber = styled('div')(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  flex: `0 0 ${theme.size.px26}`,
-  textAlign: 'right',
-  padding: theme.size.px2 + ' 0',
-  paddingRight: theme.size.px4
-}));
-
-const NumberedListItemInner = styled('div')(({}) => ({
-  flex: `1 1 auto`
-}));
-
-const ToggleArrowBox = styled(NumberedListItemNumber)<{ toggled: 'true' | 'false' }>(
-  ({ toggled }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-    fontSize: '1.2em',
-    transform: toggled === 'true' ? 'rotate(90deg)' : undefined,
-    transition: 'transform 0.15s'
-  })
-);
-
-const ParagraphAnchor = styled('a')(({ theme }) => ({
-  textDecoration: 'underline',
-  color: theme.color.gray85
-}));
-
-const UnderlineSpan = styled('span')({
-  textDecoration: 'underline'
-});
-
-const DatabaseContainer = styled('div')(({ theme }) => ({
-  display: 'grid',
-  gap: 20,
-  textAlign: 'center',
-  marginBottom: 20,
-  [theme.mediaQuery.mobile]: {
-    gridTemplateColumns: '1fr'
-  },
-  [theme.mediaQuery.tablet]: {
-    gridTemplateColumns: '1fr 1fr'
-  },
-  [theme.mediaQuery.laptop]: {
-    gridTemplateColumns: '1fr 1fr 1fr'
+const paragraphTextConfig = {
+  code: {
+    once: 'rounded-l rounded-r py-0.5 px-1 bg-notionColor-red_background font-mono',
+    first: 'rounded-l py-0.5 pl-1 bg-notionColor-red_background font-mono',
+    last: 'rounded-r py-0.5 pr-1 bg-notionColor-red_background font-mono',
+    middle: 'py-0.5 bg-notionColor-red_background font-mono'
   }
-}));
+} as const;
 
-const DatabaseFlexItem = styled('div')(({ theme }) => ({
-  borderRadius: theme.size.px10,
-  minWidth: 100,
-  backgroundColor: theme.color.cardBackground,
-  /**
-   * Safari 브라우저 borderRadius 오류.
-   * 쌓임 맥락에 추가 https://www.sungikchoi.com/blog/safari-overflow-border-radius/
-   * isolation: isolate
-   * will-change: transform;
-   * 추가하기
-   */
-  isolation: 'isolate',
-  overflow: 'hidden',
-  '& .page-cover': {
-    filter: 'brightness(0.75)'
-  },
-  '&:hover .page-cover': {
-    filter: 'brightness(1)',
-    '& .image': {
-      transform: 'scale(1.05)'
-    }
-  }
-}));
+const notionColor = {
+  default: 'text-notionColor-default',
+  gray: 'text-notionColor-gray',
+  brown: 'text-notionColor-brown',
+  orange: 'text-notionColor-orange',
+  yellow: 'text-notionColor-yellow',
+  green: 'text-notionColor-green',
+  blue: 'text-notionColor-blue',
+  purple: 'text-notionColor-purple',
+  pink: 'text-notionColor-pink',
+  red: 'text-notionColor-red',
+  gray_background: 'bg-notionColor-gray_background',
+  brown_background: 'bg-notionColor-brown_background',
+  orange_background: 'bg-notionColor-orange_background',
+  yellow_background: 'bg-notionColor-yellow_background',
+  green_background: 'bg-notionColor-green_background',
+  blue_background: 'bg-notionColor-blue_background',
+  purple_background: 'bg-notionColor-purple_background',
+  pink_background: 'bg-notionColor-pink_background',
+  red_background: 'bg-notionColor-red_background'
+};
 
-const DatabaseDescriptionBox = styled(FlexSpaceBetweenCenterBox)(({ theme }) => ({
-  columnGap: theme.size.px8,
-  padding: `${theme.size.px8} ${theme.size.px12}`
-}));
+const ParagraphText = ({
+  bold,
+  code,
+  color,
+  italic,
+  strikethrough,
+  underline,
+  children
+}: ParagraphTextProps) => {
+  return (
+    <span
+      className={classnames(
+        bold && 'font-bold',
+        italic && 'italic',
+        strikethrough && 'line-through',
+        underline && 'underline',
+        code && paragraphTextConfig.code[code],
+        color && color !== 'default' && !color.match(/_background$/) && notionColor[color],
+        color && color.match(/_background$/) && notionColor[color]
+      )}
+    >
+      {children}
+    </span>
+  );
+};
 
-const DatabaseItemCover = styled(ImageCover)(({ theme }) => ({
-  height: 200,
-  transition: 'filter 0.2s Linear',
-  backgroundColor: theme.color.cardBackground,
-  '& .image': {
-    transition: 'transform 0.2s Linear'
-  }
-}));
+interface HeadingContainerProps {
+  id: string;
+  children: ReactNode;
+}
 
-const DefaultImageWrapper = styled('div')({
-  position: 'relative',
-  overflow: 'hidden',
-  fontSize: 0,
-  '& > img': {
-    position: 'relative',
-    maxWidth: '100%'
-  }
-});
-
-const NextImageWrapper = styled(DefaultImageWrapper)({
-  position: 'relative',
-  width: '100%',
-  height: '100%',
-  fontSize: 0
-  // objectFit: 'cover',
-  // objectPosition: 'center center',
-});
-
-const ImageBlockContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'center'
-});
-
-const HeadingContainer = styled('div')(({ theme }) => ({
-  paddingTop: '2.1em',
-  marginBottom: theme.size.px4
-}));
-
-const Heading = styled(FlexBox)<{
+const HeadingContainer = ({ id, children }: HeadingContainerProps) => {
+  return (
+    <div id={id} className='pt-[2.1em] mb-1'>
+      {children}
+    </div>
+  );
+};
+interface HeadingProps {
   type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database' | 'normal';
-}>(({ type, theme }) => ({
-  fontWeight: 'bold',
-  fontSize:
-    type === 'heading_1' || type === 'child_database'
-      ? '2em'
-      : type === 'heading_2'
-      ? '1.5em'
-      : type === 'normal'
-      ? undefined
-      : '1.2em',
-  '& .heading-link': {
-    display: 'none'
-  },
-  '&:hover .heading-link': {
-    display: 'block'
-  }
-}));
+  children: ReactNode;
+}
 
-export const EllipsisWrapperBox = styled('div')({
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  maxHeight: '3.1em',
-  textOverflow: 'ellipsis',
-  '& p, a, span': {
-    display: '-webkit-box',
-    whiteSpace: 'normal',
-    WebkitBoxOrient: 'vertical',
-    WebkitLineClamp: '2'
-  }
-});
+const Heading = ({ type, children }: HeadingProps) => {
+  return (
+    <div
+      className={`flex ${
+        type === 'heading_1' || type === 'child_database'
+          ? 'text-[2em]'
+          : type === 'heading_2'
+          ? 'text-[1.5em]'
+          : type === 'normal'
+          ? undefined
+          : 'text-[1.2em]'
+      } [&>div>.heading-link]:hidden [&:hover>div>.heading-link]:block`}
+    >
+      {children}
+    </div>
+  );
+};
 
-// const CodeBlock = styled('div')(({ theme }) => ({
-//   fontFamily: theme.font.code,
-//   backgroundColor: theme.color.cardBackground,
-//   padding: `${theme.size.px6} ${theme.size.px12}`
-// }));
-const CalloutBlockContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
-  const fontColor =
-    color &&
-    color !== 'default' &&
-    !color.match(/_background$/) &&
-    theme.color[`notionColor_${color}`];
-  const backgroundColor =
-    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
+// export const EllipsisWrapperBox = styled('div')({
+//   overflow: 'hidden',
+//   whiteSpace: 'nowrap',
+//   maxHeight: '3.1em',
+//   textOverflow: 'ellipsis',
+//   '& p, a, span': {
+//     display: '-webkit-box',
+//     whiteSpace: 'normal',
+//     WebkitBoxOrient: 'vertical',
+//     WebkitLineClamp: '2'
+//   }
+// });
 
-  return {
-    color: fontColor ? fontColor : undefined,
-    backgroundColor: backgroundColor ? backgroundColor : undefined,
-    padding: `${theme.size.px6} ${theme.size.px12}`,
-    paddingLeft: theme.size.px6,
-    margin: theme.size.px2 + ' 0'
-  };
-});
+interface CalloutBlockContainerProps {
+  color: Color;
+  children: ReactNode;
+}
 
-const CalloutBlockHeading = styled(FlexBox)();
+const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) => {
+  return (
+    <div
+      className={classnames(
+        'py-1.5 px-3 pl-1.5 my-0.5',
+        color && color !== 'default' && !color.match(/_background$/) && notionColor[color],
+        color && color.match(/_background$/) && notionColor[color]
+      )}
+    >
+      {children}
+    </div>
+  );
+};
 
-const CalloutIcon = styled('div')(({ theme }) => ({
-  width: theme.size.px18,
-  lineHeight: theme.size.px32,
-  margin: `0 ${theme.size.px3}`,
-  textAlign: 'center',
-  fontSize: theme.size.px18,
-  fontFamily: 'emoji'
-}));
-
-const QuoteContainer = styled('div')(({ theme }) => ({
-  backgroundColor: theme.color.cardBackground,
-  padding: `${theme.size.px6} ${theme.size.px12}`,
-  borderLeft: `${theme.size.px3} solid ${theme.color.textDefaultBlack}`
-}));
-
-const BulletedListItemDot = styled('div')(({ theme }) => ({
-  flex: `0 0 ${theme.size.px26}`,
-  paddingTop: theme.size.px2,
-  paddingRight: theme.size.px4,
-  fontSize: theme.size.px20
-}));
-
-const DatabaseItemEmptyCover = styled(FlexCenterCenterBox)(({ theme }) => ({
-  fontSize: '8em',
-  color: theme.color.gray15,
-  overflow: 'hidden'
-}));
-
-const NotionColorBox = styled('div')<{ color: Color }>(({ color, theme }) => {
-  const fontColor =
-    color &&
-    color !== 'default' &&
-    !color.match(/_background$/) &&
-    theme.color[`notionColor_${color}`];
-  const backgroundColor =
-    color && color.match(/_background$/) && theme.color[`notionColor_${color}`];
-
-  return {
-    color: fontColor ? fontColor : undefined,
-    backgroundColor: backgroundColor ? backgroundColor : undefined
-  };
-});
-
-const TagContainer = styled('div')<{ color: Color }>(({ color, theme }) => {
-  const backgroundColor =
-    color && theme.color[`notionColor_${color}_background` as keyof typeof theme.color];
-  return {
-    backgroundColor: backgroundColor ? backgroundColor : undefined,
-    padding: `0 ${theme.size.px6}`,
-    borderRadius: theme.size.px6
-  };
-});
-
-const Table = styled('table')<{
+const Table = ({
+  has_column_header,
+  has_row_header,
+  children
+}: {
   has_column_header?: 'true' | 'false';
   has_row_header?: 'true' | 'false';
-}>`
-  border-collapse: collapse;
-  & th,
-  td {
-    border: 1px solid ${({ theme }) => theme.color.gray20};
-  }
-  & td {
-    padding: ${({ theme }) => `${theme.size.px2} ${theme.size.px4}`};
-  }
-  ${({ theme, has_row_header }) =>
-    has_row_header
-      ? {
-          '& tbody > tr > td:first-of-type': {
-            backgroundColor: theme.color.gray15
-          }
-        }
-      : null}
-  ${({ theme, has_column_header }) =>
-    has_column_header
-      ? {
-          '& tbody > tr:first-of-type': {
-            backgroundColor: theme.color.gray15
-          }
-        }
-      : null}
-`;
+  children: ReactNode;
+}) => {
+  return (
+    <table
+      className={classnames(
+        'border-collapse',
+        '[&>tbody>tr>td]:border',
+        '[&>tbody>tr>td]:border-solid',
+        '[&>tbody>tr>td]:border-notionColor-green_background',
+        '[&>tbody>tr>td]:py-0.5',
+        '[&>tbody>tr>td]:px-1',
+        has_row_header === 'true' &&
+          '[&>tbody>tr>td:first-of-type]:bg-notionColor-green_background/20',
+        has_column_header === 'true' &&
+          '[&>tbody>tr:first-of-type]:bg-notionColor-green_background/20'
+      )}
+    >
+      {children}
+    </table>
+  );
+};
 
 const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
@@ -495,11 +211,12 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
 
   if (!blocks?.blocks?.results || !page) {
     return (
-      <FlexCenterCenterBox>
-        <CircularProgress size={40} />
-      </FlexCenterCenterBox>
+      <div className='flex-center'>
+        <progress className='radial-progress'></progress>
+      </div>
     );
   }
+
   const title =
     page.object === 'page'
       ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || null
@@ -509,10 +226,10 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
   const description = blocks?.blocks?.results
     ?.slice(0, 10)
     ?.map((block: any) =>
-      block?.[block.type]?.rich_text?.map((text: RichText) => text?.plain_text).join('')
+      block?.[block.type]?.rich_text?.map((text: RichText) => text?.plain_text || '')?.join('')
     )
-    .join(' ')
-    .replaceAll('\n', '');
+    ?.join(' ')
+    .replace(/\n/gm, '');
 
   const url = page?.cover
     ? page?.cover?.type === 'external'
@@ -526,7 +243,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
     : '';
 
   return (
-    <NotionContainer>
+    <div className='w-full mb-5 text-base whitespace-pre-wrap'>
       <NextSeo
         title={title?.slice(0, 60) || '제목 없음'}
         description={description?.slice(0, 155) || undefined}
@@ -559,32 +276,54 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         )}
       </Head>
 
-      <PageInfoContainer>
+      <div>
         {page?.cover?.[page?.cover?.type]?.url && (
-          <PageInfoCover>
+          <div className='h-[30vh] overflow-hidden [&>div>img]:w-full'>
             <NotionSecureImage blockId={page.id} src={page?.cover?.[page?.cover?.type]?.url!} />
-          </PageInfoCover>
+          </div>
         )}
-        <PageInfoInner icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
+        <div
+          className={classnames(
+            'max-w-screen-lg mx-auto',
+            'px-4 sm:px-6 lg:px-10',
+            Boolean(page?.cover)
+              ? page.icon?.type === 'emoji'
+                ? 'mt-[-50px]'
+                : page.icon?.type === 'file'
+                ? 'mt-[-34px]'
+                : ''
+              : 'mt-[50px]',
+            !Boolean(page?.cover) && page.icon?.type === 'file' && 'pt-[50px]'
+          )}
+        >
           {page.icon?.file && page.icon?.type === 'file' && (
-            <PageImage>
+            <div className='relative w-[70px] h-[70px]'>
               <NotionSecureImage blockId={page.id} src={page.icon.file.url} />
-            </PageImage>
+            </div>
           )}
           {page.icon?.emoji && page.icon?.type === 'emoji' && (
-            <PageEmoji>{page.icon?.emoji}</PageEmoji>
+            <span className='px-3 text-7xl font-emoji'>{page.icon?.emoji}</span>
           )}
-          <PageTitle icontype={page.icon?.type} cover={`${Boolean(page?.cover)}`}>
+          <div
+            className={classnames(
+              Boolean(page?.cover) && ['emoji', 'file'].includes(page.icon?.type)
+                ? 'mt-[20px]'
+                : 'mt-[50px]',
+              'mb-3 text-[40px] font-bold'
+            )}
+          >
             <Heading type={'normal'}>
-              <CopyHeadingLink href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
-                <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
-                  <a>🔗</a>
-                </Link>
-              </CopyHeadingLink>
+              <div>
+                <CopyHeadingLink href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+                  <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+                    <a>🔗</a>
+                  </Link>
+                </CopyHeadingLink>
+              </div>
               <ParagraphText>{title || '제목 없음'}</ParagraphText>
             </Heading>
-          </PageTitle>
-          <Typography sx={{ color: (theme) => theme.color.gray65 }}>
+          </div>
+          <p className='text-opacity-50 text-base-content'>
             {typeof page?.created_time === 'string' &&
               `작성일: ${formatInTimeZone(
                 new Date(page.created_time),
@@ -607,19 +346,27 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                 )} 수정됨`}
               </NoSsrWrapper>
             ) : null}
-          </Typography>
+          </p>
           {Array.isArray(page.properties?.tags?.multi_select) && (
-            <FlexBox sx={{ columnGap: 1 }}>
-              {page.properties?.tags?.multi_select?.map((select) => (
-                <TagContainer color={select.color} key={`multi-select-${page.id}-${select.id}`}>
-                  <Typography>{select.name}</Typography>
-                </TagContainer>
-              ))}
-            </FlexBox>
+            <div className='flex gap-x-2'>
+              {page.properties?.tags?.multi_select?.map((select) => {
+                const color = (select?.color + '_background') as Color;
+
+                return (
+                  <div
+                    className={`${notionColor[color]} bord px-1.5 rounded-md`}
+                    color={select.color}
+                    key={`multi-select-${page.id}-${select.id}`}
+                  >
+                    <p>{select.name}</p>
+                  </div>
+                );
+              })}
+            </div>
           )}
-        </PageInfoInner>
-      </PageInfoContainer>
-      <NotionContent>
+        </div>
+      </div>
+      <div className='max-w-screen-lg px-4 mx-auto sm:px-6 lg:px-10'>
         {page.object === 'page' ? (
           <NotionContentContainer blocks={blocks} />
         ) : page.object === 'database' ? (
@@ -635,8 +382,8 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             databases={{ [page.id]: blocks.blocks as unknown as NotionDatabasesQuery }}
           />
         ) : null}
-      </NotionContent>
-    </NotionContainer>
+      </div>
+    </div>
   );
 };
 
@@ -704,16 +451,17 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <RichTextContainer>
-                  <ParagraphAnchor
+                <div className='break-all min-h-[1.25em] p-0.5'>
+                  <a
+                    className='underline'
                     key={`block-${block.id}-${i}`}
                     href={notionBlockUrlToRelativePath(block.bookmark.url)}
                     rel='noreferrer'
                     target='_blank'
                   >
                     {block.bookmark.url}
-                  </ParagraphAnchor>
-                </RichTextContainer>
+                  </a>
+                </div>
               </NotionBlockRender>
             );
           }
@@ -725,7 +473,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <HorizontalRule />
+                <hr className='border-gray-500' />
               </NotionBlockRender>
             );
           }
@@ -748,16 +496,18 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <NumberedListItemContainer>
-                  <NumberedListItemNumber>{numberOfSameTag.current + 1}.</NumberedListItemNumber>
-                  <NumberedListItemInner>
+                <div className='flex'>
+                  <div className='flex-initial py-0.5 basis-6 text-right'>
+                    {numberOfSameTag.current + 1}.
+                  </div>
+                  <div className='flex-auto'>
                     <Paragraph
                       blockId={block.id}
                       richText={block.numbered_list_item.rich_text}
                       color={block.numbered_list_item.color}
                     />
-                  </NumberedListItemInner>
-                </NumberedListItemContainer>
+                  </div>
+                </div>
               </NotionBlockRender>
             );
           }
@@ -781,23 +531,23 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <ImageBlockContainer>
+                <div className='flex justify-center'>
                   <div>
                     <NotionSecureImage
                       blockId={block.id}
                       src={block.image?.file?.url ?? block.image?.external?.url ?? ''}
                     />
                     {Array.isArray(block?.image?.caption) && block?.image?.caption?.length > 0 && (
-                      <FullWidthBox>
+                      <div className='w-full'>
                         <Paragraph
                           blockId={block.id}
                           richText={block.image.caption}
                           color={'gray'}
                         />
-                      </FullWidthBox>
+                      </div>
                     )}
                   </div>
-                </ImageBlockContainer>
+                </div>
               </NotionBlockRender>
             );
           }
@@ -818,9 +568,9 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                   {block?.code?.rich_text?.map((text) => text?.plain_text ?? '').join('')}
                 </SyntaxHighlighter>
                 {Array.isArray(block?.code?.caption) && block?.code?.caption?.length > 0 && (
-                  <FullWidthBox>
+                  <div className='w-full'>
                     <Paragraph blockId={block.id} richText={block.code.caption} color={'gray'} />
-                  </FullWidthBox>
+                  </div>
                 )}
               </NotionBlockRender>
             );
@@ -843,13 +593,15 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <QuoteContainer>
-                  <Paragraph
-                    blockId={block.id}
-                    richText={block.quote.rich_text}
-                    color={block.quote.color}
-                  />
-                </QuoteContainer>
+                <div className='p-0.5 bg-notionColor-gray_background'>
+                  <div className='bg-[rgb(46 46 46 / 8%)] py-1.5 px-3 border-l-[0.3125rem] border-solid border-base-content'>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block.quote.rich_text}
+                      color={block.quote.color}
+                    />
+                  </div>
+                </div>
               </NotionBlockRender>
             );
           }
@@ -861,38 +613,35 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <NumberedListItemContainer>
-                  <BulletedListItemDot>
-                    <BsDot />
-                  </BulletedListItemDot>
-                  <NumberedListItemInner>
+                <div className='flex'>
+                  <div className='flex items-center max-h-7 basis-6 text-sm flex-initial py-0.5'>
+                    <GoPrimitiveDot />
+                  </div>
+                  <div className='flex-auto'>
                     <Paragraph
                       blockId={block.id}
                       richText={block.bulleted_list_item.rich_text}
                       color={block.bulleted_list_item.color}
                     />
-                  </NumberedListItemInner>
-                </NumberedListItemContainer>
+                  </div>
+                </div>
               </NotionBlockRender>
             );
           }
           case 'column_list': {
             return (
-              <GridBox
-                key={`block-${block.id}-${i}`}
-                sx={{
+              <div
+                className='grid gap-x-2 [&>*]:overflow-x-auto'
+                style={{
                   gridTemplateColumns: `repeat(${
                     blocks['childrenBlocks'][block.id]?.results.length ?? 1
-                  }, 1fr)`,
-                  columnGap: (theme) => theme.size.px8,
-                  '& > *': {
-                    overflowX: 'auto'
-                  }
+                  }, 1fr)`
                 }}
+                key={`block-${block.id}-${i}`}
               >
                 {blocks['childrenBlocks'][block.id]?.results.map((block, i) => {
                   return (
-                    <Block key={`block-${block.id}-${i}`}>
+                    <div className='mx-0.5' key={`block-${block.id}-${i}`}>
                       <NotionContentContainer
                         blocks={{
                           blocks: blocks['childrenBlocks'][block.id],
@@ -900,10 +649,10 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                           databaseBlocks: blocks.databaseBlocks
                         }}
                       />
-                    </Block>
+                    </div>
                   );
                 })}
-              </GridBox>
+              </div>
             );
           }
           case 'column': {
@@ -919,14 +668,15 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
           case 'link_preview': {
             const href = block.link_preview.url;
             return (
-              <ParagraphAnchor
+              <a
+                className='underline'
                 key={`block-anchor-${block.id}-${i}`}
                 href={notionBlockUrlToRelativePath(href)}
                 rel='noreferrer'
                 target='_blank'
               >
                 <ParagraphText>{href}</ParagraphText>
-              </ParagraphAnchor>
+              </a>
             );
           }
           case 'table': {
@@ -992,17 +742,19 @@ const CalloutBlock: React.FC<CalloutBlockProps> = ({ block, blocks, chilrenBlock
   return (
     <CalloutBlockContainer color={block.callout.color}>
       <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth}>
-        <CalloutBlockHeading>
-          <CalloutIcon>
-            {block.callout?.icon?.file && block.callout?.icon?.type === 'file' && (
-              <NotionSecureImage blockId={block.id} src={block.callout?.icon.file.url} />
-            )}
-            {block.callout?.icon?.emoji &&
-              block.callout?.icon?.type === 'emoji' &&
-              block.callout?.icon?.emoji}
-          </CalloutIcon>
+        <div className='flex'>
+          <div className='pt-0.5 basis-6 flex justify-center'>
+            <div className='text-xl leading-6 font-emoji'>
+              {block.callout?.icon?.file && block.callout?.icon?.type === 'file' && (
+                <NotionSecureImage blockId={block.id} src={block.callout?.icon.file.url} />
+              )}
+              {block.callout?.icon?.emoji &&
+                block.callout?.icon?.type === 'emoji' &&
+                block.callout?.icon?.emoji}
+            </div>
+          </div>
           <Paragraph blockId={block.id} richText={block.callout.rich_text} />
-        </CalloutBlockHeading>
+        </div>
       </NotionBlockRender>
     </CalloutBlockContainer>
   );
@@ -1022,10 +774,10 @@ const NotionBlockRender: React.FC<NotionBlockProps> = ({
   chilrenBlockDepth
 }) => {
   return (
-    <Block>
+    <div className='mx-0.5'>
       {children}
       {block?.has_children && typeof chilrenBlockDepth === 'number' && chilrenBlockDepth > 0 && (
-        <DepthBlock>
+        <div className='ml-6'>
           <NotionContentContainer
             blocks={{
               blocks: blocks['childrenBlocks'][block.id],
@@ -1033,9 +785,9 @@ const NotionBlockRender: React.FC<NotionBlockProps> = ({
               databaseBlocks: blocks.databaseBlocks
             }}
           />
-        </DepthBlock>
+        </div>
       )}
-    </Block>
+    </div>
   );
 };
 
@@ -1052,11 +804,11 @@ const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   return (
     <HeadingContainer id={hash}>
       <Heading type={type}>
-        <FlexAlignItemsCenterBox>
+        <div className='flex items-center'>
           <CopyHeadingLink href={href}>
             <a href={'#' + hash}>🔗</a>
           </CopyHeadingLink>
-        </FlexAlignItemsCenterBox>
+        </div>
         <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
       </Heading>
     </HeadingContainer>
@@ -1073,9 +825,9 @@ const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode }> = (
     href && copyTextAtClipBoard(href);
   };
   return (
-    <MarginRightPx4 className='heading-link' onClick={handleClick(href)}>
+    <div className='mr-1 heading-link' onClick={handleClick(href)}>
       {children}
-    </MarginRightPx4>
+    </div>
   );
 };
 
@@ -1091,7 +843,15 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
   }
 
   return (
-    <RichTextContainer color={color}>
+    <div
+      className={classnames(
+        'break-all',
+        'min-h-[1.25em]',
+        'p-0.5',
+        color && color !== 'default' && !color.match(/_background$/) && notionColor[color],
+        color && color.match(/_background$/) && notionColor[color]
+      )}
+    >
       {richText.map((text, i) => {
         if (text.type === 'mention') {
           return (
@@ -1112,7 +872,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
         const prevTextIsCode = code && richText[i - 1]?.annotations.code;
         const nextTextIsCode = code && richText[i + 1]?.annotations.code;
 
-        const annotations: Partial<typeof ParagraphText['defaultProps']> = {
+        const annotations: Partial<ParagraphTextProps> = {
           bold: bold ? 'bold' : undefined,
           italic: italic ? 'italic' : undefined,
           strikethrough: strikethrough ? 'line-through' : undefined,
@@ -1125,20 +885,21 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
               ? 'first'
               : nextTextIsCode
               ? 'middle'
-              : 'end'
+              : 'last'
             : undefined
         };
 
         if (href) {
           return (
-            <ParagraphAnchor
+            <a
+              className='underline'
               key={`block-anchor-${blockId}-${i}`}
               href={notionBlockUrlToRelativePath(href)}
               rel='noreferrer'
               target='_blank'
             >
               <ParagraphText {...annotations}>{plain_text}</ParagraphText>
-            </ParagraphAnchor>
+            </a>
           );
         }
         return (
@@ -1147,7 +908,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
           </ParagraphText>
         );
       })}
-    </RichTextContainer>
+    </div>
   );
 };
 
@@ -1163,24 +924,24 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
     setOpen((prev) => !prev);
   };
   return (
-    <NotionColorBox color={block.toggle.color}>
+    <div className={notionColor[block.toggle.color]}>
       <NotionBlockRender
         block={block}
         blocks={blocks}
         chilrenBlockDepth={isOpen ? chilrenBlockDepth : undefined}
       >
-        <CursorPointerBox>
-          <FlexAlignItemsCenterBox onClick={handleClickToggleButton}>
-            <ToggleArrowBox toggled={`${isOpen}`}>
+        <div className='cursor-pointer'>
+          <div className='flex items-center' onClick={handleClickToggleButton}>
+            <div className={`${isOpen ? 'rotate-90' : ''}`}>
               <TiChevronRight />
-            </ToggleArrowBox>
-            <NumberedListItemInner>
+            </div>
+            <div className='flex-auto'>
               <Paragraph blockId={block.id} richText={block.toggle.rich_text} />
-            </NumberedListItemInner>
-          </FlexAlignItemsCenterBox>
-        </CursorPointerBox>
+            </div>
+          </div>
+        </div>
       </NotionBlockRender>
-    </NotionColorBox>
+    </div>
   );
 };
 
@@ -1270,46 +1031,45 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     <div>
       <HeadingContainer id={hash}>
         <Heading type={block.type as 'child_database'}>
-          <FlexAlignItemsCenterBox>
+          <div className='flex items-center'>
             <CopyHeadingLink href={href}>
               <a href={'#' + hash}>🔗</a>
             </CopyHeadingLink>
-          </FlexAlignItemsCenterBox>
-          <Flex11AutoBox>
-            <FlexSpaceBetweenCenterBox>
-              <BreakAllTypography>{block?.child_database?.title || '제목 없음'}</BreakAllTypography>
-              <NoWrapBox>
-                <Button color='inherit' size='large' onClick={handleClickSortMenu}>
+          </div>
+          <div className='flex-auto'>
+            <div className='flex items-center justify-between'>
+              <p className='break-words break-all'>{block?.child_database?.title || '제목 없음'}</p>
+              <div className='whitespace-nowrap'>
+                <button className='btn btn-ghost btn-sm text-inherit' onClick={handleClickSortMenu}>
                   {KorKeyRecord[sortKey]}
                   {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
-                </Button>
-              </NoWrapBox>
-              <Menu
+                </button>
+              </div>
+              {/* <Menu
                 anchorEl={accountEl}
                 keepMounted
                 open={Boolean(accountEl)}
                 onClose={handleCloseSortMenu()}
               >
                 <MenuItem onClick={handleCloseSortMenu('title')}>
-                  <Typography>이름</Typography>
+                  <p>이름</p>
                 </MenuItem>
                 <MenuItem onClick={handleCloseSortMenu('created_time')}>
-                  <Typography>생성일</Typography>
+                  <p>생성일</p>
                 </MenuItem>
                 <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
-                  <Typography>수정일</Typography>
+                  <p>수정일</p>
                 </MenuItem>
-              </Menu>
-            </FlexSpaceBetweenCenterBox>
-          </Flex11AutoBox>
+              </Menu> */}
+            </div>
+          </div>
         </Heading>
       </HeadingContainer>
-
-      <DatabaseContainer>
+      <div className='grid grid-cols-1 gap-5 mb-5 sm:grid-cols-2 lg:grid-cols-3'>
         {blocks.map((block) => (
           <ChildDatabaseBlock key={`database-${block.id}`} block={block} />
         ))}
-      </DatabaseContainer>
+      </div>
     </div>
   );
 };
@@ -1343,52 +1103,75 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
   }, []);
 
   return (
-    <DatabaseFlexItem>
-      <Link href={title ? `/${title}-${block.id.slice(0, 8)}` : `/${block.id}`}>
-        <a>
-          <DatabaseItemCover className='page-cover'>
-            {block?.cover ? (
-              <NotionSecureImage
-                src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
-                blockId={block.id}
-              />
-            ) : block?.icon ? (
-              block?.icon?.emoji ? (
-                <DatabaseItemEmptyCover>{block?.icon?.emoji}</DatabaseItemEmptyCover>
-              ) : block?.icon?.file ? (
+    // borderRadius: theme.size.px10,
+    // minWidth: 100,
+    // backgroundColor: theme.color.cardBackground,
+    // /**
+    //  * Safari 브라우저 borderRadius 오류.
+    //  * 쌓임 맥락에 추가 https://www.sungikchoi.com/blog/safari-overflow-border-radius/
+    //  * isolation: isolate
+    //  * will-change: transform;
+    //  * 추가하기
+    //  */
+    // isolation: 'isolate',
+    // overflow: 'hidden',
+    // '& .page-cover': {
+    //   filter: 'brightness(0.75)'
+    // },
+    // '&:hover .page-cover': {
+    //   filter: 'brightness(1)',
+    //   '& .image': {
+    //     transform: 'scale(1.05)'
+    //   }
+    // }
+    <div>
+      <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-75 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05]'>
+        <Link href={title ? `/${title}-${block.id.slice(0, 8)}` : `/${block.id}`}>
+          <a>
+            <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear  [&>div>img]:w-full'>
+              {block?.cover ? (
                 <NotionSecureImage
-                  src={
-                    awsImageObjectUrlToNotionUrl({
-                      blockId: block.id,
-                      s3ObjectUrl: block?.icon.file?.url
-                    }) ?? ''
-                  }
+                  src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
                   blockId={block.id}
                 />
+              ) : block?.icon ? (
+                block?.icon?.emoji ? (
+                  <div className='notion-database-item-empty-cover'>{block?.icon?.emoji}</div>
+                ) : block?.icon?.file ? (
+                  <NotionSecureImage
+                    src={
+                      awsImageObjectUrlToNotionUrl({
+                        blockId: block.id,
+                        s3ObjectUrl: block?.icon.file?.url
+                      }) ?? ''
+                    }
+                    blockId={block.id}
+                  />
+                ) : (
+                  <div className='notion-database-item-empty-cover'>
+                    <SiNotion />
+                  </div>
+                )
               ) : (
-                <DatabaseItemEmptyCover>
+                <div className='notion-database-item-empty-cover'>
                   <SiNotion />
-                </DatabaseItemEmptyCover>
-              )
-            ) : (
-              <DatabaseItemEmptyCover>
-                <SiNotion />
-              </DatabaseItemEmptyCover>
-            )}
-          </DatabaseItemCover>
-          <DatabaseDescriptionBox>
-            <EllipsisWrapperBox>
-              {block?.properties?.title?.title && (
-                <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+                </div>
               )}
-            </EllipsisWrapperBox>
-            <NoWrapBox>
-              <Typography>{createdAt}</Typography>
-            </NoWrapBox>
-          </DatabaseDescriptionBox>
-        </a>
-      </Link>
-    </DatabaseFlexItem>
+            </div>
+            <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
+              <div className='overflow-hidden max-h-[3.3em] [&>div>p]:line-clamp-2 [&>div>a]:line-clamp-2 [&>div>span]:line-clamp-2'>
+                {block?.properties?.title?.title && (
+                  <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+                )}
+              </div>
+              <div className='whitespace-nowrap'>
+                <p>{createdAt}</p>
+              </div>
+            </div>
+          </a>
+        </Link>
+      </div>
+    </div>
   );
 }, isEqual);
 ChildDatabaseBlock.displayName = 'ChildDatabaseBlock';
@@ -1400,9 +1183,9 @@ const VideoBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
         <VideoBlockInner block={block}></VideoBlockInner>
       </NoSsrWrapper>
       {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
-        <FullWidthBox>
+        <div className='w-full'>
           <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
-        </FullWidthBox>
+        </div>
       )}
     </>
   );
@@ -1419,45 +1202,32 @@ const VideoBlockInner: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   );
   if (error) {
     return (
-      <FullWidthBox>
-        <FlexCenterCenterBox
-          sx={{
-            py: 2,
-            backgroundColor: (theme) => theme.color.gray20
-          }}
-        >
-          <FlexAlignItemsCenterBox sx={{ color: (theme) => theme.color.notionColor_red }}>
+      <div className='w-full'>
+        <div className='flex-center py-0.5 bg-gray-900'>
+          <div className='flex items-center text-notionColor-red'>
             <IoClose />
-          </FlexAlignItemsCenterBox>
+          </div>
           &nbsp;
-          <Typography>비디오 정보를 불러올 수 없습니다.</Typography>
-        </FlexCenterCenterBox>
-      </FullWidthBox>
+          <p>비디오 정보를 불러올 수 없습니다.</p>
+        </div>
+      </div>
     );
   }
 
   if (isValidating || !data?.video?.file?.url) {
     return (
-      <FullWidthBox>
-        <FlexCenterCenterBox>
-          <CircularProgress size={30} />
-          &nbsp;
-          <Typography>비디오 정보를 불러오고 있습니다.</Typography>
-        </FlexCenterCenterBox>
-      </FullWidthBox>
+      <div className='w-full'>
+        <div className='flex-center h-[50vw] max-h-[20rem] bg-notionColor-gray_background'>
+          <p>비디오 정보를 불러오고 있습니다.</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <FullWidthBox
-      sx={{
-        '& > video': {
-          width: '100%'
-        }
-      }}
-    >
-      <video controls src={data?.video.file?.url} />
-    </FullWidthBox>
+    <div className='w-full'>
+      <video className='w-full' controls src={data?.video.file?.url} />
+    </div>
   );
 };
 
@@ -1487,7 +1257,7 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   //   const src = awsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table });
 
   //   return (
-  //     <NextImageWrapper>
+  //     <div className="relative w-full h-full font-[0px]">
   //       <Image
   //         className={'image'}
   //         {...props}
@@ -1497,21 +1267,21 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   //         objectFit={objectFit}
   //         src={src}
   //       />
-  //     </NextImageWrapper>
+  //     </div>
   //   );
   // }
   //   throw '';
   // } catch (e) {
   // }
   return (
-    <DefaultImageWrapper>
+    <div className='image-wrapper'>
       <img
         className={'image'}
         {...props}
         src={awsImageObjectUrlToNotionUrl({ s3ObjectUrl: srcProp, blockId, table })}
         loading='lazy'
       />
-    </DefaultImageWrapper>
+    </div>
   );
 };
 
