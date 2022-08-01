@@ -69,7 +69,10 @@ const Header: React.FC = (): JSX.Element => {
           </Box>
         </FlexAlignItemsCenterBox> */}
       </div>
-      <div ref={ref} className='h-0.5 bg-white bg-opacity-50 transition-all duration-100'></div>
+      <div
+        ref={ref}
+        className='h-0.5 bg-white opacity-50 transition-[background] duration-100'
+      ></div>
     </nav>
   );
 };
