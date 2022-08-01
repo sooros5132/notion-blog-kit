@@ -44,11 +44,11 @@ export const useThemeStore = create(
             ? MAX_FONT_SIZE
             : fontSize
         }))
-    })
-    // {
-    //   name: 'theme', // unique name
-    //   getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
-    //   version: 0.1
-    // }
+    }),
+    {
+      name: 'theme', // unique name
+      getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
+      version: 0.1
+    }
   )
 );
