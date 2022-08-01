@@ -42,5 +42,8 @@ module.exports = {
       }
     }
   },
+  daisyui: {
+    themes: ['light', 'dark', 'black', 'forest']
+  },
   plugins: [require('@tailwindcss/line-clamp'), require('daisyui')]
 };
