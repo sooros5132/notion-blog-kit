@@ -127,15 +127,18 @@ interface HeadingProps {
 const Heading = ({ type, children }: HeadingProps) => {
   return (
     <div
-      className={`flex ${
+      className={classnames(
+        'flex break-all',
         type === 'heading_1' || type === 'child_database'
           ? 'text-[2em]'
           : type === 'heading_2'
           ? 'text-[1.5em]'
           : type === 'normal'
           ? undefined
-          : 'text-[1.2em]'
-      } [&>div>.heading-link]:hidden [&:hover>div>.heading-link]:block`}
+          : 'text-[1.2em]',
+        'leading-[1.2em]',
+        '[&>div>.heading-link]:hidden [&:hover>div>.heading-link]:block'
+      )}
     >
       {children}
     </div>
@@ -243,7 +246,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
     : '';
 
   return (
-    <div className='w-full mb-5 text-base whitespace-pre-wrap'>
+    <div className='w-full mb-5 whitespace-pre-wrap'>
       <NextSeo
         title={title?.slice(0, 60) || '제목 없음'}
         description={description?.slice(0, 155) || undefined}
@@ -970,7 +973,6 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
       'created_time'
     ).reverse()
   );
-  const [accountEl, setAccountEl] = React.useState<null | HTMLElement>(null);
   const [sortKey, setSortKey] = useState<'created_time' | 'last_edited_time' | 'title'>(
     'created_time'
   );
@@ -984,15 +986,25 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     []
   );
 
-  const handleClickSortMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAccountEl(event.currentTarget);
-  };
-
   const handleCloseSortMenu = (prop?: typeof sortKey) => () => {
     switch (prop) {
       // 시간은 반대 개념 나머지는 정상
       case 'last_edited_time':
       case 'created_time': {
+        if (prop === sortKey) {
+          const newIsOrderAsc = !isOrderAsc;
+          setBlocks((prevBlocks) =>
+            newIsOrderAsc ? sortBy(prevBlocks, prop) : sortBy(prevBlocks, prop).reverse()
+          );
+          setSortKey(prop);
+          setIsOrderAsc(newIsOrderAsc);
+        } else {
+          setBlocks((prevBlocks) => sortBy(prevBlocks, prop));
+          setSortKey(prop);
+          setIsOrderAsc(true);
+        }
+      }
+      case 'title': {
         if (prop === sortKey) {
           const newIsOrderAsc = !isOrderAsc;
           setBlocks((prevBlocks) =>
@@ -1007,22 +1019,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
         }
         break;
       }
-      case 'title': {
-        if (prop === sortKey) {
-          const newIsOrderAsc = !isOrderAsc;
-          setBlocks((prevBlocks) =>
-            newIsOrderAsc ? sortBy(prevBlocks, prop) : sortBy(prevBlocks, prop).reverse()
-          );
-          setSortKey(prop);
-          setIsOrderAsc(newIsOrderAsc);
-        } else {
-          setBlocks((prevBlocks) => sortBy(prevBlocks, prop));
-          setSortKey(prop);
-          setIsOrderAsc(true);
-        }
-      }
     }
-    setAccountEl(null);
   };
   const hash = `${block?.child_database?.title.slice(0, 50) || ''}-${block.id.slice(0, 8)}`;
   const href = useMemo(() => `${router.asPath.replace(/\#.*/, '')}#${hash}`, [router]);
@@ -1039,28 +1036,29 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
           <div className='flex-auto'>
             <div className='flex items-center justify-between'>
               <p className='break-words break-all'>{block?.child_database?.title || '제목 없음'}</p>
-              <div className='whitespace-nowrap'>
-                <button className='btn btn-ghost btn-sm text-inherit' onClick={handleClickSortMenu}>
+              <div className='dropdown dropdown-left'>
+                <label
+                  tabIndex={0}
+                  className='m-1 text-xl whitespace-nowrap flex-nowrap btn btn-ghost btn-sm text-inherit'
+                >
                   {KorKeyRecord[sortKey]}
                   {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
-                </button>
+                </label>
+                <ul
+                  tabIndex={0}
+                  className='p-2 text-xl shadow dropdown-content menu bg-base-300 rounded-box w-52'
+                >
+                  <li onClick={handleCloseSortMenu('title')}>
+                    <a>이름</a>
+                  </li>
+                  <li onClick={handleCloseSortMenu('created_time')}>
+                    <a>생성일</a>
+                  </li>
+                  <li onClick={handleCloseSortMenu('last_edited_time')}>
+                    <a>수정일</a>
+                  </li>
+                </ul>
               </div>
-              {/* <Menu
-                anchorEl={accountEl}
-                keepMounted
-                open={Boolean(accountEl)}
-                onClose={handleCloseSortMenu()}
-              >
-                <MenuItem onClick={handleCloseSortMenu('title')}>
-                  <p>이름</p>
-                </MenuItem>
-                <MenuItem onClick={handleCloseSortMenu('created_time')}>
-                  <p>생성일</p>
-                </MenuItem>
-                <MenuItem onClick={handleCloseSortMenu('last_edited_time')}>
-                  <p>수정일</p>
-                </MenuItem>
-              </Menu> */}
             </div>
           </div>
         </Heading>
