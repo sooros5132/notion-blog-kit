@@ -48,7 +48,7 @@ export const useThemeStore = create(
     {
       name: 'theme', // unique name
       getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
-      version: 0.1
+      version: 0.2
     }
   )
 );
