@@ -1,53 +1,10 @@
 import React, { useRef } from 'react';
-import { styled } from '@mui/material/styles';
 import { AiFillThunderbolt } from 'react-icons/ai';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { throttle } from 'lodash';
-// import { FlexAlignItemsCenterBox } from '../modules/Box';
-// import { useThemeStore } from 'src/store/theme';
-// import shallow from 'zustand/shallow';
-// import { IconButton } from '@mui/material';
-// import { MdDarkMode, MdLightMode } from 'react-icons/md';
-// import { Box } from '@mui/system';
 
 interface HeaderProps {}
-
-const HeaderContainer = styled('nav')(({ theme }) => ({
-  position: 'sticky',
-  top: 0,
-  left: 0,
-  backdropFilter: 'blur(21px) brightness(0.9)',
-  backgroundColor: 'rgba(33, 33, 33, 0.68)', //'rgba(255, 255, 255, 0.05)',
-  zIndex: 1
-}));
-
-const HeaderInner = styled('div')(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  maxWidth: theme.size.maxWidth,
-  margin: '0 auto',
-  padding: '0 ' + theme.size.px8,
-  color: theme.color.textDefaultBlack,
-  fontSize: theme.size.px20
-}));
-
-const HeaderLogo = styled('div')(({ theme }) => ({
-  padding: theme.size.px6 + ' 0'
-}));
-
-const HeaderLogoInner = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  cursor: 'pointer',
-  padding: `${theme.size.px2} ${theme.size.px6}`
-}));
-
-const HeaderBar = styled('div')(({ theme }) => ({
-  height: theme.size.px2,
-  backgroundColor: 'rgba(255, 255, 255, 0.15)',
-  transition: 'background 0.1s'
-}));
 
 const Header: React.FC = (): JSX.Element => {
   // const { mode, useDarkTheme, useLightTheme } = useThemeStore(
@@ -78,18 +35,16 @@ const Header: React.FC = (): JSX.Element => {
   }, []);
 
   return (
-    <HeaderContainer>
-      <HeaderInner>
-        <HeaderLogo>
+    <nav className='sticky top-0 left-0 z-10 bg-stone-900 backdrop-blur-xl backdrop-brightness-90 bg-opacity-80'>
+      <div className='flex justify-between max-w-screen-xl px-2 mx-auto text-xl'>
+        <div className='py-1.5'>
           <Link href='/'>
-            <a>
-              <HeaderLogoInner>
-                <AiFillThunderbolt />
-                &nbsp;soolog
-              </HeaderLogoInner>
+            <a className='btn btn-ghost normal-case rounded-md btn-sm text-xl px-1.5'>
+              <AiFillThunderbolt />
+              &nbsp;soolog
             </a>
           </Link>
-        </HeaderLogo>
+        </div>
         {/* <FlexAlignItemsCenterBox>
           <Box
             sx={
@@ -113,9 +68,9 @@ const Header: React.FC = (): JSX.Element => {
             )}
           </Box>
         </FlexAlignItemsCenterBox> */}
-      </HeaderInner>
-      <HeaderBar ref={ref}></HeaderBar>
-    </HeaderContainer>
+      </div>
+      <div ref={ref} className='h-0.5 bg-white bg-opacity-50 transition-all duration-100'></div>
+    </nav>
   );
 };
 Header.displayName = 'Header';

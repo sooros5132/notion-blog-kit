@@ -3,24 +3,9 @@ import axios from 'axios';
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import Layout from 'src/components/Layout';
-import { CommonCustomTheme } from 'src/styles/CommomTheme';
 import Script from 'next/script';
 import config from 'site-setting';
-
-declare module '@mui/material/styles' {
-  interface Theme {
-    font: typeof CommonCustomTheme.font;
-    size: typeof CommonCustomTheme.size;
-    color: typeof CommonCustomTheme.color;
-    mediaQuery: typeof CommonCustomTheme.mediaQuery;
-  }
-  interface ThemeOptions {
-    font?: typeof CommonCustomTheme.font;
-    size?: typeof CommonCustomTheme.size;
-    color?: typeof CommonCustomTheme.color;
-    mediaQuery?: typeof CommonCustomTheme.mediaQuery;
-  }
-}
+import 'src/styles/globals.css';
 
 axios.defaults.baseURL = config.origin;
 axios.defaults.withCredentials = true;

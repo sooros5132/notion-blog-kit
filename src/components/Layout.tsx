@@ -1,31 +1,11 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Theme as MuiTheme, CssBaseline } from '@mui/material';
-import {
-  createTheme,
-  styled,
-  ThemeOptions,
-  ThemeProvider as MuiThemeProvider
-} from '@mui/material/styles';
 import _ from 'lodash';
 import { useThemeStore } from 'src/store/theme';
-import CommonTheme from 'src/styles/CommomTheme';
-import LightTheme from 'src/styles/LightTheme';
-import DarkTheme from 'src/styles/DarkTheme';
 import Header from './header/Header';
 import Footer from './footer/Footer';
-import { FlexColumnBox } from './modules/Box';
 import NextNProgress from 'nextjs-progressbar';
-
-const Layout = styled(FlexColumnBox)(({ theme }) => ({
-  minHeight: '100vh'
-}));
-
-const MainContent = styled('main')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  marginBottom: 'auto'
-}));
+import shallow from 'zustand/shallow';
 
 export const introductionPathnameList = [
   '/'
@@ -34,9 +14,9 @@ export const introductionPathnameList = [
   // '/introduction/mou'
 ];
 
-function SoologLayout({ children }: any) {
+function Layout({ children }: any) {
   const router = useRouter();
-  const themeStore = useThemeStore();
+  const themeStore = useThemeStore((state) => state, shallow);
 
   // React.useEffect(() => {
   //   const handleRouteChangeStart = (url: string) => {
@@ -46,46 +26,20 @@ function SoologLayout({ children }: any) {
   //   return () => router.events.off('routeChangeStart', handleRouteChangeStart);
   // }, [router.events, router]);
 
-  const theme = React.useMemo(() => {
-    let theme: MuiTheme;
-    const fontSize: ThemeOptions = {
-      components: {
-        MuiCssBaseline: {
-          styleOverrides: {
-            html: {
-              fontSize: themeStore.fontSize
-            },
-            body: {
-              fontSize: themeStore.fontSize
-            }
-          }
-        }
-      }
-    };
-    switch (themeStore.mode) {
-      case 'light': {
-        theme = createTheme(_.merge(fontSize, CommonTheme, LightTheme));
-        break;
-      }
-      case 'dark': {
-        theme = createTheme(_.merge(fontSize, CommonTheme, DarkTheme));
-        break;
-      }
+  useEffect(() => {
+    if (themeStore.mode) {
+      document.documentElement.dataset.theme = themeStore.mode;
     }
-    return theme;
   }, [themeStore]);
 
   return (
-    <MuiThemeProvider<MuiTheme> theme={theme}>
-      <CssBaseline />
+    <div className='flex flex-col min-h-screen text-neutral-900 dark:text-neutral-100'>
       <NextNProgress startPosition={0.2} />
-      <Layout>
-        <Header />
-        <MainContent>{children}</MainContent>
-        <Footer />
-      </Layout>
-    </MuiThemeProvider>
+      <Header />
+      <main className='flex flex-col mb-auto'>{children}</main>
+      <Footer />
+    </div>
   );
 }
 
-export default SoologLayout;
+export default Layout;

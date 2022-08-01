@@ -2,7 +2,7 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface Theme {
-  mode: 'dark' | 'light';
+  mode: 'dark' | 'light' | 'forest' | 'black' | 'business';
   fontSize: number;
   useDarkTheme: () => void;
   useLightTheme: () => void;
@@ -14,9 +14,9 @@ const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 18;
 
 const defaultState = {
-  mode: 'dark' as Theme['mode'],
+  mode: 'forest' as Theme['mode'],
   fontSize: DEFAULT_FONT_SIZE
-};
+} as const;
 
 const initialState = { ...defaultState };
 
@@ -44,11 +44,11 @@ export const useThemeStore = create(
             ? MAX_FONT_SIZE
             : fontSize
         }))
-    }),
-    {
-      name: 'theme', // unique name
-      getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
-      version: 0.1
-    }
+    })
+    // {
+    //   name: 'theme', // unique name
+    //   getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
+    //   version: 0.1
+    // }
   )
 );
