@@ -290,9 +290,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             'px-4 sm:px-6 lg:px-10',
             Boolean(page?.cover)
               ? page.icon?.type === 'emoji'
-                ? 'mt-[-50px]'
+                ? 'mt-[-30px]'
                 : page.icon?.type === 'file'
-                ? 'mt-[-34px]'
+                ? 'mt-[-36px]'
                 : ''
               : 'mt-[50px]',
             !Boolean(page?.cover) && page.icon?.type === 'file' && 'pt-[50px]'
