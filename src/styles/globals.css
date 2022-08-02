@@ -86,10 +86,10 @@
   }
 
   .image-wrapper {
-    @apply overflow-hidden h-full text-[0px] [&>div>img]:max-w-full;
+    @apply overflow-hidden h-full text-[0px];
   }
 
   .image-wrapper img {
-    @apply max-w-full h-full object-cover object-center;
+    @apply max-w-full object-cover object-center;
   }
 }

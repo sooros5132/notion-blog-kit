@@ -1,5 +1,5 @@
 import React, { useMemo, memo, useEffect } from 'react';
-import type { ReactNode, CSSProperties } from 'react';
+import type { ReactNode } from 'react';
 import {
   NotionBlock,
   IGetNotion,
@@ -32,7 +32,7 @@ import { useRouter } from 'next/router';
 import NoSsrWrapper from './NoSsrWrapper';
 import { fetcher } from 'src/lib/swr';
 import { IoClose } from 'react-icons/io5';
-import { filter, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 import classnames from 'classnames';
 
 interface NotionRenderProps {
@@ -128,7 +128,7 @@ const Heading = ({ type, children }: HeadingProps) => {
   return (
     <div
       className={classnames(
-        'flex break-all',
+        'font-bold flex break-all leading-[1.2em]',
         type === 'heading_1' || type === 'child_database'
           ? 'text-[2em]'
           : type === 'heading_2'
@@ -136,7 +136,6 @@ const Heading = ({ type, children }: HeadingProps) => {
           : type === 'normal'
           ? undefined
           : 'text-[1.2em]',
-        'leading-[1.2em]',
         '[&>div>.heading-link]:hidden [&:hover>div>.heading-link]:block'
       )}
     >
@@ -1126,7 +1125,7 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
       <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-75 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05]'>
         <Link href={title ? `/${title}-${block.id.slice(0, 8)}` : `/${block.id}`}>
           <a>
-            <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear  [&>div>img]:w-full'>
+            <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear [&>div>img]:w-full [&>div>img]:h-full'>
               {block?.cover ? (
                 <NotionSecureImage
                   src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
