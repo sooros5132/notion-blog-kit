@@ -52,10 +52,10 @@ interface ParagraphTextProps {
 
 const paragraphTextConfig = {
   code: {
-    once: 'rounded-l rounded-r py-0.5 px-1 bg-notionColor-red_background font-mono',
-    first: 'rounded-l py-0.5 pl-1 bg-notionColor-red_background font-mono',
-    last: 'rounded-r py-0.5 pr-1 bg-notionColor-red_background font-mono',
-    middle: 'py-0.5 bg-notionColor-red_background font-mono'
+    once: 'rounded-l rounded-r py-[0.0625rem] px-0.5 bg-notionColor-red_background font-mono',
+    first: 'rounded-l py-[0.0625rem] pl-0.5 bg-notionColor-red_background font-mono',
+    last: 'rounded-r py-[0.0625rem] pr-0.5 bg-notionColor-red_background font-mono',
+    middle: 'py-[0.0625rem] bg-notionColor-red_background font-mono'
   }
 } as const;
 
@@ -280,7 +280,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
 
       <div>
         {page?.cover?.[page?.cover?.type]?.url && (
-          <div className='h-[30vh] overflow-hidden [&>div>img]:w-full'>
+          <div className='h-[30vh] overflow-hidden [&>div>img]:w-full [&>div>img]:h-full'>
             <NotionSecureImage blockId={page.id} src={page?.cover?.[page?.cover?.type]?.url!} />
           </div>
         )}
@@ -616,7 +616,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <div className='flex'>
-                  <div className='flex items-center max-h-7 basis-6 text-sm flex-initial py-0.5'>
+                  <div className='flex items-center max-h-7 basis-6 shrink-0 text-sm flex-initial py-0.5'>
                     <GoPrimitiveDot />
                   </div>
                   <div className='flex-auto'>

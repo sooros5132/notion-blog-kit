@@ -2,7 +2,7 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface Theme {
-  mode: 'dark' | 'light' | 'forest' | 'black' | 'business';
+  mode: 'dark' | 'light' | 'forest' | 'black';
   fontSize: number;
   useDarkTheme: () => void;
   useLightTheme: () => void;

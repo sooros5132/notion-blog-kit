@@ -35,7 +35,7 @@ const Header: React.FC = (): JSX.Element => {
   }, []);
 
   return (
-    <nav className='sticky top-0 left-0 z-10 bg-stone-900 backdrop-blur-xl backdrop-brightness-90 bg-opacity-80'>
+    <nav className='sticky top-0 left-0 z-10 bg-stone-900 backdrop-blur-xl backdrop-brightness-120 bg-opacity-60'>
       <div className='flex justify-between max-w-screen-xl px-2 mx-auto text-xl'>
         <div className='py-1.5'>
           <Link href='/'>

@@ -6,7 +6,7 @@ interface FooterProps {}
 
 const Footer: React.FC = (): JSX.Element => {
   return (
-    <footer className='p-14 footer footer-center bg-neutral text-primary'>
+    <footer className='p-14 footer footer-center bg-primary text-primary-content'>
       <div>
         <p className='text-6xl font-bold'>soolog</p>
         <p>
@@ -37,7 +37,7 @@ const Footer: React.FC = (): JSX.Element => {
           </a>
           <a
             className='tooltip'
-            data-tip='GitHub Repository'
+            data-tip='soolog Repository'
             href='https://github.com/sooros5132/soolog'
             rel='noreferrer'
             target='_blank'
