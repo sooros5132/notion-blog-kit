@@ -368,7 +368,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
           )}
         </div>
       </div>
-      <div className='max-w-screen-lg px-4 mx-auto sm:px-6 lg:px-10'>
+      <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:my-0.5'>
         {page.object === 'page' ? (
           <NotionContentContainer blocks={blocks} />
         ) : page.object === 'database' ? (
@@ -398,7 +398,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
   const childrenDepth = useRef(0);
 
   return (
-    <div>
+    <>
       {blocks.blocks?.results.map((block, i) => {
         numberOfSameTag.current =
           blocks.blocks.results?.[i - 1]?.type === block.type ? numberOfSameTag.current + 1 : 0;
@@ -690,7 +690,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
 
         return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
       })}
-    </div>
+    </>
   );
 };
 
