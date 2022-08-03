@@ -499,7 +499,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <div className='flex'>
-                  <div className='flex-initial py-0.5 basis-6 text-right'>
+                  <div className='flex-initial pt-0.5 basis-6 text-right'>
                     {numberOfSameTag.current + 1}.
                   </div>
                   <div className='flex-auto'>
