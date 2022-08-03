@@ -2,7 +2,7 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface Theme {
-  mode: 'dark' | 'light' | 'forest' | 'black';
+  mode: 'dark' | 'light' | 'black' | 'halloween';
   fontSize: number;
   useDarkTheme: () => void;
   useLightTheme: () => void;
@@ -14,7 +14,7 @@ const MIN_FONT_SIZE = 12;
 const MAX_FONT_SIZE = 18;
 
 const defaultState = {
-  mode: 'forest' as Theme['mode'],
+  mode: 'halloween' as Theme['mode'],
   fontSize: DEFAULT_FONT_SIZE
 } as const;
 
@@ -48,7 +48,7 @@ export const useThemeStore = create(
     {
       name: 'theme', // unique name
       getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
-      version: 0.2
+      version: 0.3
     }
   )
 );
