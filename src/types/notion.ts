@@ -228,6 +228,12 @@ interface TableRowObject {
   cells: Array<Array<RichText>>;
 }
 
+interface TodoObject {
+  rich_text: Array<RichText>;
+  checked: boolean;
+  color: Color;
+}
+
 export interface NotionBlockItem
   extends Record<
     BlockType,
@@ -245,7 +251,7 @@ export interface NotionBlockItem
   heading_3: RichTextObject;
   bulleted_list_item: RichTextObject;
   numbered_list_item: RichTextObject;
-  to_do: RichTextObject;
+  to_do: TodoObject;
   toggle: RichTextObject;
   child_page: RichTextObject;
   child_database: RichTextTitle;

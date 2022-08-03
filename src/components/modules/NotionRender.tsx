@@ -553,6 +553,33 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               </NotionBlockRender>
             );
           }
+          case 'to_do': {
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <div className='flex'>
+                  <div className='flex-initial py-0.5 basis-6 pr-1 text-right flex-center'>
+                    <input
+                      type='checkbox'
+                      defaultChecked={block?.to_do?.checked ?? false}
+                      className='w-5 h-5 rounded-md checkbox'
+                    />
+                  </div>
+                  <div className='flex-auto'>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block.to_do.rich_text}
+                      color={block.to_do.color}
+                    />
+                  </div>
+                </div>
+              </NotionBlockRender>
+            );
+          }
           case 'code': {
             return (
               <NotionBlockRender
