@@ -33,7 +33,7 @@ function Layout({ children }: any) {
   }, [themeStore]);
 
   return (
-    <div className='flex flex-col min-h-screen text-neutral-900 dark:text-neutral-100'>
+    <div className='flex flex-col min-h-screen bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-300'>
       <NextNProgress startPosition={0.2} />
       <Header />
       <main className='flex flex-col mb-auto'>{children}</main>
