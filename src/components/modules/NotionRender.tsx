@@ -591,7 +591,6 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 <SyntaxHighlighter
                   language={block?.code?.language || undefined}
                   style={vscDarkPlus}
-                  showLineNumbers
                   lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}
                 >
                   {block?.code?.rich_text?.map((text) => text?.plain_text ?? '').join('')}
