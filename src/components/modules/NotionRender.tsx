@@ -562,11 +562,11 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <div className='flex'>
-                  <div className='flex-initial py-0.5 basis-6 pr-1 text-right flex-center'>
+                  <div className='flex-initial pt-1 pr-1 text-right basis-6'>
                     <input
                       type='checkbox'
                       defaultChecked={block?.to_do?.checked ?? false}
-                      className='w-5 h-5 rounded-md checkbox'
+                      className='w-4 h-4 rounded-sm checkbox'
                     />
                   </div>
                   <div className='flex-auto'>
@@ -574,6 +574,10 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                       blockId={block.id}
                       richText={block.to_do.rich_text}
                       color={block.to_do.color}
+                      annotations={{
+                        color: block?.to_do?.checked ? 'gray' : undefined,
+                        strikethrough: block?.to_do?.checked ? true : undefined
+                      }}
                     />
                   </div>
                 </div>
@@ -863,9 +867,15 @@ interface ParagraphProps {
   blockId: string;
   richText: Array<RichText>;
   color?: Color;
+  annotations?: Partial<RichText['annotations']>;
 }
 
-const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
+const Paragraph: React.FC<ParagraphProps> = ({
+  blockId,
+  richText,
+  color,
+  annotations: annotationsProps
+}) => {
   if (!Array.isArray(richText)) {
     return null;
   }
@@ -876,8 +886,12 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
         'break-all',
         'min-h-[1.25em]',
         'p-0.5',
-        color && color !== 'default' && !color.match(/_background$/) && notionColor[color],
-        color && color.match(/_background$/) && notionColor[color]
+        color && color !== 'default' && !color.match(/_background$/)
+          ? notionColor[color]
+          : annotationsProps?.color
+          ? notionColor['gray']
+          : '',
+        color && color.match(/_background$/) ? notionColor[color] : ''
       )}
     >
       {richText.map((text, i) => {
@@ -901,10 +915,11 @@ const Paragraph: React.FC<ParagraphProps> = ({ blockId, richText, color }) => {
         const nextTextIsCode = code && richText[i + 1]?.annotations.code;
 
         const annotations: Partial<ParagraphTextProps> = {
-          bold: bold ? 'bold' : undefined,
-          italic: italic ? 'italic' : undefined,
-          strikethrough: strikethrough ? 'line-through' : undefined,
-          underline: underline ? 'underline' : undefined,
+          bold: annotationsProps?.bold || bold ? 'bold' : undefined,
+          italic: annotationsProps?.italic || italic ? 'italic' : undefined,
+          strikethrough:
+            annotationsProps?.strikethrough || strikethrough ? 'line-through' : undefined,
+          underline: annotationsProps?.underline || underline ? 'underline' : undefined,
           color: color ? color : undefined,
           code: code
             ? !prevTextIsCode && !nextTextIsCode
