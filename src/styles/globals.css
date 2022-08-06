@@ -98,6 +98,16 @@
     @apply flex-center text-[8em] text-gray-300 overflow-hidden h-full;
   }
 
+  .notion-heading-link-copy .heading-link {
+    @apply hidden;
+  }
+
+  .notion-heading-link-copy:hover .heading-link,
+  .notion-heading-link-copy:active .heading-link,
+  .notion-heading-link-copy:focus .heading-link {
+    @apply inline;
+  }
+
   .image-wrapper {
     @apply overflow-hidden h-full text-[0px];
   }

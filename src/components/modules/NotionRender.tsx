@@ -135,7 +135,7 @@ const Heading = ({ type, children }: HeadingProps) => {
           : type === 'normal'
           ? undefined
           : 'text-[1.2em]',
-        '[&>div>.heading-link]:hidden [&:hover>div>.heading-link]:block'
+        'notion-heading-link-copy'
       )}
     >
       {children}
@@ -314,14 +314,12 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             )}
           >
             <Heading type={'normal'}>
-              <div>
-                <CopyHeadingLink href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
-                  <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
-                    <a>🔗</a>
-                  </Link>
-                </CopyHeadingLink>
-              </div>
               <ParagraphText>{title || '제목 없음'}</ParagraphText>
+              <CopyHeadingLink href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+                <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+                  <a>&nbsp;🔗</a>
+                </Link>
+              </CopyHeadingLink>
             </Heading>
           </div>
           <p className='text-opacity-50 text-base-content'>
@@ -838,12 +836,12 @@ const HeadingBlock: React.FC<NotionChildrenRenderProps> = ({ block }) => {
   return (
     <HeadingContainer id={hash}>
       <Heading type={type}>
-        <div className='flex items-center'>
-          <CopyHeadingLink href={href}>
-            <a href={'#' + hash}>🔗</a>
-          </CopyHeadingLink>
-        </div>
-        <Paragraph blockId={block.id} richText={block[type].rich_text} color={block[type].color} />
+        <Paragraph
+          blockId={block.id}
+          richText={block[type].rich_text}
+          color={block[type].color}
+          headingLink={'#' + hash}
+        />
       </Heading>
     </HeadingContainer>
   );
@@ -859,9 +857,9 @@ const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode }> = (
     href && copyTextAtClipBoard(href);
   };
   return (
-    <div className='mr-1 heading-link' onClick={handleClick(href)}>
+    <span className='heading-link' onClick={handleClick(href)}>
       {children}
-    </div>
+    </span>
   );
 };
 
@@ -870,13 +868,15 @@ interface ParagraphProps {
   richText: Array<RichText>;
   color?: Color;
   annotations?: Partial<RichText['annotations']>;
+  headingLink?: string;
 }
 
 const Paragraph: React.FC<ParagraphProps> = ({
   blockId,
   richText,
   color,
-  annotations: annotationsProps
+  annotations: annotationsProps,
+  headingLink
 }) => {
   if (!Array.isArray(richText)) {
     return null;
@@ -953,6 +953,11 @@ const Paragraph: React.FC<ParagraphProps> = ({
           </ParagraphText>
         );
       })}
+      {headingLink && (
+        <CopyHeadingLink href={headingLink}>
+          <a href={headingLink}>&nbsp;🔗</a>
+        </CopyHeadingLink>
+      )}
     </div>
   );
 };
@@ -1058,14 +1063,14 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
     <div>
       <HeadingContainer id={hash}>
         <Heading type={block.type as 'child_database'}>
-          <div className='flex items-center'>
-            <CopyHeadingLink href={href}>
-              <a href={'#' + hash}>🔗</a>
-            </CopyHeadingLink>
-          </div>
           <div className='flex-auto'>
             <div className='flex items-center justify-between'>
-              <p className='break-words break-all'>{block?.child_database?.title || '제목 없음'}</p>
+              <p className='break-words break-all'>
+                {block?.child_database?.title || '제목 없음'}
+                <CopyHeadingLink href={href}>
+                  <a href={'#' + hash}>&nbsp;🔗</a>
+                </CopyHeadingLink>
+              </p>
               <div className='dropdown dropdown-left'>
                 <label
                   tabIndex={0}
