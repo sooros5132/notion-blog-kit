@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer components {
-  html.nprogress-busy > body > #nprogress > .spinner {
-    display: none;
-  }
-
   .flex-align-items-center {
     @apply flex items-center;
   }
@@ -109,4 +105,8 @@
   .image-wrapper img {
     @apply max-w-full object-cover object-center;
   }
+}
+
+html.nprogress-busy > body > #nprogress > .spinner {
+  display: none;
 }
