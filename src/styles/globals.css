@@ -81,6 +81,23 @@
     background-color: 'rgba(253, 235, 236, 1)';
   }
 
+  .notion-toggle > summary {
+    @apply list-none;
+  }
+
+  .notion-toggle > summary::-webkit-details-marker {
+    @apply hidden;
+  }
+
+  .notion-toggle > summary::before {
+    @apply block basis-6 shrink-0 font-mono text-center;
+    content: '▶';
+  }
+
+  .notion-toggle[open]:not([open='false']) > summary::before {
+    content: '▼';
+  }
+
   .notion-database-item-empty-cover {
     @apply flex-center text-[8em] text-gray-300 overflow-hidden h-full;
   }
