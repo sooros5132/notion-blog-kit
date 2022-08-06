@@ -165,7 +165,7 @@ const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) 
   return (
     <div
       className={classnames(
-        'py-1.5 px-3 pl-1.5 my-0.5',
+        'py-1.5 pr-3 pl-1.5',
         color && color !== 'default' && !color.match(/_background$/) && notionColor[color],
         color && color.match(/_background$/) && notionColor[color]
       )}
@@ -367,7 +367,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
           )}
         </div>
       </div>
-      <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:my-0.5'>
+      <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
         {page.object === 'page' ? (
           <NotionContentContainer blocks={blocks} />
         ) : page.object === 'database' ? (
@@ -738,29 +738,31 @@ const TableBlock: React.FC<TableBlockProps> = ({ block, blocks, chilrenBlockDept
   }
 
   return (
-    <Table
-      has_column_header={`${Boolean(block.table.has_column_header)}`}
-      has_row_header={`${Boolean(block.table.has_row_header)}`}
-    >
-      {/* <thead>
-        <tr>
-          {[...new Array(block.table.table_width)].map((i) => (
-            <th key={`table-head-th-${i}`}></th>
-          ))}
-        </tr>
-      </thead> */}
-      <tbody>
-        {tbodyBlock.results.map((rowBlock, rowIdx) => (
-          <tr key={`table-row-${rowBlock.id}`}>
-            {rowBlock.table_row.cells.map((cellBlocks, cellIdx) => (
-              <td key={`table-row-${rowBlock.id}-cell-${cellIdx}`}>
-                <Paragraph blockId={rowBlock.id} richText={cellBlocks} />
-              </td>
+    <div>
+      <Table
+        has_column_header={`${Boolean(block.table.has_column_header)}`}
+        has_row_header={`${Boolean(block.table.has_row_header)}`}
+      >
+        {/* <thead>
+          <tr>
+            {[...new Array(block.table.table_width)].map((i) => (
+              <th key={`table-head-th-${i}`}></th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead> */}
+        <tbody>
+          {tbodyBlock.results.map((rowBlock, rowIdx) => (
+            <tr key={`table-row-${rowBlock.id}`}>
+              {rowBlock.table_row.cells.map((cellBlocks, cellIdx) => (
+                <td key={`table-row-${rowBlock.id}-cell-${cellIdx}`}>
+                  <Paragraph blockId={rowBlock.id} richText={cellBlocks} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
   );
 };
 
@@ -806,7 +808,7 @@ const NotionBlockRender: React.FC<NotionBlockProps> = ({
   chilrenBlockDepth
 }) => {
   return (
-    <div className='mx-0.5'>
+    <div>
       {children}
       {block?.has_children && typeof chilrenBlockDepth === 'number' && chilrenBlockDepth > 0 && (
         <div className='ml-6'>
@@ -967,7 +969,7 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
     setOpen((prev) => !prev);
   };
   return (
-    <div className={notionColor[block.toggle.color]}>
+    <div className={block.toggle.color !== 'default' ? notionColor[block.toggle.color] : undefined}>
       <NotionBlockRender
         block={block}
         blocks={blocks}
