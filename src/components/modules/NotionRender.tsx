@@ -18,7 +18,6 @@ import { useState } from 'react';
 import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
 import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
-import { GoPrimitiveDot } from 'react-icons/go';
 import isEqual from 'react-fast-compare';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
@@ -638,6 +637,7 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
             );
           }
           case 'bulleted_list_item': {
+            const dots = ['•', '◦', '▪'];
             return (
               <NotionBlockRender
                 key={`block-${block.id}-${i}`}
@@ -646,8 +646,8 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <div className='flex'>
-                  <div className='flex items-center max-h-7 basis-6 shrink-0 text-sm flex-initial py-0.5'>
-                    <GoPrimitiveDot />
+                  <div className='flex-initial text-2xl flex-center max-h-7 basis-6 shrink-0'>
+                    {dots[0]}
                   </div>
                   <div className='flex-auto'>
                     <Paragraph
