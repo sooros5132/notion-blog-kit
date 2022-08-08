@@ -15,7 +15,6 @@ import { ImageProps } from 'next/image';
 import { NextSeo } from 'next-seo';
 import { useRef } from 'react';
 import { useState } from 'react';
-import { TiChevronRight } from 'react-icons/ti';
 import Head from 'next/head';
 import { BsArrowDownShort, BsArrowUpShort } from 'react-icons/bs';
 import isEqual from 'react-fast-compare';
@@ -33,6 +32,7 @@ import { fetcher } from 'src/lib/swr';
 import { IoClose } from 'react-icons/io5';
 import { sortBy } from 'lodash';
 import classnames from 'classnames';
+import { LinkPreview } from 'src/types/types';
 
 interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -279,7 +279,7 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
 
       <div>
         {page?.cover?.[page?.cover?.type]?.url && (
-          <div className='h-[30vh] overflow-hidden [&>div>img]:w-full [&>div>img]:h-full'>
+          <div className='h-[30vh] overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
             <NotionSecureImage blockId={page.id} src={page?.cover?.[page?.cover?.type]?.url!} />
           </div>
         )}
@@ -332,7 +332,6 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                   locale: koLocale
                 }
               )}`}
-
             {typeof page?.last_edited_time === 'string' ? (
               <NoSsrWrapper>
                 {`, ${formatDistance(
@@ -406,9 +405,9 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
           case 'child_database': {
             return (
               <ChildDatabase
+                key={`block-${block.id}-${i}`}
                 block={block}
                 databases={blocks.databaseBlocks}
-                key={`block-${block.id}-${i}`}
               />
             );
           }
@@ -442,7 +441,12 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               </NotionBlockRender>
             );
           }
-          case 'bookmark': {
+          case 'link_preview': {
+            const url = block.link_preview.url;
+            if (!url) {
+              return <ParagraphText></ParagraphText>;
+            }
+
             return (
               <NotionBlockRender
                 key={`block-${block.id}-${i}`}
@@ -450,17 +454,33 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
-                <div className='break-all min-h-[1.25em] p-0.5'>
-                  <a
-                    className='underline'
-                    key={`block-${block.id}-${i}`}
-                    href={notionBlockUrlToRelativePath(block.bookmark.url)}
-                    rel='noreferrer'
-                    target='_blank'
-                  >
-                    {block.bookmark.url}
-                  </a>
-                </div>
+                <LinkPreviewBlock key={`block-${block.id}`} url={url} />
+              </NotionBlockRender>
+            );
+          }
+          case 'bookmark': {
+            const url = block.bookmark.url;
+            if (!url) {
+              return <ParagraphText></ParagraphText>;
+            }
+
+            return (
+              <NotionBlockRender
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              >
+                <LinkPreviewBlock key={`block-${block.id}`} url={url} />
+                {Array.isArray(block?.bookmark?.caption) && block?.bookmark?.caption?.length > 0 && (
+                  <div className='w-full'>
+                    <Paragraph
+                      blockId={block.id}
+                      richText={block.bookmark.caption}
+                      color={'gray'}
+                    />
+                  </div>
+                )}
               </NotionBlockRender>
             );
           }
@@ -661,13 +681,13 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
           case 'column_list': {
             return (
               <div
+                key={`block-${block.id}-${i}`}
                 className='grid gap-x-2 [&>*]:overflow-x-auto'
                 style={{
                   gridTemplateColumns: `repeat(${
                     blocks['childrenBlocks'][block.id]?.results.length ?? 1
                   }, 1fr)`
                 }}
-                key={`block-${block.id}-${i}`}
               >
                 {blocks['childrenBlocks'][block.id]?.results.map((block, i) => {
                   return (
@@ -695,23 +715,14 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
               />
             );
           }
-          case 'link_preview': {
-            const href = block.link_preview.url;
-            return (
-              <a
-                className='underline'
-                key={`block-anchor-${block.id}-${i}`}
-                href={notionBlockUrlToRelativePath(href)}
-                rel='noreferrer'
-                target='_blank'
-              >
-                <ParagraphText>{href}</ParagraphText>
-              </a>
-            );
-          }
           case 'table': {
             return (
-              <TableBlock block={block} blocks={blocks} chilrenBlockDepth={childrenDepth.current} />
+              <TableBlock
+                key={`block-${block.id}-${i}`}
+                block={block}
+                blocks={blocks}
+                chilrenBlockDepth={childrenDepth.current}
+              />
             );
           }
         }
@@ -719,6 +730,65 @@ const NotionContentContainer: React.FC<NotionContentContainerProps> = ({ blocks 
         return <React.Fragment key={`block-${block.id}-${i}`}></React.Fragment>;
       })}
     </>
+  );
+};
+
+const LinkPreviewBlock: React.FC<{ url: string }> = ({ url }) => {
+  const { data, error, isValidating } = useSWR<LinkPreview>(
+    `${config.path}/linkPreview/${encodeURIComponent(url)}`,
+    fetcher,
+    {
+      revalidateOnFocus: false
+    }
+  );
+
+  const relativePath = notionBlockUrlToRelativePath(url);
+
+  if (error || isValidating) {
+    return (
+      <a className='underline' href={relativePath} rel='noreferrer' target='_blank'>
+        <ParagraphText>{url}</ParagraphText>
+      </a>
+    );
+  }
+
+  return (
+    <a href={relativePath} rel='noreferrer' target='_blank'>
+      <div className='flex-col-reverse rounded-sm shadow-xl card card-side bg-base-100 sm:flex-row'>
+        <div className='px-4 py-3 card-body'>
+          <h2 className='text-lg card-title line-clamp-2'>
+            <ParagraphText>{data?.title}</ParagraphText>
+          </h2>
+          <p className='flex-grow-0 text-sm line-clamp-3 text-notionColor-gray'>
+            <ParagraphText>{data?.description}</ParagraphText>
+          </p>
+          <div className='mt-auto text-sm'>
+            <div className='flex-grow-0 break-all flex-align-items-center gap-x-1 text-ellipsis'>
+              {data?.icon && (
+                <img
+                  className='w-[1.2em] h-[1.2em]'
+                  src={data.icon.charAt(0) === '/' ? new URL(data.icon, url).href : data.icon}
+                />
+              )}
+              <p>{url}</p>
+            </div>
+          </div>
+        </div>
+        {data?.image?.url && (
+          <figure className='image-wrapper shrink-0 max-w-none sm:min-h-full sm:max-w-[200px] md:max-w-[300px] lg:max-w-[350px]'>
+            <img
+              className='w-full sm:h-full max-h-[175px]'
+              src={
+                data.image.url.charAt(0) === '/'
+                  ? new URL(data.image.url, url).href
+                  : data.image.url
+              }
+              alt={data?.image?.alt ?? undefined}
+            />
+          </figure>
+        )}
+      </div>
+    </a>
   );
 };
 
@@ -1158,10 +1228,10 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
     //   }
     // }
     <div>
-      <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-75 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05]'>
+      <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
         <Link href={title ? `/${title}-${block.id.slice(0, 8)}` : `/${block.id}`}>
           <a>
-            <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear [&>div>img]:w-full [&>div>img]:h-full'>
+            <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear '>
               {block?.cover ? (
                 <NotionSecureImage
                   src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}

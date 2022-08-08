@@ -95,7 +95,7 @@
   }
 
   .notion-database-item-empty-cover {
-    @apply flex-center text-[8em] text-gray-300 overflow-hidden h-full;
+    @apply flex-center text-[8em] text-gray-300 overflow-hidden h-full transition-[transform] duration-200 ease-linear;
   }
 
   .notion-heading-link-copy .heading-link {
@@ -109,7 +109,7 @@
   }
 
   .image-wrapper {
-    @apply overflow-hidden h-full text-[0px];
+    @apply overflow-hidden text-[0px];
   }
 
   .image-wrapper img {
