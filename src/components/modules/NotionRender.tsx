@@ -383,6 +383,62 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
             databases={{ [page.id]: blocks.blocks as unknown as NotionDatabasesQuery }}
           />
         ) : null}
+
+        {page?.id && (
+          <div className='flex justify-end pt-5'>
+            {process.env.NODE_ENV === 'production' ? (
+              <img
+                src={`https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(
+                  `${config.origin}/${page.id}`
+                )}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false`}
+              />
+            ) : (
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                xmlnsXlink='http://www.w3.org/1999/xlink'
+                width='75'
+                height='20'
+              >
+                <linearGradient id='smooth' x2='0' y2='100%'>
+                  <stop offset='0' stop-color='#bbb' stop-opacity='.1' />
+                  <stop offset='1' stop-opacity='.1' />
+                </linearGradient>
+
+                <mask id='round'>
+                  <rect width='75' height='20' rx='3' ry='3' fill='#fff' />
+                </mask>
+
+                <g mask='url(#round)'>
+                  <rect width='30' height='20' fill='#555555' />
+                  <rect x='30' width='45' height='20' fill='#79C83D' />
+                  <rect width='75' height='20' fill='url(#smooth)' />
+                </g>
+
+                <g
+                  fill='#fff'
+                  text-anchor='middle'
+                  font-family='Verdana,DejaVu Sans,Geneva,sans-serif'
+                  font-size='11'
+                >
+                  <text x='16' y='15' fill='#010101' fill-opacity='.3'>
+                    hits
+                  </text>
+                  <text x='16' y='14' fill='#fff'>
+                    hits
+                  </text>
+                  <text x='51.5' y='15' fill='#010101' fill-opacity='.3'>
+                    {' '}
+                    1 / 1{' '}
+                  </text>
+                  <text x='51.5' y='14' fill='#fff'>
+                    {' '}
+                    1 / 1{' '}
+                  </text>
+                </g>
+              </svg>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
