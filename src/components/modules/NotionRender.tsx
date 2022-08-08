@@ -249,7 +249,10 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
         title={title?.slice(0, 60) || '제목 없음'}
         description={description?.slice(0, 155) || undefined}
         openGraph={{
-          url: config.origin + slug?.charAt(0) === '/' ? slug : '/' + slug,
+          url:
+            config.origin + slug?.charAt(0) === '/'
+              ? config.origin + slug
+              : config.origin + '/' + slug,
           images: url
             ? [
                 {
