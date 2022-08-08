@@ -214,7 +214,7 @@ interface CaptionObject {
 }
 
 interface BookmarkObject {
-  caption: RichTextObject[];
+  caption: Array<RichText>;
   url: string;
 }
 
