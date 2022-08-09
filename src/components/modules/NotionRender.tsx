@@ -400,8 +400,8 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                 height='20'
               >
                 <linearGradient id='smooth' x2='0' y2='100%'>
-                  <stop offset='0' stop-color='#bbb' stop-opacity='.1' />
-                  <stop offset='1' stop-opacity='.1' />
+                  <stop offset='0' stopColor='#bbb' stopOpacity='.1' />
+                  <stop offset='1' stopOpacity='.1' />
                 </linearGradient>
 
                 <mask id='round'>
@@ -416,17 +416,17 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
 
                 <g
                   fill='#fff'
-                  text-anchor='middle'
-                  font-family='Verdana,DejaVu Sans,Geneva,sans-serif'
-                  font-size='11'
+                  textAnchor='middle'
+                  fontFamily='Verdana,DejaVu Sans,Geneva,sans-serif'
+                  fontSize='11'
                 >
-                  <text x='16' y='15' fill='#010101' fill-opacity='.3'>
+                  <text x='16' y='15' fill='#010101' fillOpacity='.3'>
                     hits
                   </text>
                   <text x='16' y='14' fill='#fff'>
                     hits
                   </text>
-                  <text x='51.5' y='15' fill='#010101' fill-opacity='.3'>
+                  <text x='51.5' y='15' fill='#010101' fillOpacity='.3'>
                     {' '}
                     1 / 1{' '}
                   </text>
