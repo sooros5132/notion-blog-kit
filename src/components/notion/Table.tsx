@@ -26,9 +26,9 @@ const Table: React.FC<TableProps> = ({ block, blocks, chilrenBlockDepth }) => {
           '[&>tbody>tr>td]:py-1',
           '[&>tbody>tr>td]:px-2',
           Boolean(block.table.has_row_header) === true &&
-            '[&>tbody>tr>td:first-of-type]:bg-notionColor-orange_background/25',
+            '[&>tbody>tr>td:first-of-type]:bg-notionColor-gray_background/40',
           Boolean(block.table.has_column_header) === true &&
-            '[&>tbody>tr:first-of-type]:bg-notionColor-orange_background/25'
+            '[&>tbody>tr:first-of-type]:bg-notionColor-gray_background/40'
         )}
       >
         {/* <thead>
