@@ -1,4 +1,4 @@
-import { NotionBlock } from 'src/types/notion';
+import type { NotionBlock } from 'src/types/notion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { NotionParagraphBlock } from '.';

@@ -17,10 +17,15 @@ import { ko as koLocale } from 'date-fns/locale';
 import NoSsrWrapper from '../../lib/NoSsrWrapper';
 import classnames from 'classnames';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import { CopyHeadingLink, HeadingInner } from './Heading';
-import NotionSecureImage from './NotionSecureImage';
-import { ParagraphText, notionColorClasses } from './Paragraph';
-import { NotionBlocksRender, NotionChildDatabaseBlock } from '.';
+import {
+  NotionBlocksRender,
+  NotionChildDatabaseBlock,
+  NotionCopyHeadingLink,
+  NotionHeadingInner,
+  NotionParagraphText,
+  NotionSecureImage,
+  notionColorClasses
+} from '.';
 
 export interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -152,14 +157,16 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
               'mb-3 text-[40px] font-bold'
             )}
           >
-            <HeadingInner type={'normal'}>
-              <ParagraphText>{title || '제목 없음'}</ParagraphText>
-              <CopyHeadingLink href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+            <NotionHeadingInner type={'normal'}>
+              <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
+              <NotionCopyHeadingLink
+                href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}
+              >
                 <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
                   <a>&nbsp;🔗</a>
                 </Link>
-              </CopyHeadingLink>
-            </HeadingInner>
+              </NotionCopyHeadingLink>
+            </NotionHeadingInner>
           </div>
           <p className='text-opacity-50 text-base-content'>
             {typeof page?.created_time === 'string' &&

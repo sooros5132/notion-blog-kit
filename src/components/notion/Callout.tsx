@@ -1,9 +1,7 @@
 import classnames from 'classnames';
-import { ReactNode } from 'react';
-import { Color, NotionBlock, IGetNotion } from 'src/types/notion';
-import NotionBlockRender from './BlockRender';
-import NotionSecureImage from './NotionSecureImage';
-import Paragraph, { notionColorClasses } from './Paragraph';
+import type { ReactNode } from 'react';
+import type { Color, NotionBlock, IGetNotion } from 'src/types/notion';
+import { NotionBlockRender, NotionParagraphBlock, NotionSecureImage, notionColorClasses } from '.';
 
 interface CalloutBlockContainerProps {
   color: Color;
@@ -45,7 +43,7 @@ const Callout: React.FC<CalloutProps> = ({ block, blocks, chilrenBlockDepth }) =
                 block.callout?.icon?.emoji}
             </div>
           </div>
-          <Paragraph blockId={block.id} richText={block.callout.rich_text} />
+          <NotionParagraphBlock blockId={block.id} richText={block.callout.rich_text} />
         </div>
       </NotionBlockRender>
     </CalloutBlockContainer>

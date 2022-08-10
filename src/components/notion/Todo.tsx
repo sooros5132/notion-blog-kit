@@ -1,4 +1,4 @@
-import { NotionBlock } from 'src/types/notion';
+import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 
 interface TodoProps {

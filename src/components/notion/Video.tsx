@@ -2,9 +2,9 @@ import { IoClose } from 'react-icons/io5';
 import config from 'site-setting';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';
 import { fetcher } from 'src/lib/swr';
-import { NotionBlock } from 'src/types/notion';
+import type { NotionBlock } from 'src/types/notion';
 import useSWR from 'swr';
-import Paragraph from './Paragraph';
+import { NotionParagraphBlock } from '.';
 
 interface VideoProps {
   block: NotionBlock;
@@ -18,7 +18,7 @@ const Video: React.FC<VideoProps> = ({ block }) => {
       </NoSsrWrapper>
       {Array.isArray(block?.video?.caption) && block?.video?.caption?.length > 0 && (
         <div className='w-full'>
-          <Paragraph blockId={block.id} richText={block.video.caption} color={'gray'} />
+          <NotionParagraphBlock blockId={block.id} richText={block.video.caption} color={'gray'} />
         </div>
       )}
     </>

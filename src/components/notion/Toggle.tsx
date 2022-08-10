@@ -1,6 +1,5 @@
-import { NotionBlock, IGetNotion } from 'src/types/notion';
-import NotionBlockRender from './BlockRender';
-import Paragraph, { notionColorClasses } from './Paragraph';
+import type { NotionBlock, IGetNotion } from 'src/types/notion';
+import { NotionBlockRender, NotionParagraphBlock, notionColorClasses } from '.';
 
 interface ToggleProps {
   block: NotionBlock;
@@ -18,7 +17,7 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
       <details className='notion-toggle'>
         <summary className='flex cursor-pointer marker'>
           <div className='flex-auto'>
-            <Paragraph blockId={block.id} richText={block.toggle.rich_text} />
+            <NotionParagraphBlock blockId={block.id} richText={block.toggle.rich_text} />
           </div>
         </summary>
         <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth} />

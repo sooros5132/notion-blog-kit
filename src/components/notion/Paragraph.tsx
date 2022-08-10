@@ -1,9 +1,9 @@
 import classnames from 'classnames';
-import type { ReactNode, FC } from 'react';
+import type { ReactNode } from 'react';
 import { Fragment } from 'react';
 import { notionBlockUrlToRelativePath } from 'src/lib/notion';
-import { Color, RichText } from 'src/types/notion';
-import { CopyHeadingLink } from './Heading';
+import type { Color, RichText } from 'src/types/notion';
+import { NotionCopyHeadingLink } from '.';
 
 export interface ParagraphTextProps {
   bold?: string;
@@ -163,9 +163,9 @@ const Paragraph: React.FC<ParagraphProps> = ({
         );
       })}
       {headingLink && (
-        <CopyHeadingLink href={headingLink}>
+        <NotionCopyHeadingLink href={headingLink}>
           <a href={headingLink}>&nbsp;🔗</a>
-        </CopyHeadingLink>
+        </NotionCopyHeadingLink>
       )}
     </div>
   );

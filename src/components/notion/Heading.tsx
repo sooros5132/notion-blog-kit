@@ -1,10 +1,11 @@
 import classnames from 'classnames';
 import { useRouter } from 'next/router';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import config from 'site-setting';
 import { copyTextAtClipBoard } from 'src/lib/utils';
-import { NotionBlock } from 'src/types/notion';
-import Paragraph from './Paragraph';
+import type { NotionBlock } from 'src/types/notion';
+import { NotionParagraphBlock } from '.';
 
 export interface HeadingContainerProps {
   id: string;
@@ -23,7 +24,7 @@ export interface HeadingInnerProps {
   children: ReactNode;
 }
 
-export const HeadingInner = ({ type, children }: HeadingInnerProps) => {
+export const HeadingInner: React.FC<HeadingInnerProps> = ({ type, children }) => {
   return (
     <div
       className={classnames(
@@ -74,7 +75,7 @@ const Heading: React.FC<HeadingProps> = ({ block }) => {
   return (
     <HeadingContainer id={hash}>
       <HeadingInner type={type}>
-        <Paragraph
+        <NotionParagraphBlock
           blockId={block.id}
           richText={block[type].rich_text}
           color={block[type].color}

@@ -7,13 +7,12 @@ import { useRouter } from 'next/router';
 import { useState, useMemo, memo, useEffect } from 'react';
 import { BsArrowUpShort, BsArrowDownShort } from 'react-icons/bs';
 import { SiNotion } from 'react-icons/si';
-import { NotionBlock, IGetNotion, NotionDatabase } from 'src/types/notion';
+import type { NotionBlock, IGetNotion, NotionDatabase } from 'src/types/notion';
 import isEqual from 'react-fast-compare';
 import { CopyHeadingLink, HeadingContainer, HeadingInner } from './Heading';
 import { ko as koLocale } from 'date-fns/locale';
-import NotionSecureImage from './NotionSecureImage';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import Paragraph from './Paragraph';
+import { NotionParagraphBlock, NotionSecureImage } from '.';
 
 export type NotionChildrenRenderProps = { block: NotionBlock };
 
@@ -228,7 +227,10 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
             <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
               <div className='overflow-hidden max-h-[3.3em] [&>div>p]:line-clamp-2 [&>div>a]:line-clamp-2 [&>div>span]:line-clamp-2'>
                 {block?.properties?.title?.title && (
-                  <Paragraph blockId={block.id} richText={block?.properties?.title?.title} />
+                  <NotionParagraphBlock
+                    blockId={block.id}
+                    richText={block?.properties?.title?.title}
+                  />
                 )}
               </div>
               <div className='whitespace-nowrap'>

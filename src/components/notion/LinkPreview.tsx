@@ -1,9 +1,9 @@
 import { notionBlockUrlToRelativePath } from 'src/lib/notion';
-import { fetcher } from 'src/lib/swr';
 import useSWR from 'swr';
-import { ParagraphText } from './Paragraph';
-import { LinkPreview as ILinkPreview } from 'src/types/types';
+import { fetcher } from 'src/lib/swr';
+import type { LinkPreview as ILinkPreview } from 'src/types/types';
 import config from 'site-setting';
+import { NotionParagraphText } from '.';
 
 export interface LinkPreviewProps {
   url: string;
@@ -23,7 +23,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   if (error || isValidating) {
     return (
       <a className='underline' href={relativePath} rel='noreferrer' target='_blank'>
-        <ParagraphText>{url}</ParagraphText>
+        <NotionParagraphText>{url}</NotionParagraphText>
       </a>
     );
   }
@@ -33,10 +33,10 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
       <div className='flex-col-reverse rounded-sm shadow-xl card card-side bg-base-100 sm:flex-row'>
         <div className='px-4 py-3 card-body'>
           <h2 className='text-lg card-title line-clamp-2'>
-            <ParagraphText>{data?.title}</ParagraphText>
+            <NotionParagraphText>{data?.title}</NotionParagraphText>
           </h2>
           <p className='flex-grow-0 text-sm line-clamp-3 text-notionColor-gray'>
-            <ParagraphText>{data?.description}</ParagraphText>
+            <NotionParagraphText>{data?.description}</NotionParagraphText>
           </p>
           <div className='mt-auto text-sm'>
             <div className='flex-grow-0 break-all flex-align-items-center gap-x-1 text-ellipsis'>

@@ -3,10 +3,18 @@ export { default as NotionBlockRender } from './BlockRender';
 export { default as NotionBlocksRender } from './BlocksRender';
 export { default as NotionCalloutBlock } from './Callout';
 export { default as NotionChildDatabaseBlock } from './ChildDatabase';
-export { default as NotionHeadingBlock } from './Heading';
+export {
+  default as NotionHeadingBlock,
+  HeadingInner as NotionHeadingInner,
+  CopyHeadingLink as NotionCopyHeadingLink
+} from './Heading';
 export { default as NotionLinkPreviewBlock } from './LinkPreview';
 export { default as NotionSecureImage } from './NotionSecureImage';
-export { default as NotionParagraphBlock } from './Paragraph';
+export {
+  default as NotionParagraphBlock,
+  ParagraphText as NotionParagraphText,
+  notionColorClasses
+} from './Paragraph';
 export { default as NotionTableBlock } from './Table';
 export { default as NotionToggleBlock } from './Toggle';
 export { default as NotionVideoBlock } from './Video';

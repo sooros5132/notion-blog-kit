@@ -1,5 +1,5 @@
-import { IGetNotion, NotionBlock } from 'src/types/notion';
-import BlocksRender from './BlocksRender';
+import type { IGetNotion, NotionBlock } from 'src/types/notion';
+import { NotionBlocksRender } from './';
 
 export interface ColumnListItemProps {
   blocks: IGetNotion;
@@ -20,7 +20,7 @@ const ColumnListItem: React.FC<ColumnListItemProps> = ({ blocks, block }) => {
       {blocks['childrenBlocks'][block.id]?.results.map((block, i) => {
         return (
           <div className='mx-0.5' key={`block-${block.id}-${i}`}>
-            <BlocksRender
+            <NotionBlocksRender
               blocks={{
                 blocks: blocks['childrenBlocks'][block.id],
                 childrenBlocks: blocks.childrenBlocks,

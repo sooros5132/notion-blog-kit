@@ -1,6 +1,6 @@
 import classnames from 'classnames';
-import { NotionBlock, IGetNotion } from 'src/types/notion';
-import Paragraph from './Paragraph';
+import type { NotionBlock, IGetNotion } from 'src/types/notion';
+import { NotionParagraphBlock } from '.';
 
 interface TableProps {
   block: NotionBlock;
@@ -43,7 +43,7 @@ const Table: React.FC<TableProps> = ({ block, blocks, chilrenBlockDepth }) => {
             <tr key={`table-row-${rowBlock.id}`}>
               {rowBlock.table_row.cells.map((cellBlocks, cellIdx) => (
                 <td key={`table-row-${rowBlock.id}-cell-${cellIdx}`}>
-                  <Paragraph blockId={rowBlock.id} richText={cellBlocks} />
+                  <NotionParagraphBlock blockId={rowBlock.id} richText={cellBlocks} />
                 </td>
               ))}
             </tr>

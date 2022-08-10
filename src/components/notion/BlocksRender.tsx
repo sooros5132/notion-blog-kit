@@ -1,5 +1,5 @@
 import { Fragment, useRef } from 'react';
-import { IGetNotion } from 'src/types/notion';
+import type { IGetNotion } from 'src/types/notion';
 import {
   NotionBlockRender,
   NotionBulletedListItemBlock,
@@ -12,13 +12,12 @@ import {
   NotionNumberedListItemBlock,
   NotionParagraphBlock,
   NotionQuoteBlock,
-  NotionSecureImage,
   NotionTableBlock,
   NotionTodoBlock,
   NotionToggleBlock,
-  NotionVideoBlock
+  NotionVideoBlock,
+  NotionParagraphText
 } from '.';
-import { ParagraphText } from './Paragraph';
 
 export interface NotionBlocksProps {
   blocks: IGetNotion;
@@ -79,7 +78,7 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           case 'link_preview': {
             const url = block.link_preview.url;
             if (!url) {
-              return <ParagraphText></ParagraphText>;
+              return <NotionParagraphText></NotionParagraphText>;
             }
 
             return (
@@ -96,7 +95,7 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           case 'bookmark': {
             const url = block.bookmark.url;
             if (!url) {
-              return <ParagraphText></ParagraphText>;
+              return <NotionParagraphText></NotionParagraphText>;
             }
 
             return (
@@ -240,6 +239,7 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           case 'column_list': {
             return <NotionColumnListBlock blocks={blocks} block={block} />;
           }
+
           case 'column': {
             return (
               <NotionBlockRender
@@ -250,6 +250,7 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
               />
             );
           }
+
           case 'table': {
             return (
               <NotionTableBlock
@@ -260,9 +261,10 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
               />
             );
           }
+          default: {
+            return <Fragment key={`block-${block.id}-${i}`}></Fragment>;
+          }
         }
-
-        return <Fragment key={`block-${block.id}-${i}`}></Fragment>;
       })}
     </>
   );
