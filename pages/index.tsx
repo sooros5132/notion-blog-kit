@@ -3,7 +3,7 @@ import type { GetStaticProps, NextPage } from 'next';
 import { ReactNode } from 'react';
 import config from 'site-setting';
 import { IResponseSuccess } from 'src-server/types/response';
-import NotionRender from 'src/components/modules/NotionRender';
+import NotionRender from 'src/components/notion/NotionRender';
 import { IGetNotion, INotionSearchObject } from 'src/types/notion';
 import { SWRConfig } from 'swr';
 
