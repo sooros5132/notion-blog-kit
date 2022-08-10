@@ -24,3 +24,5 @@ export { default as NotionBulletedListItemBlock } from './BulletedListItem';
 export { default as NotionImageBlock } from './Image';
 export { default as NotionQuoteBlock } from './Quote';
 export { default as NotionColumnListBlock } from './ColumnList';
+export { default as NotionSeo } from './NotionSeo';
+export { default as NotionPageHeader } from './NotionPageHeader';

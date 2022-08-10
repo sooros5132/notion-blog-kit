@@ -1,4 +1,4 @@
-import { NotionBlock, IGetNotion } from 'src/types/notion';
+import type { NotionBlock, IGetNotion } from 'src/types/notion';
 import { NotionBlocksRender } from '.';
 
 interface NotionBlockProps {
