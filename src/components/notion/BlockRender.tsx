@@ -1,5 +1,5 @@
 import { NotionBlock, IGetNotion } from 'src/types/notion';
-import NotionBlocks from './BlocksRender';
+import { NotionBlocksRender } from '.';
 
 interface NotionBlockProps {
   block: NotionBlock;
@@ -19,7 +19,7 @@ const BlockRender: React.FC<NotionBlockProps> = ({
       {children}
       {block?.has_children && typeof chilrenBlockDepth === 'number' && chilrenBlockDepth > 0 && (
         <div className='ml-6'>
-          <NotionBlocks
+          <NotionBlocksRender
             blocks={{
               blocks: blocks['childrenBlocks'][block.id],
               childrenBlocks: blocks.childrenBlocks,

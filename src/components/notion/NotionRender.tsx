@@ -1,11 +1,8 @@
-import React, { useMemo, memo, useEffect } from 'react';
-import type { ReactNode } from 'react';
 import {
   NotionBlock,
   IGetNotion,
   RichText,
   Color,
-  NotionDatabase,
   INotionSearchObject,
   NotionDatabasesQuery
 } from 'src/types/notion';
@@ -19,13 +16,11 @@ import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import { ko as koLocale } from 'date-fns/locale';
 import NoSsrWrapper from '../../lib/NoSsrWrapper';
 import classnames from 'classnames';
-import NotionBlockRender from './BlockRender';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import ChildDatabase from './ChildDatabase';
-import Heading, { CopyHeadingLink, HeadingInner } from './Heading';
+import { CopyHeadingLink, HeadingInner } from './Heading';
 import NotionSecureImage from './NotionSecureImage';
 import { ParagraphText, notionColorClasses } from './Paragraph';
-import BlocksRender from './BlocksRender';
+import { NotionBlocksRender, NotionChildDatabaseBlock } from '.';
 
 export interface NotionRenderProps {
   // readonly blocks: Array<NotionBlock>;
@@ -210,9 +205,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       </div>
       <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
         {page.object === 'page' ? (
-          <BlocksRender blocks={blocks} />
+          <NotionBlocksRender blocks={blocks} />
         ) : page.object === 'database' ? (
-          <ChildDatabase
+          <NotionChildDatabaseBlock
             block={
               {
                 ...page,
