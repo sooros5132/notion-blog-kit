@@ -20,7 +20,9 @@ const Toggle: React.FC<ToggleProps> = ({ block, blocks, chilrenBlockDepth }) => 
             <NotionParagraphBlock blockId={block.id} richText={block.toggle.rich_text} />
           </div>
         </summary>
-        <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth} />
+        <div className='pb-2 pr-2'>
+          <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth} />
+        </div>
       </details>
     </div>
   );
