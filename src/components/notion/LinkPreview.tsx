@@ -31,7 +31,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   return (
     <a href={relativePath} rel='noreferrer' target='_blank'>
       <div className='flex-col-reverse rounded-sm shadow-xl card card-side bg-base-100 sm:flex-row'>
-        <div className='px-4 py-3 card-body'>
+        <div className='px-4 py-3 card-body basis-full sm:basis-[60%] md:basis-[65%]'>
           <h2 className='text-lg card-title line-clamp-2'>
             <NotionParagraphText>{data?.title}</NotionParagraphText>
           </h2>
@@ -39,21 +39,23 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
             <NotionParagraphText>{data?.description}</NotionParagraphText>
           </p>
           <div className='mt-auto text-sm'>
-            <div className='flex-grow-0 break-all flex-align-items-center gap-x-1 text-ellipsis'>
-              {data?.icon && (
-                <img
-                  className='w-[1.2em] h-[1.2em]'
-                  src={data.icon.charAt(0) === '/' ? new URL(data.icon, url).href : data.icon}
-                />
-              )}
-              <p>{url}</p>
+            <div className='flex-grow-0 break-all gap-x-1 text-ellipsis'>
+              <p>
+                {data?.icon && (
+                  <img
+                    className='inline-block w-[1.1em] h-[1.1em] align-text-bottom mr-1'
+                    src={data.icon.charAt(0) === '/' ? new URL(data.icon, url).href : data.icon}
+                  />
+                )}
+                {url}
+              </p>
             </div>
           </div>
         </div>
         {data?.image?.url && (
-          <figure className='image-wrapper shrink-0 max-w-none sm:min-h-full sm:max-w-[200px] md:max-w-[300px] lg:max-w-[350px]'>
+          <figure className='image-wrapper shrink-0 basis-full sm:min-h-full sm:basis-[40%] md:basis-[35%]'>
             <img
-              className='w-full sm:h-full max-h-[175px]'
+              className='w-full sm:h-full min-h-[200px] sm:min-h-[125px] max-h-[175px]'
               src={
                 data.image.url.charAt(0) === '/'
                   ? new URL(data.image.url, url).href
