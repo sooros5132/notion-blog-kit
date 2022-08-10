@@ -22,13 +22,13 @@ const Table: React.FC<TableProps> = ({ block, blocks, chilrenBlockDepth }) => {
           'border-collapse',
           '[&>tbody>tr>td]:border',
           '[&>tbody>tr>td]:border-solid',
-          '[&>tbody>tr>td]:border-notionColor-green_background',
-          '[&>tbody>tr>td]:py-0.5',
-          '[&>tbody>tr>td]:px-1',
-          Boolean(block.table.has_column_header) === true &&
-            '[&>tbody>tr>td:first-of-type]:bg-notionColor-green_background/20',
+          '[&>tbody>tr>td]:border-notionColor-gray_background',
+          '[&>tbody>tr>td]:py-1',
+          '[&>tbody>tr>td]:px-2',
           Boolean(block.table.has_row_header) === true &&
-            '[&>tbody>tr:first-of-type]:bg-notionColor-green_background/20'
+            '[&>tbody>tr>td:first-of-type]:bg-notionColor-orange_background/25',
+          Boolean(block.table.has_column_header) === true &&
+            '[&>tbody>tr:first-of-type]:bg-notionColor-orange_background/25'
         )}
       >
         {/* <thead>
