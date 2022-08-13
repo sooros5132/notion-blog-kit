@@ -89,7 +89,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
       }
     }
   };
-  const hash = `${block?.child_database?.title.slice(0, 50) || ''}-${block.id.slice(0, 8)}`;
+  const hash = `${block?.child_database?.title.slice(0, 50) || ''}-${block.id.replaceAll('-', '')}`;
   const href = useMemo(() => `${router.asPath.replace(/\#.*/, '')}#${hash}`, [router]);
 
   return (
@@ -192,7 +192,7 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
     // }
     <div>
       <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
-        <Link href={title ? `/${title}-${block.id.slice(0, 8)}` : `/${block.id}`}>
+        <Link href={title ? `/${title}-${block.id.replaceAll('-', '')}` : `/${block.id}`}>
           <a>
             <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear '>
               {block?.cover ? (

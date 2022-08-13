@@ -67,10 +67,7 @@ interface HeadingProps {
 const Heading: React.FC<HeadingProps> = ({ block }) => {
   const router = useRouter();
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
-  const hash = `${block[type].rich_text
-    .map((text) => text.plain_text)
-    .join('')
-    .slice(0, 50)}-${block.id.slice(0, 8)}`;
+  const hash = block.id.replaceAll('-', '');
   const href = useMemo(() => `${router.asPath.replace(/\#.*/, '')}#${hash}`, [router]);
   return (
     <HeadingContainer id={hash}>

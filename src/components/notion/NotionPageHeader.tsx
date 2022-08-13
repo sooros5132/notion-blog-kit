@@ -60,9 +60,9 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
           <NotionHeadingInner type={'normal'}>
             <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
             <NotionCopyHeadingLink
-              href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}
+              href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}
             >
-              <Link href={title ? `/${title}-${page.id.slice(0, 8)}` : `/${page.id}`}>
+              <Link href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}>
                 <a>&nbsp;🔗</a>
               </Link>
             </NotionCopyHeadingLink>

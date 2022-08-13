@@ -9,7 +9,6 @@ export interface ColumnListItemProps {
 const ColumnListItem: React.FC<ColumnListItemProps> = ({ blocks, block }) => {
   return (
     <div
-      key={`block-${block.id}`}
       className='grid gap-x-2 [&>*]:overflow-x-auto'
       style={{
         gridTemplateColumns: `repeat(${
