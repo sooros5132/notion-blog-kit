@@ -16,7 +16,8 @@ import {
   NotionTodoBlock,
   NotionToggleBlock,
   NotionVideoBlock,
-  NotionParagraphText
+  NotionParagraphText,
+  NotionCodeBlock
 } from '.';
 
 export interface NotionBlocksProps {
@@ -99,7 +100,9 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 block={block}
                 blocks={blocks}
                 chilrenBlockDepth={childrenDepth.current}
-              ></NotionBlockRender>
+              >
+                <NotionCodeBlock block={block} />
+              </NotionBlockRender>
             );
           }
           case 'column_list': {

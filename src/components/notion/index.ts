@@ -22,6 +22,7 @@ export { default as NotionTodoBlock } from './Todo';
 export { default as NotionNumberedListItemBlock } from './NumberedListItem';
 export { default as NotionBulletedListItemBlock } from './BulletedListItem';
 export { default as NotionImageBlock } from './Image';
+export { default as NotionCodeBlock } from './Code';
 export { default as NotionQuoteBlock } from './Quote';
 export { default as NotionColumnListBlock } from './ColumnList';
 export { default as NotionSeo } from './NotionSeo';
