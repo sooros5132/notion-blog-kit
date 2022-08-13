@@ -23,14 +23,18 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
   return (
     <div>
       {page?.cover?.[page?.cover?.type]?.url && (
-        <div className='h-[30vh] overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
-          <NotionSecureImage blockId={page.id} src={page?.cover?.[page?.cover?.type]?.url!} />
+        <div className='relative h-[30vh] overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
+          <NotionSecureImage
+            blockId={page.id}
+            src={page?.cover?.[page?.cover?.type]?.url!}
+            layout='fill'
+            objectFit='cover'
+          />
         </div>
       )}
       <div
         className={classnames(
-          'max-w-screen-lg mx-auto',
-          'px-4 sm:px-6 lg:px-10',
+          'relative max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-10',
           Boolean(page?.cover)
             ? page.icon?.type === 'emoji'
               ? 'mt-[-30px]'
@@ -42,7 +46,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
         )}
       >
         {page.icon?.file && page.icon?.type === 'file' && (
-          <div className='relative w-[70px] h-[70px]'>
+          <div className='w-[70px] h-[70px]'>
             <NotionSecureImage blockId={page.id} src={page.icon.file.url} />
           </div>
         )}

@@ -199,6 +199,8 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
                 <NotionSecureImage
                   src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
                   blockId={block.id}
+                  layout='fill'
+                  objectFit='cover'
                 />
               ) : block?.icon ? (
                 block?.icon?.emoji ? (
@@ -211,6 +213,8 @@ const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block })
                         s3ObjectUrl: block?.icon.file?.url
                       }) ?? ''
                     }
+                    layout='fill'
+                    objectFit='cover'
                     blockId={block.id}
                   />
                 ) : (
