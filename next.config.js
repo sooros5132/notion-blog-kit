@@ -13,7 +13,8 @@ module.exports = withBundleAnalyzer({
     domains: ['www.notion.so', 'notion.so', 's3.us-west-2.amazonaws.com'],
     formats: ['image/avif', 'image/webp'],
     dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    minimumCacheTTL: 1800
   },
   webpack(conf) {
     conf.module.rules.push({
