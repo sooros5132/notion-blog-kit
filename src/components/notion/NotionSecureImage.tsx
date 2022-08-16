@@ -46,8 +46,8 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
             layout={layout}
             objectFit={objectFit}
             src={src}
-            width={size.width}
-            height={size.height}
+            width={layout !== 'fill' ? size.width : undefined}
+            height={layout !== 'fill' ? size.height : undefined}
             onLoadingComplete={({ naturalHeight, naturalWidth }) => {
               setSize({ height: naturalHeight, width: naturalWidth });
             }}
