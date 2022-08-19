@@ -9,12 +9,14 @@ const Image: React.FC<ImageProps> = ({ block }) => {
   return (
     <div className='flex justify-center'>
       <div>
-        <NotionSecureImage
-          blockId={block.id}
-          src={block.image?.file?.url ?? block.image?.external?.url ?? ''}
-        />
+        <div className='text-center font-[0px]'>
+          <NotionSecureImage
+            blockId={block.id}
+            src={block.image?.file?.url ?? block.image?.external?.url ?? ''}
+          />
+        </div>
         {Array.isArray(block?.image?.caption) && block?.image?.caption?.length > 0 && (
-          <div className='w-full'>
+          <div className='flex w-full'>
             <NotionParagraphBlock
               blockId={block.id}
               richText={block.image.caption}
