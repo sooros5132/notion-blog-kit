@@ -98,7 +98,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
         <HeadingInner type={block.type as 'child_database'}>
           <div className='flex-auto'>
             <div className='flex items-center justify-between'>
-              <p className='break-words break-all'>
+              <p className='break-words'>
                 {block?.child_database?.title || '제목 없음'}
                 <CopyHeadingLink href={href}>
                   <a href={'#' + hash}>&nbsp;🔗</a>
