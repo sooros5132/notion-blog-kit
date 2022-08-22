@@ -1,4 +1,4 @@
-import config from 'site-setting';
+import config from 'site-config';
 
 export function notionBlockUrlToRelativePath(url: string): string {
   const { customDomain, notionSoRegExp, notionSiteRegExp } = config?.notion;

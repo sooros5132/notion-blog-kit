@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import type { ReactNode } from 'react';
-import config from 'site-setting';
+import config from 'site-config';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';

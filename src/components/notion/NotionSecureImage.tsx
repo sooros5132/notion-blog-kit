@@ -1,7 +1,7 @@
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
 import { useState } from 'react';
-import config, { NEXT_IMAGE_DOMAINS } from 'site-setting';
+import config, { NEXT_IMAGE_DOMAINS } from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 
 interface NotionSecureImageProps extends ImageProps {

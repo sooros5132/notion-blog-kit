@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
-import config from 'site-setting';
+import config from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import type { INotionSearchObject } from 'src/types/notion';
 

@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { formatDistance } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
-import config from 'site-setting';
+import config from 'site-config';
 import Link from 'next/link';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';
 import type { INotionSearchObject, Color } from 'src/types/notion';

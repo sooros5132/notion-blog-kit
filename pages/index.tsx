@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { GetStaticProps, NextPage } from 'next';
 import { ReactNode } from 'react';
-import config from 'site-setting';
+import config from 'site-config';
 import { IResponseSuccess } from 'src-server/types/response';
 import NotionRender from 'src/components/notion/NotionRender';
 import { IGetNotion, INotionSearchObject } from 'src/types/notion';

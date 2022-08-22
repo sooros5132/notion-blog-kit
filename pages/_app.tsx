@@ -4,7 +4,7 @@ import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import Layout from 'src/components/Layout';
 import Script from 'next/script';
-import config from 'site-setting';
+import config from 'site-config';
 import 'src/styles/globals.css';
 
 axios.defaults.baseURL = config.origin;

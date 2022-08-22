@@ -1,5 +1,5 @@
 import { IoClose } from 'react-icons/io5';
-import config from 'site-setting';
+import config from 'site-config';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';
 import { fetcher } from 'src/lib/swr';
 import type { NotionBlock } from 'src/types/notion';

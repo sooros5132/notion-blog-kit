@@ -2,7 +2,7 @@ import { notionBlockUrlToRelativePath } from 'src/lib/notion';
 import useSWR from 'swr';
 import { fetcher } from 'src/lib/swr';
 import type { LinkPreview as ILinkPreview } from 'src/types/types';
-import config from 'site-setting';
+import config from 'site-config';
 import { NotionParagraphText } from '.';
 
 export interface LinkPreviewProps {

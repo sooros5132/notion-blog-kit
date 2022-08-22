@@ -6,7 +6,7 @@ import type {
   NotionDatabasesQuery
 } from 'src/types/notion';
 import useSWR from 'swr';
-import config from 'site-setting';
+import config from 'site-config';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
 
 export interface NotionRenderProps {

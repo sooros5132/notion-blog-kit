@@ -10,3 +10,17 @@ export type LinkPreview = {
   media: string | null;
   username: string | null;
 };
+
+export interface SiteConfig extends Record<string, any> {
+  origin: string;
+  path: string;
+  notion: {
+    baseDatabase: string;
+    baseBlock: string;
+    secretKey: string;
+    customDomain: string | null;
+    notionSoRegExp?: RegExp;
+    notionSiteRegExp?: RegExp;
+  };
+  TZ: string;
+}

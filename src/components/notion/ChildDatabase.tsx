@@ -1,7 +1,7 @@
 import { formatDistance } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import { sortBy } from 'lodash';
-import config from 'site-setting';
+import config from 'site-config';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useMemo, memo, useEffect } from 'react';
