@@ -49,34 +49,37 @@ const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    throw '';
-    const databases = await fetch(
-      config.origin + config.path + '/notion/databases/' + config.notion.baseDatabase
-    ).then(async (res) => (await res.json()) as IResponseSuccess<NotionDatabasesQuery>);
+  return {
+    paths: [],
+    fallback: 'blocking'
+  };
+  // try {
+  //   const databases = await fetch(
+  //     config.origin + config.path + '/notion/databases/' + config.notion.baseDatabase
+  //   ).then(async (res) => (await res.json()) as IResponseSuccess<NotionDatabasesQuery>);
 
-    // axios
-    // .get<IResponseSuccess<NotionDatabasesQuery>>(config.path + '/notion/databases/' + config.notion.baseDatabase)
-    // .then((res) => res.data?.result?.results);
+  //   // axios
+  //   // .get<IResponseSuccess<NotionDatabasesQuery>>(config.path + '/notion/databases/' + config.notion.baseDatabase)
+  //   // .then((res) => res.data?.result?.results);
 
-    if (!Array.isArray(databases)) {
-      throw 'type error databases';
-    }
+  //   if (!Array.isArray(databases)) {
+  //     throw 'type error databases';
+  //   }
 
-    const paths = databases.map((page) => ({
-      params: { slug: uuidRegex.test(page?.id) ? page.id.replaceAll('-', '') : page?.id }
-    }));
+  //   const paths = databases.map((page) => ({
+  //     params: { slug: uuidRegex.test(page?.id) ? page.id.replaceAll('-', '') : page?.id }
+  //   }));
 
-    return {
-      paths,
-      fallback: 'blocking'
-    };
-  } catch (e) {
-    return {
-      paths: [],
-      fallback: 'blocking'
-    };
-  }
+  //   return {
+  //     paths,
+  //     fallback: 'blocking'
+  //   };
+  // } catch (e) {
+  //   return {
+  //     paths: [],
+  //     fallback: 'blocking'
+  //   };
+  // }
 };
 
 export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
