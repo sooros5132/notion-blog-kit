@@ -1,8 +1,11 @@
 import React, { useRef } from 'react';
-import { AiFillThunderbolt } from 'react-icons/ai';
+import { AiFillThunderbolt, AiOutlineSearch } from 'react-icons/ai';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { throttle } from 'lodash';
+import config from 'site-config';
+import { useRouter } from 'next/router';
+import Search from '../search/Search';
 
 interface HeaderProps {}
 
@@ -35,15 +38,31 @@ const Header: React.FC = (): JSX.Element => {
   }, []);
 
   return (
-    <nav className='sticky top-0 left-0 z-10 bg-zinc-100/80 dark:bg-zinc-900/80 backdrop-blur-xl'>
-      <div className='flex justify-between max-w-screen-xl px-2 mx-auto text-xl'>
-        <div className='py-1.5'>
+    <nav className='sticky top-0 left-0 z-10 bg-base-100/80 backdrop-blur-xl'>
+      <div className='max-w-screen-lg mx-auto navbar'>
+        <div className='flex-1'>
           <Link href='/'>
-            <a className='btn btn-ghost normal-case rounded-md btn-sm text-xl px-1.5'>
-              <AiFillThunderbolt />
-              &nbsp;soolog
+            <a className='text-xl normal-case rounded-md btn btn-ghost'>
+              {/* <AiFillThunderbolt />&nbsp; */}
+              soolog
             </a>
           </Link>
+        </div>
+        <div className='flex-none gap-1 md:gap-2'>
+          <div className='max-w-[150px] sm:max-w-[200px]'>
+            <Search autoInputHidden={true} />
+          </div>
+          <ul className='gap-1 p-0 md:gap-2 menu menu-horizontal'>
+            {Array.isArray(config.headerNav) &&
+              config.headerNav.length > 0 &&
+              config.headerNav.map((item, i) => (
+                <li key={`header-nav-item-${i}`}>
+                  <Link href={item.url}>
+                    <a>{item.name}</a>
+                  </Link>
+                </li>
+              ))}
+          </ul>
         </div>
         {/* <FlexAlignItemsCenterBox>
           <Box

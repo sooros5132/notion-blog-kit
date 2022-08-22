@@ -64,6 +64,9 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
           <NotionBlocksRender blocks={blocks} />
         ) : page.object === 'database' ? (
           <NotionChildDatabaseBlock
+            //! key로 useState 초기화 + 리렌더링 강제유발
+            key={page.id}
+            //! key로 useState 초기화 + 리렌더링 강제유발
             block={
               {
                 ...page,

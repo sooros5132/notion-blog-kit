@@ -28,7 +28,7 @@ export const HeadingInner: React.FC<HeadingInnerProps> = ({ type, children }) =>
   return (
     <div
       className={classnames(
-        'font-bold flex break-words leading-[1.2em]',
+        'font-bold flex break-all leading-[1.2em]',
         type === 'heading_1' || type === 'child_database'
           ? 'text-[2em]'
           : type === 'heading_2'

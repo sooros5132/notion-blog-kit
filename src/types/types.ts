@@ -21,5 +21,9 @@ export interface SiteConfig extends Record<string, any> {
     notionSoRegExp?: RegExp;
     notionSiteRegExp?: RegExp;
   };
+  headerNav?: Array<{
+    name: string;
+    url: string;
+  }>;
   TZ: string;
 }

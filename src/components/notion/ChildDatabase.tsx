@@ -98,7 +98,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
         <HeadingInner type={block.type as 'child_database'}>
           <div className='flex-auto'>
             <div className='flex items-center justify-between'>
-              <p className='break-words'>
+              <p className='break-all'>
                 {block?.child_database?.title || '제목 없음'}
                 <CopyHeadingLink href={href}>
                   <a href={'#' + hash}>&nbsp;🔗</a>
@@ -140,7 +140,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
   );
 };
 
-const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block }) => {
+export const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block }) => {
   const [createdAt, setCreatedAt] = useState(
     block?.created_time
       ? formatInTimeZone(new Date(block.created_time), config.TZ, 'yyyy-MM-dd', {

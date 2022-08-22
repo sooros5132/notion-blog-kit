@@ -7,31 +7,6 @@ import NotionRender from 'src/components/notion/NotionRender';
 import { IGetNotion, INotionSearchObject } from 'src/types/notion';
 import { SWRConfig } from 'swr';
 
-interface HeadingProps {
-  type: 'heading_1' | 'heading_2' | 'heading_3' | 'child_database' | 'normal';
-  children: ReactNode;
-}
-
-const Heading = ({ type, children }: HeadingProps) => {
-  return (
-    <div
-      className={`flex ${
-        type === 'heading_1' || type === 'child_database'
-          ? 'text-[2em]'
-          : type === 'heading_2'
-          ? 'text-[1.5em]'
-          : type === 'normal'
-          ? undefined
-          : 'text-[1.2em]'
-      } [&>div>.heading-link]:hidden [&:hover>div>.heading-link]:block`}
-    >
-      <div>
-        <div className='heading-link'>dd</div>
-      </div>
-      {children}
-    </div>
-  );
-};
 interface HomeProps {
   slug: string;
   notionBlocksChildrenList: IGetNotion;
@@ -47,11 +22,6 @@ const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo })
         }
       }}
     >
-      {/* <Heading type='child_database'>a</Heading>
-      <div className='flex-1 flex-center'>
-        <button className='btn btn-ghost'>test</button>
-      </div> */}
-
       <NotionRender slug={slug} />
     </SWRConfig>
   );

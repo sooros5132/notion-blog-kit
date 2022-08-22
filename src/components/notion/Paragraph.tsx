@@ -94,7 +94,7 @@ const Paragraph: React.FC<ParagraphProps> = ({
   return (
     <div
       className={classnames(
-        'break-words',
+        'break-all',
         'min-h-[1.25em]',
         'p-0.5',
         color && color !== 'default' && !color.match(/_background$/)

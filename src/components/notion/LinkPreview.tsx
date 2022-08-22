@@ -39,7 +39,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
             <NotionParagraphText>{data?.description}</NotionParagraphText>
           </p>
           <div className='mt-auto text-sm'>
-            <div className='flex-grow-0 break-words gap-x-1 text-ellipsis'>
+            <div className='flex-grow-0 break-all gap-x-1 text-ellipsis'>
               <p className='line-clamp-2'>
                 {data?.icon && (
                   <img
