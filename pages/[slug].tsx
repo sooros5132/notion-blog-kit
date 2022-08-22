@@ -50,6 +50,7 @@ const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
+    throw '';
     const databases = await fetch(
       config.origin + config.path + '/notion/databases/' + config.notion.baseDatabase
     ).then(async (res) => (await res.json()) as IResponseSuccess<NotionDatabasesQuery>);
