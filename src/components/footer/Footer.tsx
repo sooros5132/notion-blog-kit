@@ -1,5 +1,5 @@
 import React from 'react';
-import { SiGithub } from 'react-icons/si';
+import { SiGithub, SiMaildotru } from 'react-icons/si';
 import { RiGitRepositoryFill } from 'react-icons/ri';
 
 interface FooterProps {}
@@ -24,6 +24,11 @@ const Footer: React.FC = (): JSX.Element => {
       </div>
       <div>
         <div className='grid grid-flow-col gap-4 text-3xl'>
+          <a className='tooltip' data-tip='send mail' href='mailto:sooros5132@gmail.com'>
+            <div>
+              <SiMaildotru />
+            </div>
+          </a>
           <a
             className='tooltip'
             data-tip='GitHub'
