@@ -17,9 +17,9 @@ export interface ParagraphTextProps {
 
 const paragraphTextClasses = {
   code: {
-    once: 'rounded-l rounded-r py-[0.0625rem] px-0.5 bg-notionColor-red_background font-mono',
-    first: 'rounded-l py-[0.0625rem] pl-0.5 bg-notionColor-red_background font-mono',
-    last: 'rounded-r py-[0.0625rem] pr-0.5 bg-notionColor-red_background font-mono',
+    once: 'rounded-l rounded-r py-[0.0625rem] px-1 bg-notionColor-red_background font-mono',
+    first: 'rounded-l py-[0.0625rem] pl-1 bg-notionColor-red_background font-mono',
+    last: 'rounded-r py-[0.0625rem] pr-1 bg-notionColor-red_background font-mono',
     middle: 'py-[0.0625rem] bg-notionColor-red_background font-mono'
   }
 } as const;
