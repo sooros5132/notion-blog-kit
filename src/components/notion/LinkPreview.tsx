@@ -30,12 +30,12 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
 
   return (
     <a href={relativePath} rel='noreferrer' target='_blank'>
-      <div className='flex-col-reverse rounded-sm shadow-xl card card-side bg-base-100 sm:flex-row sm:min-h-[150px] sm:max-h-[250px]'>
-        <div className='px-4 py-3 card-body basis-full sm:basis-[60%] md:basis-[65%]'>
+      <div className='rounded-sm shadow-xl card card-side bg-base-100 flex-row h-[150px]'>
+        <div className='px-4 py-3 card-body basis-[60%] md:basis-[65%]'>
           <h2 className='text-lg card-title line-clamp-2'>
             <NotionParagraphText>{data?.title}</NotionParagraphText>
           </h2>
-          <p className='flex-grow-0 text-sm line-clamp-3 text-notionColor-gray'>
+          <p className='flex-grow-0 hidden text-sm sm:line-clamp-2 sm:block text-notionColor-gray'>
             <NotionParagraphText>{data?.description}</NotionParagraphText>
           </p>
           <div className='mt-auto text-sm'>
@@ -53,7 +53,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
           </div>
         </div>
         {data?.image?.url && (
-          <figure className='image-wrapper shrink-0 basis-full sm:min-h-full sm:basis-[40%] md:basis-[35%]'>
+          <figure className='image-wrapper min-h-full basis-[40%] md:basis-[35%]'>
             <img
               className='w-full sm:h-full min-h-[200px] max-h-[200px] sm:min-h-[125px] sm:max-h-[initial]'
               src={
