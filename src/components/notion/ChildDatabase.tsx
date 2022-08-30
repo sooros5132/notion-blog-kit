@@ -133,39 +133,43 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
       </HeadingContainer>
       <div className='grid grid-cols-1 gap-5 mb-5 sm:grid-cols-2 lg:grid-cols-3'>
         {blocks.map((block) => (
-          <ChildDatabaseBlock key={`database-${block.id}`} block={block} />
+          <ChildDatabaseBlock key={`database-${block.id}`} block={block} sortKey={sortKey} />
         ))}
       </div>
     </div>
   );
 };
 
-export const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ block }) => {
-  const [createdAt, setCreatedAt] = useState(
-    block?.created_time
-      ? formatInTimeZone(new Date(block.created_time), config.TZ, 'yyyy-MM-dd', {
-          locale: koLocale
-        })
-      : undefined
-  );
+export const ChildDatabaseBlock: React.FC<{
+  block: NotionDatabase;
+  sortKey: 'created_time' | 'last_edited_time' | 'title';
+}> = memo(({ block, sortKey }) => {
+  const [isMounted, setMounted] = useState(false);
   const title = useMemo(
     () => block?.properties?.title?.title?.map((t) => t?.plain_text).join('') || null,
     []
   );
 
+  const date = isMounted
+    ? formatDistance(
+        utcToZonedTime(
+          new Date(block[sortKey === 'last_edited_time' ? 'last_edited_time' : 'created_time']),
+          config.TZ
+        ),
+        utcToZonedTime(new Date(), config.TZ),
+        {
+          locale: koLocale,
+          addSuffix: true
+        }
+      )
+    : (block?.created_time &&
+        formatInTimeZone(new Date(block.created_time), config.TZ, 'yyyy-MM-dd', {
+          locale: koLocale
+        })) ??
+      undefined;
+
   useEffect(() => {
-    if (block?.created_time) {
-      setCreatedAt(
-        formatDistance(
-          utcToZonedTime(new Date(block.created_time), config.TZ),
-          utcToZonedTime(new Date(), config.TZ),
-          {
-            locale: koLocale,
-            addSuffix: true
-          }
-        )
-      );
-    }
+    setMounted(true);
   }, []);
 
   return (
@@ -238,7 +242,10 @@ export const ChildDatabaseBlock: React.FC<{ block: NotionDatabase }> = memo(({ b
                 )}
               </div>
               <div className='whitespace-nowrap'>
-                <p>{createdAt}</p>
+                <p>
+                  {date}
+                  {sortKey === 'last_edited_time' && ' 수정됨'}
+                </p>
               </div>
             </div>
           </a>
