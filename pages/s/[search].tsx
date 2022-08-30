@@ -59,7 +59,7 @@ const Searching: React.FC = () => {
         <div className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
           {data.map((search) => (
             <div key={`search-${search.id}`}>
-              <ChildDatabaseBlock block={search as NotionDatabase} />
+              <ChildDatabaseBlock block={search as NotionDatabase} sortKey={'created_time'} />
             </div>
           ))}
         </div>
