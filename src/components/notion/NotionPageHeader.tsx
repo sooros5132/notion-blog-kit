@@ -47,7 +47,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
       >
         {page.icon?.file && page.icon?.type === 'file' && (
           <div className='w-[70px] h-[70px]'>
-            <NotionSecureImage blockId={page.id} src={page.icon.file.url} />
+            <NotionSecureImage blockId={page.id} src={page.icon.file.url} priority />
           </div>
         )}
         {page.icon?.emoji && page.icon?.type === 'emoji' && (
