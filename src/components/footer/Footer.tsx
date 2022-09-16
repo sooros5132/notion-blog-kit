@@ -1,6 +1,7 @@
 import React from 'react';
 import { SiGithub, SiMaildotru } from 'react-icons/si';
 import { RiGitRepositoryFill } from 'react-icons/ri';
+import config from 'site-config';
 
 interface FooterProps {}
 
@@ -8,49 +9,59 @@ const Footer: React.FC = (): JSX.Element => {
   return (
     <footer className='p-14 footer footer-center bg-primary text-primary-content'>
       <div>
-        <p className='text-6xl font-bold'>soolog</p>
+        <p className='text-6xl font-bold'>{config.infomation.nickname}</p>
         <p>
           Copyright{' '}
-          <a
-            className='underline'
-            href='mailto:sooros5132@gmail.com'
-            rel='noreferrer'
-            target='_blank'
-          >
-            sooros
-          </a>{' '}
+          {config.infomation.email ? (
+            <a
+              className='underline'
+              href={'mailto:' + config.infomation.email}
+              rel='noreferrer'
+              target='_blank'
+            >
+              {config.infomation.nickname}
+            </a>
+          ) : (
+            config.infomation.nickname
+          )}{' '}
           2022 - All right reserved
         </p>
       </div>
       <div>
         <div className='grid grid-flow-col gap-4 text-3xl'>
-          <a className='tooltip' data-tip='send mail' href='mailto:sooros5132@gmail.com'>
-            <div>
-              <SiMaildotru />
-            </div>
-          </a>
-          <a
-            className='tooltip'
-            data-tip='GitHub'
-            href='https://github.com/sooros5132'
-            rel='noreferrer'
-            target='_blank'
-          >
-            <div>
-              <SiGithub />
-            </div>
-          </a>
-          <a
-            className='tooltip'
-            data-tip='soolog Repository'
-            href='https://github.com/sooros5132/soolog'
-            rel='noreferrer'
-            target='_blank'
-          >
-            <div>
-              <RiGitRepositoryFill />
-            </div>
-          </a>
+          {config.infomation.email && (
+            <a className='tooltip' data-tip='send mail' href={'mailto:' + config.infomation.email}>
+              <div>
+                <SiMaildotru />
+              </div>
+            </a>
+          )}
+          {config.infomation.github && (
+            <a
+              className='tooltip'
+              data-tip='GitHub'
+              href={config.infomation.github}
+              rel='noreferrer'
+              target='_blank'
+            >
+              <div>
+                <SiGithub />
+              </div>
+            </a>
+          )}
+          {config.infomation.repository && (
+            <a
+              className='tooltip'
+              data-tip='repository'
+              href={config.infomation.repository}
+              rel='noreferrer'
+              target='_blank'
+            >
+              <div>
+                <RiGitRepositoryFill />
+              </div>
+            </a>
+          )}
         </div>
       </div>
       {/* {process.env.NODE_ENV === 'production' ? (

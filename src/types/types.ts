@@ -26,4 +26,10 @@ export interface SiteConfig extends Record<string, any> {
     url: string;
   }>;
   TZ: string;
+  infomation: {
+    nickname: string;
+    email?: string;
+    github?: string;
+    repository?: string;
+  };
 }

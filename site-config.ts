@@ -18,7 +18,13 @@ const config = siteConfig({
       name: '세팅',
       url: `${process.env.NEXT_PUBLIC_BASE_API_ORIGIN}/e4b50b569ffb44e9bec7f71bd29fb23b`
     }
-  ]
+  ],
+  infomation: {
+    nickname: process.env.NEXT_PUBLIC_INFOMATION_NICKNAME || 'sooros',
+    email: process.env.NEXT_PUBLIC_INFOMATION_EMAIL,
+    github: process.env.NEXT_PUBLIC_INFOMATION_GITHUB,
+    repository: process.env.NEXT_PUBLIC_INFOMATION_REPOSITORY
+  }
 });
 
 export default config;
