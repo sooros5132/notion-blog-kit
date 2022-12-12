@@ -19,7 +19,7 @@ interface SlugProps {
     '/notion/pages': INotionSearchObject;
   };
 }
-const uuidRegex = /^[0-9a-f]{8}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{12}$/;
+const uuidRegex = /^[0-9a-f]{8}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{12}$/i;
 
 const Slug: NextPage<SlugProps> = ({ slug, fallback }) => {
   const [query, setQuery] = useState<{
@@ -88,7 +88,9 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       throw 'type error "slug"';
     }
     const slug = encodeURIComponent(
-      uuidRegex.test(params.slug) ? params.slug.replaceAll('-', '') : params.slug
+      uuidRegex.test(params.slug)
+        ? params.slug.replaceAll('-', '')
+        : params.slug.replaceAll('-', '').slice(-32)
     );
 
     const pageInfo = await axios
