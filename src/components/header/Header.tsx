@@ -1,15 +1,13 @@
 import React, { useRef } from 'react';
-import { AiFillThunderbolt, AiOutlineSearch } from 'react-icons/ai';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { throttle } from 'lodash';
 import config from 'site-config';
-import { useRouter } from 'next/router';
 import Search from '../search/Search';
 
 interface HeaderProps {}
 
-const Header: React.FC = (): JSX.Element => {
+const Header: React.FC<HeaderProps> = (): JSX.Element => {
   // const { mode, useDarkTheme, useLightTheme } = useThemeStore(
   //   ({ mode, useDarkTheme, useLightTheme }) => ({ mode, useDarkTheme, useLightTheme }),
   //   shallow
@@ -57,7 +55,7 @@ const Header: React.FC = (): JSX.Element => {
               config.headerNav.length > 0 &&
               config.headerNav.map((item, i) => (
                 <li key={`header-nav-item-${i}`}>
-                  <Link href={item.url}>
+                  <Link href={`/${item.slug}`}>
                     <a>{item.name}</a>
                   </Link>
                 </li>

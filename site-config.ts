@@ -12,11 +12,11 @@ const config = siteConfig({
   headerNav: [
     {
       name: '카테고리',
-      url: `${process.env.NEXT_PUBLIC_BASE_API_ORIGIN}/dec967958ca74abeb493942f923100f7`
+      slug: 'dec967958ca74abeb493942f923100f7'
     },
     {
       name: '세팅',
-      url: `${process.env.NEXT_PUBLIC_BASE_API_ORIGIN}/e4b50b569ffb44e9bec7f71bd29fb23b`
+      slug: 'e4b50b569ffb44e9bec7f71bd29fb23b'
     }
   ],
   infomation: {

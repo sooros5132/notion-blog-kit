@@ -23,7 +23,7 @@ export interface SiteConfig extends Record<string, any> {
   };
   headerNav?: Array<{
     name: string;
-    url: string;
+    slug: string;
   }>;
   TZ: string;
   infomation: {
