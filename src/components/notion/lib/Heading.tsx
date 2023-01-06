@@ -76,7 +76,7 @@ const Heading: React.FC<HeadingProps> = ({ block }) => {
           blockId={block.id}
           richText={block[type].rich_text}
           color={block[type].color}
-          headingLink={'#' + hash}
+          headingLink={href}
         />
       </HeadingInner>
     </HeadingContainer>
