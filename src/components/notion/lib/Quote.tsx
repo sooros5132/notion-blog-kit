@@ -1,7 +1,7 @@
 import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 
-interface QuoteProps {
+export interface QuoteProps {
   block: NotionBlock;
 }
 
