@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = (): JSX.Element => {
           <Link href='/'>
             <a className='text-xl normal-case rounded-md btn btn-ghost'>
               {/* <AiFillThunderbolt />&nbsp; */}
-              soolog
+              {config.infomation.nickname}
             </a>
           </Link>
         </div>

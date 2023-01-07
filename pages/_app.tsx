@@ -14,17 +14,17 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <NextSeo
-        title='soolog'
-        defaultTitle='soolog'
+        title={config.infomation.nickname}
+        defaultTitle={config.infomation.nickname}
         openGraph={{
-          site_name: 'soolog',
-          title: 'soolog',
+          site_name: config.infomation.nickname,
+          title: config.infomation.nickname,
           locale: 'ko_KR',
           type: 'website',
           url: config.origin,
-          description: 'sooros 블로그입니다.'
+          description: 'notion blog 플랫폼입니다.'
         }}
-        description='sooros 블로그입니다.'
+        description='notion blog 플랫폼입니다.'
       />
       <Head>
         <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -46,17 +46,21 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='msapplication-TileColor' content='#151a19' />
         <meta name='theme-color' content='#151a19' />
       </Head>
-      <Script
-        src='https://www.googletagmanager.com/gtag/js?id=G-ERREE02BX9'
-        strategy='beforeInteractive'
-      />
-      <Script id='google-analytics' strategy='afterInteractive'>
-        {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', 'G-ERREE02BX9');`}
-      </Script>
+      {config.googleGTag && (
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${config.googleGTag}`}
+          strategy='beforeInteractive'
+        />
+      )}
+      {config.googleGTag && (
+        <Script id='google-analytics' strategy='afterInteractive'>
+          {`window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  
+  gtag('config', '${config.googleGTag}');`}
+        </Script>
+      )}
       <Layout>
         <Component {...pageProps} />
       </Layout>
