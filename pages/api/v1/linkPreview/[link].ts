@@ -129,5 +129,3 @@ function getOpenGraphMedia(html: ParsedHTMLElement) {
 }
 
 export default handler;
-// https://www.notion.so/sooros/macOS-c63ecbf68b484fb1b338588e31fed9ea
-// https://www.notion.so/sooros/VS-Code-812b8358b3ba44b897ecf01258818108
