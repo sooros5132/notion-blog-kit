@@ -16,7 +16,6 @@ export interface SiteConfig extends Record<string, any> {
   path: string;
   notion: {
     baseBlock: string;
-    secretKey: string;
     customDomain: string | null;
     notionSoRegExp?: RegExp;
     notionSiteRegExp?: RegExp;

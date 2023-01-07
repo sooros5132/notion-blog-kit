@@ -6,7 +6,6 @@ const config = siteConfig({
   path: process.env.NEXT_PUBLIC_BASE_API_PATH || '/api/v1',
   notion: {
     baseBlock: process.env.NEXT_PUBLIC_NOTION_BASE_BLOCK || 'cd9c83dd9ea14181854cced99bac68c6',
-    secretKey: process.env.NOTION_API_SECRET_KEY || '',
     customDomain: process.env.NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN || null
   },
   headerNav: [
