@@ -1,14 +1,10 @@
 import type { AppProps } from 'next/app';
-import axios from 'axios';
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import Layout from 'src/components/Layout';
 import Script from 'next/script';
 import config from 'site-config';
 import 'src/styles/globals.css';
-
-axios.defaults.baseURL = config.origin;
-axios.defaults.withCredentials = true;
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
