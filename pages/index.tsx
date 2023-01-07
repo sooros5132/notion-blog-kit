@@ -32,12 +32,12 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     const [blocks, pageInfo] = await Promise.all([
       axios
         .get<IResponseSuccess<IGetNotion>>(
-          config.path + '/notion/blocks/children/list/' + config.notion.baseBlock
+          config.origin + config.path + '/notion/blocks/children/list/' + config.notion.baseBlock
         )
         .then((res) => res.data),
       axios
         .get<IResponseSuccess<INotionSearchObject>>(
-          config.path + '/notion/pages/' + config.notion.baseBlock
+          config.origin + config.path + '/notion/pages/' + config.notion.baseBlock
         )
         .then((res) => res.data)
     ]);

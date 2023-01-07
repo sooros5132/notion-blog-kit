@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           title: config.infomation.nickname,
           locale: 'ko_KR',
           type: 'website',
-          url: config.origin,
+          url: config.origin || '',
           description: 'notion blog 플랫폼입니다.'
         }}
         description='notion blog 플랫폼입니다.'
