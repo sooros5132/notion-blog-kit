@@ -197,58 +197,54 @@ export const ChildDatabaseBlock: React.FC<{
     <div>
       <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
         <Link href={title ? `/${title}-${block.id.replaceAll('-', '')}` : `/${block.id}`}>
-          <a>
-            <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-white/5 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear '>
-              {block?.cover ? (
+          <div className='page-cover  h-48 transition-[filter] duration-200 ease-linear bg-white/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
+            {block?.cover ? (
+              <NotionSecureImage
+                src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
+                blockId={block.id}
+                alt={'page-cover'}
+              />
+            ) : block?.icon ? (
+              block?.icon?.emoji ? (
+                <div className='notion-database-item-empty-cover'>{block?.icon?.emoji}</div>
+              ) : block?.icon?.file ? (
                 <NotionSecureImage
-                  src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
+                  src={
+                    awsImageObjectUrlToNotionUrl({
+                      blockId: block.id,
+                      s3ObjectUrl: block?.icon.file?.url
+                    }) ?? ''
+                  }
                   blockId={block.id}
-                  layout='fill'
-                  objectFit='cover'
+                  alt={'page-icon'}
                 />
-              ) : block?.icon ? (
-                block?.icon?.emoji ? (
-                  <div className='notion-database-item-empty-cover'>{block?.icon?.emoji}</div>
-                ) : block?.icon?.file ? (
-                  <NotionSecureImage
-                    src={
-                      awsImageObjectUrlToNotionUrl({
-                        blockId: block.id,
-                        s3ObjectUrl: block?.icon.file?.url
-                      }) ?? ''
-                    }
-                    layout='fill'
-                    objectFit='cover'
-                    blockId={block.id}
-                  />
-                ) : (
-                  <div className='notion-database-item-empty-cover'>
-                    <SiNotion />
-                  </div>
-                )
               ) : (
                 <div className='notion-database-item-empty-cover'>
                   <SiNotion />
                 </div>
+              )
+            ) : (
+              <div className='notion-database-item-empty-cover'>
+                <SiNotion />
+              </div>
+            )}
+          </div>
+          <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
+            <div className='overflow-hidden max-h-[3.3em] [&>div>p]:line-clamp-2 [&>div>a]:line-clamp-2 [&>div>span]:line-clamp-2'>
+              {block?.properties?.title?.title && (
+                <NotionParagraphBlock
+                  blockId={block.id}
+                  richText={block?.properties?.title?.title}
+                />
               )}
             </div>
-            <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
-              <div className='overflow-hidden max-h-[3.3em] [&>div>p]:line-clamp-2 [&>div>a]:line-clamp-2 [&>div>span]:line-clamp-2'>
-                {block?.properties?.title?.title && (
-                  <NotionParagraphBlock
-                    blockId={block.id}
-                    richText={block?.properties?.title?.title}
-                  />
-                )}
-              </div>
-              <div className='whitespace-nowrap'>
-                <p>
-                  {date}
-                  {sortKey === 'last_edited_time' && ' 수정됨'}
-                </p>
-              </div>
+            <div className='whitespace-nowrap'>
+              <p>
+                {date}
+                {sortKey === 'last_edited_time' && ' 수정됨'}
+              </p>
             </div>
-          </a>
+          </div>
         </Link>
       </div>
     </div>

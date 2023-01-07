@@ -36,7 +36,11 @@ const Callout: React.FC<CalloutProps> = ({ block, blocks, chilrenBlockDepth }) =
           <div className='pt-0.5 basis-6 flex justify-center'>
             <div className='text-xl leading-6 font-emoji'>
               {block.callout?.icon?.file && block.callout?.icon?.type === 'file' && (
-                <NotionSecureImage blockId={block.id} src={block.callout?.icon.file.url} />
+                <NotionSecureImage
+                  alt='callout-icon'
+                  blockId={block.id}
+                  src={block.callout?.icon.file.url}
+                />
               )}
               {block.callout?.icon?.emoji &&
                 block.callout?.icon?.type === 'emoji' &&

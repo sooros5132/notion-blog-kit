@@ -39,11 +39,9 @@ const Header: React.FC<HeaderProps> = (): JSX.Element => {
     <nav className='sticky top-0 left-0 z-10 bg-base-100/80 backdrop-blur-xl'>
       <div className='max-w-screen-lg mx-auto navbar'>
         <div className='flex-1'>
-          <Link href='/'>
-            <a className='text-xl normal-case rounded-md btn btn-ghost'>
-              {/* <AiFillThunderbolt />&nbsp; */}
-              {config.infomation.nickname}
-            </a>
+          <Link className='text-xl normal-case rounded-md btn btn-ghost' href='/'>
+            {/* <AiFillThunderbolt />&nbsp; */}
+            {config.infomation.nickname}
           </Link>
         </div>
         <div className='flex-none gap-1 md:gap-2'>
@@ -52,9 +50,7 @@ const Header: React.FC<HeaderProps> = (): JSX.Element => {
               config.headerNav.length > 0 &&
               config.headerNav.map((item, i) => (
                 <li key={`header-nav-item-${i}`}>
-                  <Link href={`/${item.slug}`}>
-                    <a>{item.name}</a>
-                  </Link>
+                  <Link href={`/${item.slug}`}>{item.name}</Link>
                 </li>
               ))}
           </ul>

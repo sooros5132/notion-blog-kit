@@ -62,15 +62,16 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionLinkPreviewBlock url={url} />
-                {Array.isArray(block?.bookmark?.caption) && block?.bookmark?.caption?.length > 0 && (
-                  <div className='w-full'>
-                    <NotionParagraphBlock
-                      blockId={block.id}
-                      richText={block.bookmark.caption}
-                      color={'gray'}
-                    />
-                  </div>
-                )}
+                {Array.isArray(block?.bookmark?.caption) &&
+                  block?.bookmark?.caption?.length > 0 && (
+                    <div className='w-full'>
+                      <NotionParagraphBlock
+                        blockId={block.id}
+                        richText={block.bookmark.caption}
+                        color={'gray'}
+                      />
+                    </div>
+                  )}
               </NotionBlockRender>
             );
           }
@@ -208,9 +209,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           }
           case 'quote': {
             return (
-              <NotionQuoteBlock block={block}>
+              <NotionQuoteBlock key={`block-${block.id}-${i}`} block={block}>
                 <NotionBlockRender
-                  key={`block-${block.id}-${i}`}
                   block={block}
                   blocks={blocks}
                   chilrenBlockDepth={childrenDepth.current}

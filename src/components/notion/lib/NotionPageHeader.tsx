@@ -27,8 +27,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
           <NotionSecureImage
             blockId={page.id}
             src={page?.cover?.[page?.cover?.type]?.url!}
-            layout='fill'
-            objectFit='cover'
+            alt={'page-cover'}
           />
         </div>
       )}
@@ -47,7 +46,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
       >
         {page.icon?.file && page.icon?.type === 'file' && (
           <div className='w-[70px] h-[70px]'>
-            <NotionSecureImage blockId={page.id} src={page.icon.file.url} priority />
+            <NotionSecureImage blockId={page.id} src={page.icon.file.url} alt={'page-icon'} />
           </div>
         )}
         {page.icon?.emoji && page.icon?.type === 'emoji' && (
@@ -67,7 +66,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
               href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}
             >
               <Link href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}>
-                <a>&nbsp;🔗</a>
+                &nbsp;🔗
               </Link>
             </NotionCopyHeadingLink>
           </NotionHeadingInner>
