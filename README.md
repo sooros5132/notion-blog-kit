@@ -12,7 +12,7 @@ A statically generated blog using Next.js, Notion Api.
 *`Key` is required
 |Key|Value|
 |------|---|
-|*`NOTION_API_SECRET_KEY`|ex) `secret_zhL...`|
+|*`NOTION_API_SECRET_KEY`|[notion api](https://www.notion.so/my-integrations)<br />ex) `secret_zhL...`|
 |*`NEXT_PUBLIC_BASE_ORIGIN`|ex) `https://blog.sooros.com`|
 |*`NEXT_PUBLIC_NOTION_BASE_BLOCK`|ex) `cd9c83dd9ea14181854cced99bac68c6`|
 |*`NEXT_PUBLIC_INFOMATION_NICKNAME`|ex) `sooros`|
