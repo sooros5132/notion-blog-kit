@@ -208,14 +208,14 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           }
           case 'quote': {
             return (
-              <NotionBlockRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                blocks={blocks}
-                chilrenBlockDepth={childrenDepth.current}
-              >
-                <NotionQuoteBlock block={block} />
-              </NotionBlockRender>
+              <NotionQuoteBlock block={block}>
+                <NotionBlockRender
+                  key={`block-${block.id}-${i}`}
+                  block={block}
+                  blocks={blocks}
+                  chilrenBlockDepth={childrenDepth.current}
+                ></NotionBlockRender>
+              </NotionQuoteBlock>
             );
           }
           case 'table': {
