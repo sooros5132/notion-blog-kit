@@ -47,9 +47,6 @@ const Header: React.FC<HeaderProps> = (): JSX.Element => {
           </Link>
         </div>
         <div className='flex-none gap-1 md:gap-2'>
-          <div className='max-w-[150px] sm:max-w-[200px]'>
-            <Search autoInputHidden={true} />
-          </div>
           <ul className='gap-1 p-0 md:gap-2 menu menu-horizontal'>
             {Array.isArray(config.headerNav) &&
               config.headerNav.length > 0 &&
@@ -61,6 +58,9 @@ const Header: React.FC<HeaderProps> = (): JSX.Element => {
                 </li>
               ))}
           </ul>
+          <div className='max-w-[150px] sm:max-w-[200px]'>
+            <Search autoInputHidden={true} />
+          </div>
         </div>
         {/* <FlexAlignItemsCenterBox>
           <Box
