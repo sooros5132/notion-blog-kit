@@ -9,23 +9,7 @@ const Footer: React.FC = (): JSX.Element => {
   return (
     <footer className='p-14 footer footer-center bg-primary text-primary-content'>
       <div>
-        <p className='text-6xl font-bold'>{config.infomation.nickname}</p>
-        <p>
-          Copyright{' '}
-          {config.infomation.email ? (
-            <a
-              className='underline'
-              href={'mailto:' + config.infomation.email}
-              rel='noreferrer'
-              target='_blank'
-            >
-              {config.infomation.nickname}
-            </a>
-          ) : (
-            config.infomation.nickname
-          )}{' '}
-          2022 - All right reserved
-        </p>
+        <p className='text-5xl font-bold'>{config.infomation.nickname}</p>
       </div>
       <div>
         <div className='grid grid-flow-col gap-4 text-3xl'>
@@ -72,6 +56,7 @@ const Footer: React.FC = (): JSX.Element => {
     </footer>
   );
 };
+
 Footer.displayName = 'Footer';
 
 export default Footer;
