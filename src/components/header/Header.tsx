@@ -37,20 +37,22 @@ const Header: React.FC<HeaderProps> = (): JSX.Element => {
 
   return (
     <nav className='sticky top-0 left-0 z-10 bg-base-100/80 backdrop-blur-xl'>
-      <div className='max-w-screen-lg mx-auto navbar'>
+      <div className='max-w-screen-lg mx-auto flex justify-between p-2'>
         <div className='flex-1'>
-          <Link className='text-xl normal-case rounded-md btn btn-ghost' href='/'>
+          <Link className='text-xl rounded-md btn btn-ghost btn-sm h-full normal-case' href='/'>
             {/* <AiFillThunderbolt />&nbsp; */}
-            {config.infomation.nickname}
+            {config.infomation.blogname}
           </Link>
         </div>
-        <div className='flex-none gap-1 md:gap-2'>
+        <div className='flex gap-1 md:gap-2 whitespace-nowrap overflow-x-auto scrollbar-hidden'>
           <ul className='gap-1 p-0 md:gap-2 menu menu-horizontal'>
             {Array.isArray(config.headerNav) &&
               config.headerNav.length > 0 &&
               config.headerNav.map((item, i) => (
                 <li key={`header-nav-item-${i}`}>
-                  <Link href={`/${item.slug}`}>{item.name}</Link>
+                  <Link href={`/${item.slug}`} className='btn-sm h-full py-1 px-2'>
+                    {item.name}
+                  </Link>
                 </li>
               ))}
           </ul>

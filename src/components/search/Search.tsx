@@ -36,15 +36,15 @@ const Search: React.FC<SearchProps> = ({ searchValue, autoInputHidden }): JSX.El
           <input
             className={
               autoInputHidden
-                ? 'hidden w-full bg-transparent input sm:block'
-                : 'w-full bg-transparent input'
+                ? 'hidden w-full bg-transparent input input-sm sm:block'
+                : 'w-full bg-transparent input input-sm'
             }
             defaultValue={searchValue}
             type='text'
             name='search'
             placeholder='제목 검색'
           />
-          <button className='text-xl border-none btn btn-square bg-inherit'>
+          <button className='text-lg border-none btn btn-square bg-inherit btn-sm'>
             <AiOutlineSearch />
           </button>
         </div>

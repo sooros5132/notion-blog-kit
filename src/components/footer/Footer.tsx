@@ -5,45 +5,25 @@ import config from 'site-config';
 
 interface FooterProps {}
 
-const Footer: React.FC = (): JSX.Element => {
+const Footer: React.FC<FooterProps> = (): JSX.Element => {
   return (
-    <footer className='p-14 footer footer-center bg-primary text-primary-content'>
-      <div>
         <p className='text-5xl font-bold'>{config.infomation.nickname}</p>
-      </div>
-      <div>
-        <div className='grid grid-flow-col gap-4 text-3xl'>
+    <footer className='px-2 py-4 sm:px-4 bg-primary text-primary-content'>
+      <div className='max-w-screen-lg mx-auto flex justify-between align-center'>
+        <div className='flex items-center gap-2 text-3xl'>
           {config.infomation.email && (
-            <a className='tooltip' data-tip='send mail' href={'mailto:' + config.infomation.email}>
-              <div>
-                <SiMaildotru />
-              </div>
+            <a href={'mailto:' + config.infomation.email}>
+              <SiMaildotru />
             </a>
           )}
           {config.infomation.github && (
-            <a
-              className='tooltip'
-              data-tip='GitHub'
-              href={config.infomation.github}
-              rel='noreferrer'
-              target='_blank'
-            >
-              <div>
-                <SiGithub />
-              </div>
+            <a href={config.infomation.github} rel='noreferrer' target='_blank'>
+              <SiGithub />
             </a>
           )}
           {config.infomation.repository && (
-            <a
-              className='tooltip'
-              data-tip='repository'
-              href={config.infomation.repository}
-              rel='noreferrer'
-              target='_blank'
-            >
-              <div>
-                <RiGitRepositoryFill />
-              </div>
+            <a href={config.infomation.repository} rel='noreferrer' target='_blank'>
+              <RiGitRepositoryFill />
             </a>
           )}
         </div>
