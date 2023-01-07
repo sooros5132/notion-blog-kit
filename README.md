@@ -6,7 +6,7 @@ A statically generated blog using Next.js, Notion Api.
 ## Deploy
 
 ### Vercel Deploy
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NEXT_PUBLIC_INFOMATION_NICKNAME,NEXT_PUBLIC_NOTION_BASE_BLOCK,NOTION_API_SECRET_KEY&demo-title=Notion%20Blog&demo-description=A%20statically%20generated%20blog%20example%20using%20Next.js%2C%20Notion%20Api.&demo-url=https%3A%2F%2Fblog.sooros.com)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_BASE_ORIGIN,NEXT_PUBLIC_NOTION_BASE_BLOCK,NEXT_PUBLIC_INFOMATION_NICKNAME&demo-title=My%20Notion%20Blog&demo-description=A%20statically%20generated%20blog%20using%20Next.js%2C%20Notion%20Api.&demo-url=https%3A%2F%2Fblog.sooros.com)
 
 ### env settings
 *`Key` is required

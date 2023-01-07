@@ -9,7 +9,7 @@ const config = siteConfig({
     customDomain: process.env.NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN || null
   },
   infomation: {
-    nickname: process.env.NEXT_PUBLIC_INFOMATION_NICKNAME || 'sooros',
+    blogname: process.env.NEXT_PUBLIC_INFOMATION_NICKNAME || 'sooros',
     email: process.env.NEXT_PUBLIC_INFOMATION_EMAIL,
     github: process.env.NEXT_PUBLIC_INFOMATION_GITHUB,
     repository: process.env.NEXT_PUBLIC_INFOMATION_REPOSITORY

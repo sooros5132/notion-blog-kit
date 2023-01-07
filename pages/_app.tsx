@@ -10,11 +10,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <NextSeo
-        title={config.infomation.nickname}
-        defaultTitle={config.infomation.nickname}
+        title={config.infomation.blogname}
+        defaultTitle={config.infomation.blogname}
         openGraph={{
-          site_name: config.infomation.nickname,
-          title: config.infomation.nickname,
+          site_name: config.infomation.blogname,
+          title: config.infomation.blogname,
           locale: 'ko_KR',
           type: 'website',
           url: config.origin || '',
