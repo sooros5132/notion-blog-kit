@@ -5,7 +5,7 @@ import { INotionSearch, NotionDatabase } from 'src/types/notion';
 import config from 'site-config';
 import { fetcher } from 'src/lib/swr';
 import { useRouter } from 'next/router';
-import { ChildDatabaseBlock } from 'src/components/notion/ChildDatabase';
+import { ChildDatabaseBlock } from 'src/components/notion/lib/ChildDatabase';
 import Search from 'src/components/search/Search';
 
 const SearchValue: NextPage = (): JSX.Element => {
