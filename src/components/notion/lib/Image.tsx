@@ -11,6 +11,12 @@ const Image: React.FC<ImageProps> = ({ block }) => {
       <div>
         <div className='text-center font-[0px]'>
           <NotionSecureImage
+            alt={
+              block.image.caption
+                .map((richText) => richText.plain_text)
+                .join('')
+                .slice(0, 100) || ''
+            }
             blockId={block.id}
             src={block.image?.file?.url ?? block.image?.external?.url ?? ''}
           />
