@@ -31,7 +31,7 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
     fetcher,
     {
       revalidateOnFocus: false,
-      refreshInterval: 55 * 60 * 1000 // 55분
+      refreshInterval: 54 * 60 * 1000 // 54분
     }
   );
   if (error) {
@@ -48,7 +48,7 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
     );
   }
 
-  if (isValidating || !data?.video?.file?.url) {
+  if (isValidating || (!data?.video?.file?.url && !data?.video?.external?.url)) {
     return (
       <div className='w-full'>
         <div className='flex-center h-[50vw] max-h-[20rem] bg-notionColor-gray_background'>
@@ -60,9 +60,43 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
 
   return (
     <div className='w-full'>
-      <video className='w-full' controls src={data?.video.file?.url} />
+      {data?.video.type === 'file' ? (
+        <video className='w-full aspect-video' controls src={data?.video.file?.url} />
+      ) : (
+        <div className='w-full [&>iframe]:w-full [&>iframe]:aspect-video '>
+          <EmbedVideo url={data?.video.external?.url || ''} />
+        </div>
+      )}
     </div>
   );
+};
+
+const EmbedVideo: React.FC<{ url: string }> = ({ url }) => {
+  const hostname = new URL(url).hostname;
+
+  switch (hostname) {
+    case 'youtube.com':
+    case 'www.youtube.com': {
+      const embedUrl = url.replace(/\/watch\?v=/, '/embed/');
+      return (
+        <iframe
+          src={embedUrl}
+          allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share'
+          allowFullScreen
+        />
+      );
+    }
+
+    default: {
+      return (
+        <iframe
+          src={url}
+          allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share'
+          allowFullScreen
+        />
+      );
+    }
+  }
 };
 
 export default Video;
