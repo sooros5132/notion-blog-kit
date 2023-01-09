@@ -50,17 +50,43 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
   const [isOrderAsc, setIsOrderAsc] = useState(true);
 
   const handleCloseSortMenu = (newSortKey: SortKeys) => () => {
-    if (newSortKey === sortKey) {
-      const newIsOrderAsc = !isOrderAsc;
-      setBlocks((prevBlocks) =>
-        newIsOrderAsc ? sortBy(prevBlocks, newSortKey).reverse() : sortBy(prevBlocks, newSortKey)
-      );
-      setSortKey(newSortKey);
-      setIsOrderAsc(newIsOrderAsc);
-    } else {
-      setBlocks((prevBlocks) => sortBy(prevBlocks, newSortKey).reverse());
-      setSortKey(newSortKey);
-      setIsOrderAsc(true);
+    switch (newSortKey) {
+      // 시간은 반대 나머지는 정상
+      case 'last_edited_time':
+      case 'created_time': {
+        if (newSortKey === sortKey) {
+          const newIsOrderAsc = !isOrderAsc;
+          setBlocks((prevBlocks) =>
+            newIsOrderAsc
+              ? sortBy(prevBlocks, newSortKey).reverse()
+              : sortBy(prevBlocks, newSortKey)
+          );
+          setSortKey(newSortKey);
+          setIsOrderAsc(newIsOrderAsc);
+        } else {
+          setBlocks((prevBlocks) => sortBy(prevBlocks, newSortKey).reverse());
+          setSortKey(newSortKey);
+          setIsOrderAsc(true);
+        }
+        break;
+      }
+      case 'title': {
+        if (newSortKey === sortKey) {
+          const newIsOrderAsc = !isOrderAsc;
+          setBlocks((prevBlocks) =>
+            newIsOrderAsc
+              ? sortBy(prevBlocks, newSortKey)
+              : sortBy(prevBlocks, newSortKey).reverse()
+          );
+          setSortKey(newSortKey);
+          setIsOrderAsc(newIsOrderAsc);
+        } else {
+          setBlocks((prevBlocks) => sortBy(prevBlocks, newSortKey));
+          setSortKey(newSortKey);
+          setIsOrderAsc(true);
+        }
+        break;
+      }
     }
   };
   const hash = `${
