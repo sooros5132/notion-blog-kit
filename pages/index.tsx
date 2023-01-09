@@ -1,55 +1,40 @@
-import axios from 'axios';
+import type React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
-import { ReactNode } from 'react';
 import config from 'site-config';
-import { IResponseSuccess } from 'src-server/types/response';
-import NotionRender from 'src/components/notion/NotionRender';
+import { NotionService } from 'src-server/service/Notion';
+import { NotionRender } from 'src/components/notion';
 import { IGetNotion, INotionSearchObject } from 'src/types/notion';
-import { SWRConfig } from 'swr';
 
-interface HomeProps {
+interface HomeProps extends IGetNotion {
   slug: string;
-  notionBlocksChildrenList: IGetNotion;
   pageInfo: INotionSearchObject;
 }
-const Home: NextPage<HomeProps> = ({ slug, notionBlocksChildrenList, pageInfo }) => {
+const Home: NextPage<HomeProps> = ({ slug, blocks, childrenBlocks, databaseBlocks, pageInfo }) => {
   return (
-    <SWRConfig
-      value={{
-        fallback: {
-          ['/notion/blocks/children/list/' + slug]: notionBlocksChildrenList,
-          ['/notion/pages/' + slug]: pageInfo
-        }
-      }}
-    >
-      <NotionRender slug={slug} />
-    </SWRConfig>
+    <NotionRender
+      slug={slug}
+      page={pageInfo}
+      blocks={blocks}
+      databaseBlocks={databaseBlocks}
+      childrenBlocks={childrenBlocks}
+    />
   );
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
+    const notionService = new NotionService();
     const [blocks, pageInfo] = await Promise.all([
-      axios
-        .get<IResponseSuccess<IGetNotion>>(
-          config.origin + config.path + '/notion/blocks/children/list/' + config.notion.baseBlock
-        )
-        .then((res) => res.data),
-      axios
-        .get<IResponseSuccess<INotionSearchObject>>(
-          config.origin + config.path + '/notion/pages/' + config.notion.baseBlock
-        )
-        .then((res) => res.data)
+      notionService.getAllBlocksAndChildrens(config.notion.baseBlock),
+      notionService.getPageInfoByPageId(config.notion.baseBlock)
     ]);
-
-    if (!blocks?.success || !pageInfo?.success) {
-      throw '';
-    }
     return {
       props: {
         slug: config.notion.baseBlock,
-        notionBlocksChildrenList: blocks.result,
-        pageInfo: pageInfo.result
+        blocks: blocks.blocks,
+        childrenBlocks: blocks.childrenBlocks,
+        databaseBlocks: blocks.databaseBlocks,
+        pageInfo: pageInfo
       },
       revalidate: 600
     };

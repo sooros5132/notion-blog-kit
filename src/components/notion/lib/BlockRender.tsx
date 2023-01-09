@@ -1,16 +1,18 @@
+import type React from 'react';
 import type { NotionBlock, IGetNotion } from 'src/types/notion';
-import { NotionBlocksRender } from '..';
+import { NotionBlocksRender } from '.';
 
-interface NotionBlockProps {
+interface NotionBlockProps extends IGetNotion {
   block: NotionBlock;
-  blocks: IGetNotion;
   children?: React.ReactNode;
   chilrenBlockDepth?: number;
 }
 
-const BlockRender: React.FC<NotionBlockProps> = ({
+export const BlockRender: React.FC<NotionBlockProps> = ({
   block,
   blocks,
+  childrenBlocks,
+  databaseBlocks,
   children,
   chilrenBlockDepth
 }) => {
@@ -20,16 +22,12 @@ const BlockRender: React.FC<NotionBlockProps> = ({
       {block?.has_children && typeof chilrenBlockDepth === 'number' && chilrenBlockDepth > 0 && (
         <div className='ml-6'>
           <NotionBlocksRender
-            blocks={{
-              blocks: blocks['childrenBlocks'][block.id],
-              childrenBlocks: blocks.childrenBlocks,
-              databaseBlocks: blocks.databaseBlocks
-            }}
+            blocks={childrenBlocks[block.id]}
+            childrenBlocks={childrenBlocks}
+            databaseBlocks={databaseBlocks}
           />
         </div>
       )}
     </div>
   );
 };
-
-export default BlockRender;

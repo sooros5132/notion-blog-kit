@@ -12,7 +12,6 @@ export type LinkPreview = {
 };
 
 export interface SiteConfig extends Record<string, any> {
-  origin: string;
   path: string;
   notion: {
     baseBlock: string;
@@ -32,4 +31,9 @@ export interface SiteConfig extends Record<string, any> {
     repository?: string;
   };
   googleGTag?: string;
+}
+
+export interface NextAppContext {
+  params: Record<string, Array<string> | string>;
+  searchParams: Record<string, Array<string> | string>;
 }

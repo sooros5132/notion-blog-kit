@@ -1,11 +1,9 @@
-import React from 'react';
+import type React from 'react';
 import { SiGithub, SiMaildotru } from 'react-icons/si';
 import { RiGitRepositoryFill } from 'react-icons/ri';
 import config from 'site-config';
 
-interface FooterProps {}
-
-const Footer: React.FC<FooterProps> = (): JSX.Element => {
+const Footer: React.FC = (): JSX.Element => {
   return (
     <footer className='px-2 py-4 sm:px-4 bg-primary text-primary-content'>
       <div className='max-w-screen-lg mx-auto flex justify-between align-center'>

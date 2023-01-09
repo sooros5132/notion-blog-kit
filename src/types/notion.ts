@@ -1,4 +1,5 @@
 export declare type ID = string;
+export const URL_PAGE_TITLE_MAX_LENGTH = 50;
 
 export declare type Code =
   | 'abap'
@@ -310,12 +311,12 @@ export interface NotionBlocksChildrenList {
   next_cursor?: string | null; // Only available when "has_more" is true.
   has_more: boolean;
   type: NotionBlockTypes;
-  block: {};
+  block: Record<string, any>;
 }
 
 export interface IGetSearchNotion extends NotionBlocksChildrenList {
   type: 'page_or_database';
-  page_or_database: {};
+  page_or_database: Record<string, any>;
 }
 
 interface MultiSelect {
@@ -375,7 +376,7 @@ export interface NotionDatabasesQuery {
   next_cursor?: string | null; // Only available when "has_more" is true.
   has_more: boolean;
   type: NotionBlockTypes;
-  page: {};
+  page: Record<string, any>;
 }
 
 export interface EmojiObject {
@@ -424,5 +425,5 @@ export interface INotionSearch {
   next_cursor: string | null;
   has_more: boolean;
   type: 'page_or_database';
-  page_or_database: {};
+  page_or_database: Record<string, any>;
 }

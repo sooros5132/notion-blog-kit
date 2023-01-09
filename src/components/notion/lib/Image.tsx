@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
 
@@ -5,7 +6,7 @@ interface ImageProps {
   block: NotionBlock;
 }
 
-const Image: React.FC<ImageProps> = ({ block }) => {
+export const Image: React.FC<ImageProps> = ({ block }) => {
   return (
     <div className='flex justify-center'>
       <div>
@@ -34,5 +35,3 @@ const Image: React.FC<ImageProps> = ({ block }) => {
     </div>
   );
 };
-
-export default Image;

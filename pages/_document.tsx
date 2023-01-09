@@ -1,3 +1,4 @@
+import type React from 'react';
 import Document, { Html, Main, Head, NextScript } from 'next/document';
 
 class CustomDocument extends Document {

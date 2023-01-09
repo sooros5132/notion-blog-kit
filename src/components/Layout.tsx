@@ -1,21 +1,15 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import type React from 'react';
 import _ from 'lodash';
 import { useThemeStore } from 'src/store/theme';
 import Header from './header/Header';
 import Footer from './footer/Footer';
 import NextNProgress from 'nextjs-progressbar';
 import shallow from 'zustand/shallow';
+import { useEffect } from 'react';
 
-export const introductionPathnameList = [
-  '/'
-  // '/introduction/jobseeker',
-  // '/introduction/interviewer',
-  // '/introduction/mou'
-];
+export const introductionPathnameList = ['/'];
 
 function Layout({ children }: any) {
-  const router = useRouter();
   const themeStore = useThemeStore((state) => state, shallow);
 
   // React.useEffect(() => {

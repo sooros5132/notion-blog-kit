@@ -1,3 +1,6 @@
+'use client';
+
+import type React from 'react';
 import { Fragment, useRef } from 'react';
 import type { IGetNotion } from 'src/types/notion';
 import {
@@ -20,19 +23,21 @@ import {
   NotionCodeBlock
 } from '.';
 
-export interface NotionBlocksProps {
-  blocks: IGetNotion;
-}
+export type NotionBlocksProps = IGetNotion;
 
-const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
+export const BlocksRender: React.FC<NotionBlocksProps> = ({
+  blocks,
+  childrenBlocks,
+  databaseBlocks
+}) => {
   const numberOfSameTag = useRef(0);
   const childrenDepth = useRef(0);
 
   return (
     <>
-      {blocks.blocks?.results.map((block, i) => {
+      {blocks?.results.map((block, i) => {
         numberOfSameTag.current =
-          blocks.blocks.results?.[i - 1]?.type === block.type ? numberOfSameTag.current + 1 : 0;
+          blocks.results?.[i - 1]?.type === block.type ? numberOfSameTag.current + 1 : 0;
         childrenDepth.current = block?.has_children ? childrenDepth.current + 1 : 0;
 
         switch (block.type) {
@@ -42,6 +47,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionBulletedListItemBlock block={block} />
@@ -59,6 +66,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionLinkPreviewBlock url={url} />
@@ -81,6 +90,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               />
             );
@@ -90,7 +101,7 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
               <NotionChildDatabaseBlock
                 key={`block-${block.id}-${i}`}
                 block={block}
-                databases={blocks.databaseBlocks}
+                databases={databaseBlocks}
               />
             );
           }
@@ -100,6 +111,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionCodeBlock block={block} />
@@ -108,7 +121,13 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           }
           case 'column_list': {
             return (
-              <NotionColumnListBlock key={`block-${block.id}-${i}`} blocks={blocks} block={block} />
+              <NotionColumnListBlock
+                key={`block-${block.id}-${i}`}
+                blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
+                block={block}
+              />
             );
           }
           case 'column': {
@@ -117,6 +136,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               />
             );
@@ -127,6 +148,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <hr className='border-gray-500' />
@@ -141,6 +164,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionHeadingBlock block={block} />
@@ -153,6 +178,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionImageBlock block={block} />
@@ -170,6 +197,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionLinkPreviewBlock url={url} />
@@ -182,6 +211,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionNumberedListItemBlock
@@ -197,6 +228,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionParagraphBlock
@@ -213,6 +246,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 <NotionBlockRender
                   block={block}
                   blocks={blocks}
+                  databaseBlocks={databaseBlocks}
+                  childrenBlocks={childrenBlocks}
                   chilrenBlockDepth={childrenDepth.current}
                 ></NotionBlockRender>
               </NotionQuoteBlock>
@@ -224,6 +259,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               />
             );
@@ -234,6 +271,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionTodoBlock block={block} />
@@ -246,6 +285,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
               <NotionToggleBlock
                 key={`block-${block.id}-${i}`}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 block={block}
                 chilrenBlockDepth={childrenDepth.current}
               />
@@ -257,6 +298,8 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
+                databaseBlocks={databaseBlocks}
+                childrenBlocks={childrenBlocks}
                 chilrenBlockDepth={childrenDepth.current}
               >
                 <NotionVideoBlock block={block} />
@@ -271,5 +314,3 @@ const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
     </>
   );
 };
-
-export default BlocksRender;

@@ -1,6 +1,6 @@
+import type React from 'react';
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
-import config from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import type { INotionSearchObject } from 'src/types/notion';
 
@@ -27,12 +27,12 @@ const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, slug })
     <>
       <NextSeo
         title={title?.slice(0, 60) || '제목 없음'}
-        description={description?.slice(0, 155) || undefined}
+        description={description?.slice(0, 155)?.trim() || undefined}
         openGraph={{
-          url:
-            config.origin + slug?.charAt(0) === '/'
-              ? config.origin + slug
-              : config.origin + '/' + slug,
+          // url:
+          //   config.origin + slug?.charAt(0) === '/'
+          //     ? config.origin + slug
+          //     : config.origin + '/' + slug,
           images: url
             ? [
                 {

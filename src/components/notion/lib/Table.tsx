@@ -1,15 +1,21 @@
+import type React from 'react';
 import classnames from 'classnames';
 import type { NotionBlock, IGetNotion } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 
-interface TableProps {
+interface TableProps extends IGetNotion {
   block: NotionBlock;
-  blocks: IGetNotion;
   chilrenBlockDepth?: number;
 }
 
-const Table: React.FC<TableProps> = ({ block, blocks, chilrenBlockDepth }) => {
-  const tbodyBlock = blocks.childrenBlocks[block.id];
+const Table: React.FC<TableProps> = ({
+  block,
+  blocks,
+  chilrenBlockDepth,
+  childrenBlocks,
+  databaseBlocks
+}) => {
+  const tbodyBlock = childrenBlocks[block.id];
 
   if (!block?.table || !tbodyBlock) {
     return null;

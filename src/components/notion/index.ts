@@ -24,3 +24,5 @@ export {
   NotionVideoBlock,
   notionColorClasses
 } from './lib';
+
+export { NotionRender } from './NotionRender';

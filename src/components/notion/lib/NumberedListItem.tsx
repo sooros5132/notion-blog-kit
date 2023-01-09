@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 

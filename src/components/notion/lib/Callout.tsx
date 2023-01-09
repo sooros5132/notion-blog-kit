@@ -1,3 +1,4 @@
+import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
 import type { Color, NotionBlock, IGetNotion } from 'src/types/notion';
@@ -22,16 +23,27 @@ const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) 
   );
 };
 
-interface CalloutProps {
+interface CalloutProps extends IGetNotion {
   block: NotionBlock;
-  blocks: IGetNotion;
   chilrenBlockDepth?: number;
 }
 
-const Callout: React.FC<CalloutProps> = ({ block, blocks, chilrenBlockDepth }) => {
+const Callout: React.FC<CalloutProps> = ({
+  block,
+  blocks,
+  chilrenBlockDepth,
+  childrenBlocks,
+  databaseBlocks
+}) => {
   return (
     <CalloutBlockContainer color={block.callout.color}>
-      <NotionBlockRender block={block} blocks={blocks} chilrenBlockDepth={chilrenBlockDepth}>
+      <NotionBlockRender
+        block={block}
+        blocks={blocks}
+        databaseBlocks={databaseBlocks}
+        childrenBlocks={childrenBlocks}
+        chilrenBlockDepth={chilrenBlockDepth}
+      >
         <div className='flex'>
           <div className='pt-0.5 basis-6 flex justify-center'>
             <div className='text-xl leading-6 font-emoji'>

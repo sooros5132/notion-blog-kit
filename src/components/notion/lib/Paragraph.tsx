@@ -1,3 +1,4 @@
+import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';

@@ -1,3 +1,6 @@
+'use client';
+
+import type React from 'react';
 import type {
   NotionBlock,
   IGetNotion,
@@ -5,13 +8,11 @@ import type {
   INotionSearchObject,
   NotionDatabasesQuery
 } from 'src/types/notion';
-import useSWR from 'swr';
-import config from 'site-config';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
 
-export interface NotionRenderProps {
-  // readonly blocks: Array<NotionBlock>;
-  readonly slug: string;
+export interface NotionRenderProps extends IGetNotion {
+  slug: string;
+  page: INotionSearchObject;
 }
 
 // export const EllipsisWrapperBox = styled('div')({
@@ -27,13 +28,14 @@ export interface NotionRenderProps {
 //   }
 // });
 
-const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
-  const { data: blocks } = useSWR<IGetNotion>('/notion/blocks/children/list/' + slug);
-  const { data: page } = useSWR<INotionSearchObject>('/notion/pages/' + slug);
-
-  // const { data, error } = useSWR("/key", fetch);
-
-  if (!blocks?.blocks?.results || !page) {
+export const NotionRender: React.FC<NotionRenderProps> = ({
+  slug,
+  blocks,
+  childrenBlocks,
+  databaseBlocks,
+  page
+}): JSX.Element => {
+  if (!blocks?.results || !page) {
     return (
       <div className='flex-center'>
         <progress className='radial-progress'></progress>
@@ -43,11 +45,11 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
 
   const title =
     page.object === 'page'
-      ? page.properties.title?.title?.map((text) => text?.plain_text).join('') || null
+      ? page?.properties?.title?.title?.map((text) => text?.plain_text).join('') || null
       : page.object === 'database'
       ? page.title?.map((text) => text?.plain_text).join('') || null
       : null;
-  const description = blocks?.blocks?.results
+  const description = blocks?.results
     ?.slice(0, 10)
     ?.map((block: any) =>
       block?.[block.type]?.rich_text?.map((text: RichText) => text?.plain_text || '')?.join('')
@@ -61,7 +63,11 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
       <NotionPageHeader page={page} title={title} />
       <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
         {page.object === 'page' ? (
-          <NotionBlocksRender blocks={blocks} />
+          <NotionBlocksRender
+            blocks={blocks}
+            databaseBlocks={databaseBlocks}
+            childrenBlocks={childrenBlocks}
+          />
         ) : page.object === 'database' ? (
           <NotionChildDatabaseBlock
             //! key로 useState 초기화 + 리렌더링 강제유발
@@ -75,10 +81,10 @@ const NotionRender: React.FC<NotionRenderProps> = ({ slug }): JSX.Element => {
                 }
               } as unknown as NotionBlock
             }
-            databases={{ [page.id]: blocks.blocks as unknown as NotionDatabasesQuery }}
+            databases={{ [page.id]: blocks as unknown as NotionDatabasesQuery }}
           />
         ) : null}
-        {page?.id && <NotionHits page={page} />}
+        {/* {page?.id && <NotionHits page={page} />} */}
       </div>
     </div>
   );
@@ -90,7 +96,7 @@ const NotionHits: React.FC<{ page: INotionSearchObject }> = ({ page }) => {
       {process.env.NODE_ENV === 'production' ? (
         <img
           src={`https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(
-            `${config.origin}/${page.id}`
+            `/${page.id}`
           )}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false`}
         />
       ) : (
@@ -143,5 +149,3 @@ const NotionHits: React.FC<{ page: INotionSearchObject }> = ({ page }) => {
 };
 
 NotionRender.displayName = 'NotionRender';
-
-export default NotionRender;

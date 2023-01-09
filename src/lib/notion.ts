@@ -1,7 +1,11 @@
 import config from 'site-config';
 
 export function notionBlockUrlToRelativePath(url: string): string {
-  const { customDomain, notionSoRegExp, notionSiteRegExp } = config?.notion;
+  if (!config?.notion) {
+    return url;
+  }
+
+  const { customDomain, notionSoRegExp, notionSiteRegExp } = config.notion;
 
   if (!url || !customDomain || !notionSoRegExp || !notionSiteRegExp) {
     return url;
@@ -39,7 +43,7 @@ export function awsImageObjectUrlToNotionUrl({
       return s3ObjectUrl;
     }
 
-    const s3FileUuid = s3Url.pathname.replace(/^\/secure\.notion\-static\.com\//, '');
+    const s3FileUuid = s3Url.pathname.replace(/^\/secure\.notion-static\.com\//, '');
 
     if (!s3FileUuid) {
       return s3ObjectUrl;

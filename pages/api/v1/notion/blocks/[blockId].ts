@@ -9,20 +9,16 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   onError: Error.handleError,
   onNoMatch: Error.handleNoMatch
 }).get(async (req: NextApiRequest, res: NextApiResponse<IResponseSuccess<any>>) => {
-  try {
-    const { blockId } = req.query;
-    if (typeof blockId !== 'string') {
-      throw 'type error "blockId"';
-    }
-
-    const result = await notion.blocks.retrieve({
-      block_id: blockId
-    });
-
-    res.status(200).json({ success: true, result });
-  } catch (e) {
-    throw e;
+  const { blockId } = req.query;
+  if (typeof blockId !== 'string') {
+    throw 'type error "blockId"';
   }
+
+  const result = await notion.blocks.retrieve({
+    block_id: blockId
+  });
+
+  res.status(200).json({ success: true, result });
 });
 
 export default handler;

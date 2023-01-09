@@ -2,14 +2,13 @@ import { siteConfig } from 'src/lib/siteConfig';
 
 const config = siteConfig({
   TZ: 'Asia/Seoul',
-  origin: process.env.NEXT_PUBLIC_BASE_ORIGIN || 'https://blog.sooros.com',
   path: '/api/v1',
   notion: {
     baseBlock: process.env.NEXT_PUBLIC_NOTION_BASE_BLOCK || 'cd9c83dd9ea14181854cced99bac68c6',
     customDomain: process.env.NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN || null
   },
   infomation: {
-    blogname: process.env.NEXT_PUBLIC_INFOMATION_BLOGNAME || 'sooros',
+    blogname: process.env.NEXT_PUBLIC_INFOMATION_BLOGNAME || 'notion-blog',
     email: process.env.NEXT_PUBLIC_INFOMATION_EMAIL,
     github: process.env.NEXT_PUBLIC_INFOMATION_GITHUB,
     repository: process.env.NEXT_PUBLIC_INFOMATION_REPOSITORY

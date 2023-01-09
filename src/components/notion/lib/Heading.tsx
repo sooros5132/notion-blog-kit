@@ -1,8 +1,8 @@
+import type React from 'react';
 import classnames from 'classnames';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import type { ReactNode } from 'react';
-import config from 'site-config';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
@@ -49,7 +49,7 @@ export const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode
   children
 }) => {
   const handleClick = (url: string) => () => {
-    const href = new URL(url, config.origin).href;
+    const href = new URL(url /* , config.origin */).href;
 
     href && copyTextAtClipBoard(href);
   };
@@ -65,10 +65,11 @@ interface HeadingProps {
 }
 
 const Heading: React.FC<HeadingProps> = ({ block }) => {
-  const router = useRouter();
+  const pathname = usePathname();
+
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
   const hash = block.id.replaceAll('-', '');
-  const href = useMemo(() => `${router.asPath.replace(/\#.*/, '')}#${hash}`, [router]);
+  const href = useMemo(() => `${pathname?.replace(/#.*/, '')}#${hash}`, [hash, pathname]);
   return (
     <HeadingContainer id={hash}>
       <HeadingInner type={type}>

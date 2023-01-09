@@ -1,10 +1,11 @@
+import type React from 'react';
 import classnames from 'classnames';
 import { formatDistance } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import config from 'site-config';
 import Link from 'next/link';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';
-import type { INotionSearchObject, Color } from 'src/types/notion';
+import { INotionSearchObject, Color, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import {
   notionColorClasses,
   NotionCopyHeadingLink,
@@ -26,7 +27,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
         <div className='relative h-[30vh] overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
           <NotionSecureImage
             blockId={page.id}
-            src={page?.cover?.[page?.cover?.type]?.url!}
+            src={page?.cover?.[page?.cover?.type]?.url ?? ''}
             alt={'page-cover'}
           />
         </div>
@@ -34,14 +35,14 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
       <div
         className={classnames(
           'relative max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-10',
-          Boolean(page?.cover)
+          page?.cover
             ? page.icon?.type === 'emoji'
               ? 'mt-[-30px]'
               : page.icon?.type === 'file'
               ? 'mt-[-36px]'
               : ''
             : 'mt-[50px]',
-          !Boolean(page?.cover) && page.icon?.type === 'file' && 'pt-[50px]'
+          !page?.cover && page.icon?.type === 'file' && 'pt-[50px]'
         )}
       >
         {page.icon?.file && page.icon?.type === 'file' && (
@@ -65,7 +66,13 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
             <NotionCopyHeadingLink
               href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}
             >
-              <Link href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}>
+              <Link
+                href={
+                  title
+                    ? `/${title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)}-${page.id.replaceAll('-', '')}`
+                    : `/${page.id}`
+                }
+              >
                 &nbsp;🔗
               </Link>
             </NotionCopyHeadingLink>
@@ -94,9 +101,9 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
             </NoSsrWrapper>
           ) : null}
         </p>
-        {Array.isArray(page.properties?.tags?.multi_select) && (
+        {Array.isArray(page?.properties?.tags?.multi_select) && (
           <div className='flex gap-x-2'>
-            {page.properties?.tags?.multi_select?.map((select) => {
+            {page?.properties?.tags?.multi_select?.map((select) => {
               const color = (select?.color + '_background') as Color;
 
               return (

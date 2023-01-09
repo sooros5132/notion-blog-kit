@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 
@@ -7,7 +8,7 @@ interface BulletedListItemProps {
   block: NotionBlock;
 }
 
-const BulletedListItem: React.FC<BulletedListItemProps> = ({ block }) => {
+export const BulletedListItem: React.FC<BulletedListItemProps> = ({ block }) => {
   return (
     <div className='flex'>
       <div className='flex-initial text-2xl flex-center max-h-7 basis-6 shrink-0'>{dots[0]}</div>
@@ -21,5 +22,3 @@ const BulletedListItem: React.FC<BulletedListItemProps> = ({ block }) => {
     </div>
   );
 };
-
-export default BulletedListItem;

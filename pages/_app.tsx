@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { AppProps } from 'next/app';
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
@@ -17,13 +18,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           title: config.infomation.blogname,
           locale: 'ko_KR',
           type: 'website',
-          url: config.origin || '',
           description: 'notion blog 플랫폼입니다.'
         }}
         description='notion blog 플랫폼입니다.'
       />
       <Head>
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
         {/* <link rel='apple-touch-icon' sizes='57x57' href='/apple-icon-57x57.png' />
         <link rel='apple-touch-icon' sizes='60x60' href='/apple-icon-60x60.png' />
         <link rel='apple-touch-icon' sizes='72x72' href='/apple-icon-72x72.png' />
@@ -43,10 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='theme-color' content='#151a19' />
       </Head>
       {config.googleGTag && (
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${config.googleGTag}`}
-          strategy='beforeInteractive'
-        />
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${config.googleGTag}`} />
       )}
       {config.googleGTag && (
         <Script id='google-analytics' strategy='afterInteractive'>

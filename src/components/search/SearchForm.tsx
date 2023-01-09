@@ -1,24 +1,32 @@
+'use client';
+
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { AiOutlineSearch } from 'react-icons/ai';
 
-interface SearchProps {
+interface SearchFormProps {
   searchValue?: string;
   autoInputHidden?: boolean;
 }
 
-const Search: React.FC<SearchProps> = ({ searchValue, autoInputHidden }): JSX.Element => {
+export const SearchForm: React.FC<SearchFormProps> = ({
+  searchValue,
+  autoInputHidden
+}): JSX.Element => {
   const router = useRouter();
 
   const handleSearchSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.stopPropagation();
     evt.preventDefault();
     const form = evt.target as HTMLFormElement;
-    router.push('/s/' + form.search.value);
+    const value = form?.search?.value?.trim();
+    if (value) {
+      router.push('/s/' + value);
+    }
   };
 
   return (
-    <form onSubmit={handleSearchSubmit} method='GET' action='/s'>
+    <form onSubmit={handleSearchSubmit}>
       <div
         className={
           autoInputHidden
@@ -52,6 +60,4 @@ const Search: React.FC<SearchProps> = ({ searchValue, autoInputHidden }): JSX.El
     </form>
   );
 };
-Search.displayName = 'Search';
-
-export default Search;
+SearchForm.displayName = 'SearchForm';

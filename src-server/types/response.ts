@@ -6,7 +6,6 @@ export interface IErrorResponse extends IResponseDefault {
   error: string;
   code?: number;
 }
-export interface IResponseSuccess<T> {
-  success: boolean;
+export interface IResponseSuccess<T> extends IResponseDefault {
   result: T;
 }

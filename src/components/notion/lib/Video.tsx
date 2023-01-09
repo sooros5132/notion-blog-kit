@@ -1,3 +1,4 @@
+import type React from 'react';
 import { IoClose } from 'react-icons/io5';
 import config from 'site-config';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';

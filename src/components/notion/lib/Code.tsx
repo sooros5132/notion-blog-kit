@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { NotionBlock } from 'src/types/notion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
@@ -7,7 +8,7 @@ interface CodeProps {
   block: NotionBlock;
 }
 
-const Code: React.FC<CodeProps> = ({ block }) => {
+export const Code: React.FC<CodeProps> = ({ block }) => {
   return (
     <>
       <SyntaxHighlighter
@@ -25,5 +26,3 @@ const Code: React.FC<CodeProps> = ({ block }) => {
     </>
   );
 };
-
-export default Code;

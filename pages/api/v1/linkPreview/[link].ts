@@ -12,48 +12,44 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   onError: Error.handleError,
   onNoMatch: Error.handleNoMatch
 }).get(async (req: NextApiRequest, res: NextApiResponse<IResponseSuccess<LinkPreview>>) => {
-  try {
-    if (typeof req.query.link !== 'string') {
-      throw 'type error "link"';
-    }
-
-    const link = decodeURIComponent(req.query.link);
-
-    const head = await axios
-      .get(link)
-      .then((res) => {
-        const head = parse(res.data).querySelector('head');
-        if (typeof res.data === 'string' && head) return head;
-
-        throw `request error "${link}"`;
-      })
-      .catch(() => {
-        throw `request error "${link}"`;
-      });
-
-    const icon = getIcon(head);
-    const title = getTitle(head);
-    const description = getDescription(head);
-    const image = getOpenGraphImage(head);
-    const username = getUserName(head);
-    const type = getOpenGraphType(head);
-    const media = getOpenGraphMedia(head);
-
-    res.status(200).json({
-      success: true,
-      result: {
-        icon,
-        title,
-        description,
-        type,
-        image,
-        media,
-        username
-      }
-    });
-  } catch (e) {
-    throw e;
+  if (typeof req.query.link !== 'string') {
+    throw 'type error "link"';
   }
+
+  const link = decodeURIComponent(req.query.link);
+
+  const head = await axios
+    .get(link)
+    .then((res) => {
+      const head = parse(res.data).querySelector('head');
+      if (typeof res.data === 'string' && head) return head;
+
+      throw `request error "${link}"`;
+    })
+    .catch(() => {
+      throw `request error "${link}"`;
+    });
+
+  const icon = getIcon(head);
+  const title = getTitle(head);
+  const description = getDescription(head);
+  const image = getOpenGraphImage(head);
+  const username = getUserName(head);
+  const type = getOpenGraphType(head);
+  const media = getOpenGraphMedia(head);
+
+  res.status(200).json({
+    success: true,
+    result: {
+      icon,
+      title,
+      description,
+      type,
+      image,
+      media,
+      username
+    }
+  });
 });
 
 function getIcon(html: ParsedHTMLElement) {
