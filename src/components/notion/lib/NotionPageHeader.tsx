@@ -24,7 +24,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
   return (
     <div>
       {page?.cover?.[page?.cover?.type]?.url && (
-        <div className='relative h-[30vh] overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
+        <div className='relative h-[25vh] overflow-hidden pointer-events-none md:h-[30vh] [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
           <NotionSecureImage
             blockId={page.id}
             src={page?.cover?.[page?.cover?.type]?.url ?? ''}
@@ -37,27 +37,27 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
           'relative max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-10',
           page?.cover
             ? page.icon?.type === 'emoji'
-              ? 'mt-[-30px]'
+              ? 'mt-[-50px]'
               : page.icon?.type === 'file'
-              ? 'mt-[-36px]'
+              ? 'mt-[-50px]'
               : ''
             : 'mt-[50px]',
-          !page?.cover && page.icon?.type === 'file' && 'pt-[50px]'
+          !page?.cover && page.icon?.type === 'file' && 'pt-[20px]'
         )}
       >
         {page.icon?.file && page.icon?.type === 'file' && (
-          <div className='w-[70px] h-[70px]'>
+          <div className='w-[100px] h-[100px] rounded-md overflow-hidden'>
             <NotionSecureImage blockId={page.id} src={page.icon.file.url} alt={'page-icon'} />
           </div>
         )}
         {page.icon?.emoji && page.icon?.type === 'emoji' && (
-          <span className='px-3 text-7xl font-emoji'>{page.icon?.emoji}</span>
+          <span className='px-3 text-[100px] leading-none font-emoji'>{page.icon?.emoji}</span>
         )}
         <div
           className={classnames(
             Boolean(page?.cover) && ['emoji', 'file'].includes(page.icon?.type)
               ? 'mt-[20px]'
-              : 'mt-[50px]',
+              : 'mt-[20px]',
             'mb-3 text-[40px] font-bold'
           )}
         >
