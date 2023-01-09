@@ -24,7 +24,7 @@ export class Error {
     }
     res.status(err.status || 400).json({
       status: err?.status || 400,
-      error: err.error || 'Something broke!',
+      error: err?.error || err?.message || 'Something broke!',
       success: err?.success || false,
       code: err?.code
     });
