@@ -2,6 +2,7 @@ import { Client as NotionClient, LogLevel } from '@notionhq/client';
 import {
   INotionSearch,
   INotionSearchObject,
+  INotionUserInfo,
   NotionBlock,
   NotionBlocksChildrenList,
   NotionDatabasesQuery
@@ -212,5 +213,13 @@ export class NotionService {
     });
 
     return filteredResults;
+  }
+
+  async getUserProfile(userId: string) {
+    const profile = (await this.notion.users
+      .retrieve({ user_id: userId })
+      .catch(() => null)) as INotionUserInfo | null;
+
+    return profile;
   }
 }

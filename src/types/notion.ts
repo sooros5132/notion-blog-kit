@@ -325,6 +325,11 @@ interface MultiSelect {
   color: Color;
 }
 
+export interface UserObject {
+  object: 'user';
+  id: string;
+}
+
 export interface TimeObject {
   object: string;
   id: string;
@@ -354,9 +359,9 @@ export interface NotionDatabase {
   object: string; // Always "database"
   id: string; // uuid
   created_time: string;
-  created_by: TimeObject;
+  created_by: UserObject;
   last_edited_time: string;
-  last_edited_by: TimeObject;
+  last_edited_by: UserObject;
   // title?: RichText;
   // description?: RichText;
   icon?: IconObject | null;
@@ -402,8 +407,8 @@ export interface NotionPagesRetrieve {
   id: ID;
   created_time: string;
   last_edited_time: string;
-  created_by: TimeObject;
-  last_edited_by: TimeObject;
+  created_by: UserObject;
+  last_edited_by: UserObject;
   cover: FileObject;
   icon: IconObject;
   parent: ParentObject;
@@ -426,4 +431,13 @@ export interface INotionSearch {
   has_more: boolean;
   type: 'page_or_database';
   page_or_database: Record<string, any>;
+}
+
+export interface INotionUserInfo {
+  object: 'user';
+  id: string;
+  name?: string;
+  avatar_url?: string | null;
+  type?: 'person';
+  person?: Record<string, any>;
 }

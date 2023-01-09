@@ -15,6 +15,15 @@ export interface ChildDatabaseProps extends NotionChildrenRenderProps {
   databases: IGetNotion['databaseBlocks'];
 }
 
+type SortKeys = 'title' | 'created_time' | 'last_edited_time';
+
+const orderedKeys = ['title', 'created_time', 'last_edited_time'] as const;
+const KorKeyRecord = {
+  title: '이름',
+  created_time: '생성일',
+  last_edited_time: '수정일'
+} as const;
+
 const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
   const pathname = usePathname();
   const [blocks, setBlocks] = useState(
@@ -37,53 +46,21 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
       'created_time'
     ).reverse()
   );
-  const [sortKey, setSortKey] = useState<'created_time' | 'last_edited_time' | 'title'>(
-    'created_time'
-  );
+  const [sortKey, setSortKey] = useState<SortKeys>('created_time');
   const [isOrderAsc, setIsOrderAsc] = useState(true);
-  const KorKeyRecord = useMemo<Record<typeof sortKey, string>>(
-    () => ({
-      created_time: '생성일',
-      last_edited_time: '수정일',
-      title: '이름'
-    }),
-    []
-  );
 
-  const handleCloseSortMenu = (prop?: typeof sortKey) => () => {
-    switch (prop) {
-      // 시간은 반대 개념 나머지는 정상
-      case 'last_edited_time':
-      case 'created_time': {
-        if (prop === sortKey) {
-          const newIsOrderAsc = !isOrderAsc;
-          setBlocks((prevBlocks) =>
-            newIsOrderAsc ? sortBy(prevBlocks, prop) : sortBy(prevBlocks, prop).reverse()
-          );
-          setSortKey(prop);
-          setIsOrderAsc(newIsOrderAsc);
-        } else {
-          setBlocks((prevBlocks) => sortBy(prevBlocks, prop));
-          setSortKey(prop);
-          setIsOrderAsc(true);
-        }
-        break;
-      }
-      case 'title': {
-        if (prop === sortKey) {
-          const newIsOrderAsc = !isOrderAsc;
-          setBlocks((prevBlocks) =>
-            newIsOrderAsc ? sortBy(prevBlocks, prop).reverse() : sortBy(prevBlocks, prop)
-          );
-          setSortKey(prop);
-          setIsOrderAsc(newIsOrderAsc);
-        } else {
-          setBlocks((prevBlocks) => sortBy(prevBlocks, prop).reverse());
-          setSortKey(prop);
-          setIsOrderAsc(true);
-        }
-        break;
-      }
+  const handleCloseSortMenu = (newSortKey: SortKeys) => () => {
+    if (newSortKey === sortKey) {
+      const newIsOrderAsc = !isOrderAsc;
+      setBlocks((prevBlocks) =>
+        newIsOrderAsc ? sortBy(prevBlocks, newSortKey).reverse() : sortBy(prevBlocks, newSortKey)
+      );
+      setSortKey(newSortKey);
+      setIsOrderAsc(newIsOrderAsc);
+    } else {
+      setBlocks((prevBlocks) => sortBy(prevBlocks, newSortKey).reverse());
+      setSortKey(newSortKey);
+      setIsOrderAsc(true);
     }
   };
   const hash = `${
@@ -115,15 +92,22 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
                   tabIndex={0}
                   className='p-2 text-xl shadow dropdown-content menu bg-base-300 rounded-box w-52'
                 >
-                  <li onClick={handleCloseSortMenu('title')}>
-                    <a>이름</a>
-                  </li>
-                  <li onClick={handleCloseSortMenu('created_time')}>
-                    <a>생성일</a>
-                  </li>
-                  <li onClick={handleCloseSortMenu('last_edited_time')}>
-                    <a>수정일</a>
-                  </li>
+                  {orderedKeys.map((key) => {
+                    return (
+                      <li key={key} onClick={handleCloseSortMenu(key)}>
+                        <div className='gap-x-0.5'>
+                          {KorKeyRecord[key]}
+                          {sortKey === key ? (
+                            isOrderAsc ? (
+                              <BsArrowUpShort />
+                            ) : (
+                              <BsArrowDownShort />
+                            )
+                          ) : null}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>

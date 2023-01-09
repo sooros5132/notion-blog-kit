@@ -6,13 +6,15 @@ import type {
   IGetNotion,
   RichText,
   INotionSearchObject,
-  NotionDatabasesQuery
+  NotionDatabasesQuery,
+  INotionUserInfo
 } from 'src/types/notion';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
 
 export interface NotionRenderProps extends IGetNotion {
   slug: string;
   page: INotionSearchObject;
+  userInfo: INotionUserInfo | null;
 }
 
 // export const EllipsisWrapperBox = styled('div')({
@@ -33,7 +35,8 @@ export const NotionRender: React.FC<NotionRenderProps> = ({
   blocks,
   childrenBlocks,
   databaseBlocks,
-  page
+  page,
+  userInfo
 }): JSX.Element => {
   if (!blocks?.results || !page) {
     return (
@@ -60,7 +63,7 @@ export const NotionRender: React.FC<NotionRenderProps> = ({
   return (
     <div className='w-full mb-5 whitespace-pre-wrap'>
       <NotionSeo page={page} title={title} description={description} slug={slug} />
-      <NotionPageHeader page={page} title={title} />
+      <NotionPageHeader page={page} title={title} userInfo={userInfo} />
       <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
         {page.object === 'page' ? (
           <NotionBlocksRender

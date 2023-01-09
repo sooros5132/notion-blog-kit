@@ -1,14 +1,19 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { NotionRender } from 'src/components/notion';
-import { IGetNotion, INotionSearchObject, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import {
+  IGetNotion,
+  INotionSearchObject,
+  INotionUserInfo,
+  URL_PAGE_TITLE_MAX_LENGTH
+} from 'src/types/notion';
 import { NotionService } from 'src-server/service/Notion';
 import config from 'site-config';
-import { ParsedUrlQuery } from 'querystring';
 
 interface SlugProps extends IGetNotion {
   slug: string;
   pageInfo: INotionSearchObject;
+  userInfo: INotionUserInfo | null;
 }
 
 export default function Slug({
@@ -16,7 +21,8 @@ export default function Slug({
   blocks,
   childrenBlocks,
   databaseBlocks,
-  pageInfo
+  pageInfo,
+  userInfo
 }: SlugProps) {
   return (
     <NotionRender
@@ -25,6 +31,7 @@ export default function Slug({
       blocks={blocks}
       databaseBlocks={databaseBlocks}
       childrenBlocks={childrenBlocks}
+      userInfo={userInfo}
     />
   );
 }
@@ -33,10 +40,11 @@ const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
 const searchPage = async (slug: string) => {
   const notionService = new NotionService();
 
+  //! database id를 종종 page에서 찾아내는 경우가 발생 함. database 우선 검색
   const pageInfo = await notionService
     .getSearchPagesByPageId({
       searchValue: slug,
-      filterType: 'page'
+      filterType: 'database'
     })
     .then(async (res) => {
       const result = res?.results?.[0];
@@ -45,7 +53,7 @@ const searchPage = async (slug: string) => {
         return await notionService
           .getSearchPagesByPageId({
             searchValue: slug,
-            filterType: 'database'
+            filterType: 'page'
           })
           .then((res) => {
             return res?.results?.[0];
@@ -53,6 +61,8 @@ const searchPage = async (slug: string) => {
       }
       return result;
     });
+  console.log('slug', slug);
+  console.log('pageInfo', pageInfo);
 
   return pageInfo as INotionSearchObject;
 };
@@ -151,7 +161,10 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     if (!pageInfo?.id) {
       throw '';
     }
-    const blocks = await getBlocks(slug, pageInfo.object);
+    const [blocks, userInfo] = await Promise.all([
+      getBlocks(slug, pageInfo.object),
+      new NotionService().getUserProfile(pageInfo.created_by.id)
+    ]);
 
     return {
       props: {
@@ -159,7 +172,8 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         blocks: blocks.blocks,
         childrenBlocks: blocks.childrenBlocks,
         databaseBlocks: blocks.databaseBlocks,
-        pageInfo: pageInfo
+        pageInfo,
+        userInfo
       },
       revalidate: 600
     };

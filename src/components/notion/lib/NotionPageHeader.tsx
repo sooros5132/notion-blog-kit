@@ -5,7 +5,12 @@ import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import config from 'site-config';
 import Link from 'next/link';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';
-import { INotionSearchObject, Color, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import {
+  INotionSearchObject,
+  Color,
+  URL_PAGE_TITLE_MAX_LENGTH,
+  INotionUserInfo
+} from 'src/types/notion';
 import {
   notionColorClasses,
   NotionCopyHeadingLink,
@@ -18,9 +23,10 @@ import { ko as koLocale } from 'date-fns/locale';
 export interface NotionPageHeaderProps {
   page: INotionSearchObject;
   title: string | null;
+  userInfo: INotionUserInfo | null;
 }
 
-const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
+const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
   return (
     <div>
       {page?.cover?.[page?.cover?.type]?.url && (
@@ -64,12 +70,20 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
           <NotionHeadingInner type={'normal'}>
             <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
             <NotionCopyHeadingLink
-              href={title ? `/${title}-${page.id.replaceAll('-', '')}` : `/${page.id}`}
+              href={
+                title
+                  ? `/${encodeURIComponent(
+                      title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
+                    )}-${page.id.replaceAll('-', '')}`
+                  : `/${page.id}`
+              }
             >
               <Link
                 href={
                   title
-                    ? `/${title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)}-${page.id.replaceAll('-', '')}`
+                    ? `/${encodeURIComponent(
+                        title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
+                      )}-${page.id.replaceAll('-', '')}`
                     : `/${page.id}`
                 }
               >
@@ -78,46 +92,46 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title }) => {
             </NotionCopyHeadingLink>
           </NotionHeadingInner>
         </div>
-        <p className='text-opacity-50 text-base-content'>
-          {typeof page?.created_time === 'string' &&
-            `작성일: ${formatInTimeZone(
-              new Date(page.created_time),
-              config.TZ,
-              'yyyy-MM-dd aaa hh:mm',
-              {
-                locale: koLocale
-              }
-            )}`}
-          {typeof page?.last_edited_time === 'string' ? (
-            <NoSsrWrapper>
-              {`, ${formatDistance(
-                utcToZonedTime(new Date(page.last_edited_time), config.TZ),
-                utcToZonedTime(new Date(), config.TZ),
-                {
-                  locale: koLocale,
-                  addSuffix: true
-                }
-              )} 수정됨`}
-            </NoSsrWrapper>
+        <div className='flex items-center text-zinc-400'>
+          {userInfo?.avatar_url ? (
+            <div className='avatar leading-none'>
+              <div className='w-[1.2em] h-[1.2em] rounded-full'>
+                <img src={userInfo?.avatar_url} alt={`${userInfo?.name || 'author'}-avatar`} />
+              </div>
+            </div>
+          ) : userInfo?.name ? (
+            <div className='avatar placeholder'>
+              <div className='bg-neutral-focus text-neutral-content rounded-full w-24'>
+                <span className='text-3xl'>{userInfo.name.slice(0, 1)}</span>
+              </div>
+            </div>
           ) : null}
-        </p>
-        {Array.isArray(page?.properties?.tags?.multi_select) && (
-          <div className='flex gap-x-2'>
-            {page?.properties?.tags?.multi_select?.map((select) => {
-              const color = (select?.color + '_background') as Color;
+          {userInfo?.name && <span className='ml-1'>{userInfo?.name}</span>}
+          <span>
+            {typeof page?.created_time === 'string' &&
+              ` | ${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
+                locale: koLocale
+              })}`}
+          </span>
 
-              return (
-                <div
-                  className={`${notionColorClasses[color]} bord px-1.5 rounded-md`}
-                  color={select.color}
-                  key={`multi-select-${page.id}-${select.id}`}
-                >
-                  <p>{select.name}</p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+          {Array.isArray(page?.properties?.tags?.multi_select) && (
+            <span>
+              {Boolean(page?.properties?.tags?.multi_select?.length) && ' | '}
+              {page?.properties?.tags?.multi_select?.map((select) => {
+                // const color = select?.color as Color;
+
+                return (
+                  <span
+                    key={`${page.id}-${select.id}`}
+                    // className={classnames(notionColorClasses[color], 'opacity-60')}
+                  >
+                    {`#${select.name} `}
+                  </span>
+                );
+              })}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
