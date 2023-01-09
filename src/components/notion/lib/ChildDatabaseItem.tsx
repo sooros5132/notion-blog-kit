@@ -70,7 +70,9 @@ export const ChildDatabaseItem: React.FC<{
         <Link
           href={
             title
-              ? `/${title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)}-${block.id.replaceAll('-', '')}`
+              ? `/${encodeURIComponent(
+                  title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
+                )}-${block.id.replaceAll('-', '')}`
               : `/${block.id}`
           }
         >
