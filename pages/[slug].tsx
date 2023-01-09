@@ -61,8 +61,6 @@ const searchPage = async (slug: string) => {
       }
       return result;
     });
-  console.log('slug', slug);
-  console.log('pageInfo', pageInfo);
 
   return pageInfo as INotionSearchObject;
 };
