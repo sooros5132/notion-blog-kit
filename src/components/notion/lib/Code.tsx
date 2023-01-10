@@ -37,7 +37,7 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
         <div className=' bg-base-content/5'>
           <SyntaxHighlighter
             language={block?.code?.language || undefined}
-            style={!isHydrated || mode === 'light' ? prism : vscDarkPlus}
+            style={!isHydrated || mode === 'dark' ? vscDarkPlus : prism}
             // style={vscDarkPlus}
             customStyle={{
               fontSize: '1em',

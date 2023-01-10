@@ -61,6 +61,31 @@
   }
 
   :root {
+    --notion-color-gray: 155 155 155;
+    --notion-color-brown: 186 133 111;
+    --notion-color-orange: 199 125 72;
+    --notion-color-yellow: 202 152 73;
+    --notion-color-green: 82 158 114;
+    --notion-color-blue: 94 135 201;
+    --notion-color-purple: 157 104 211;
+    --notion-color-pink: 209 87 150;
+    --notion-color-red: 223 84 82;
+    --notion-color-gray_background: 47 47 47;
+    --notion-color-brown_background: 74 50 40;
+    --notion-color-orange_background: 92 59 35;
+    --notion-color-yellow_background: 86 67 40;
+    --notion-color-green_background: 36 61 48;
+    --notion-color-blue_background: 20 58 78;
+    --notion-color-purple_background: 60 45 73;
+    --notion-color-pink_background: 78 44 60;
+    --notion-color-red_background: 82 46 42;
+    --notion-color-code: 235 87 87;
+    --notion-color-code_background: 135 131 120;
+  }
+
+  /* @media (prefers-color-scheme: dark) { */
+  :root.light,
+  :root[data-theme='light'] {
     --notion-color-default: #080808;
     --notion-color-gray: 120 119 116;
     --notion-color-brown: 159 107 83;
@@ -80,31 +105,6 @@
     --notion-color-purple_background: 244 240 247;
     --notion-color-pink_background: 244 240 247;
     --notion-color-red_background: 253 235 236;
-    --notion-color-code: 235 87 87;
-    --notion-color-code_background: 135 131 120;
-  }
-
-  /* @media (prefers-color-scheme: dark) { */
-  :root.dark,
-  :root[data-theme='dark'] {
-    --notion-color-gray: 155 155 155;
-    --notion-color-brown: 186 133 111;
-    --notion-color-orange: 199 125 72;
-    --notion-color-yellow: 202 152 73;
-    --notion-color-green: 82 158 114;
-    --notion-color-blue: 94 135 201;
-    --notion-color-purple: 157 104 211;
-    --notion-color-pink: 209 87 150;
-    --notion-color-red: 223 84 82;
-    --notion-color-gray_background: 47 47 47;
-    --notion-color-brown_background: 74 50 40;
-    --notion-color-orange_background: 92 59 35;
-    --notion-color-yellow_background: 86 67 40;
-    --notion-color-green_background: 36 61 48;
-    --notion-color-blue_background: 20 58 78;
-    --notion-color-purple_background: 60 45 73;
-    --notion-color-pink_background: 78 44 60;
-    --notion-color-red_background: 82 46 42;
     --notion-color-code: 235 87 87;
     --notion-color-code_background: 135 131 120;
   }
