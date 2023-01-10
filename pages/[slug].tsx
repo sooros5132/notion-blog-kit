@@ -40,26 +40,32 @@ const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
 const searchPage = async (slug: string) => {
   const notionService = new NotionService();
 
-  //! database id를 종종 page에서 찾아내는 경우가 발생 함. database 우선 검색
+  // pageId로 먼저 page 검색 database인 경우 오류가 발생.
   const pageInfo = await notionService
-    .getSearchPagesByPageId({
-      searchValue: slug,
-      filterType: 'database'
-    })
-    .then(async (res) => {
-      const result = res?.results?.[0];
+    .getPageInfoByPageId(slug)
+    //! 못 찾으면 에러로 나옴.
+    .catch(async () => {
+      //! database id를 종종 page에서 찾아내는 경우가 발생 함. database 우선 검색
+      return await notionService
+        .getSearchPagesByPageId({
+          searchValue: slug,
+          filterType: 'database'
+        })
+        .then(async (res) => {
+          const result = res?.results?.[0];
 
-      if (!result) {
-        return await notionService
-          .getSearchPagesByPageId({
-            searchValue: slug,
-            filterType: 'page'
-          })
-          .then((res) => {
-            return res?.results?.[0];
-          });
-      }
-      return result;
+          if (!result) {
+            return await notionService
+              .getSearchPagesByPageId({
+                searchValue: slug,
+                filterType: 'page'
+              })
+              .then((res) => {
+                return res?.results?.[0];
+              });
+          }
+          return result;
+        });
     });
 
   return pageInfo as INotionSearchObject;
