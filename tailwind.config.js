@@ -5,59 +5,71 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx}',
     './src/**/*.{js,ts,jsx,tsx}'
   ],
-  darkMode: ['class'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         notionColor: {
-          default: 'rgb(212, 212, 212)',
-          gray: 'rgba(155, 155, 155, 1)',
-          brown: 'rgba(186, 133, 111, 1)',
-          orange: 'rgba(199, 125, 72, 1)',
-          yellow: 'rgba(202, 152, 73, 1)',
-          green: 'rgba(82, 158, 114, 1)',
-          blue: 'rgba(94, 135, 201, 1)',
-          purple: 'rgba(157, 104, 211, 1)',
-          pink: 'rgba(209, 87, 150, 1)',
-          red: 'rgba(223, 84, 82, 1)',
-          gray_background: 'rgba(47, 47, 47, 1)',
-          brown_background: 'rgba(74, 50, 40, 1)',
-          orange_background: 'rgba(92, 59, 35, 1)',
-          yellow_background: 'rgba(86, 67, 40, 1)',
-          green_background: 'rgba(36, 61, 48, 1)',
-          blue_background: 'rgba(20, 58, 78, 1)',
-          purple_background: 'rgba(60, 45, 73, 1)',
-          pink_background: 'rgba(78, 44, 60, 1)',
-          red_background: 'rgba(82, 46, 42, 1)'
+          default: 'rgb(var(--notion-color-default) / <alpha-value>)',
+          gray: 'rgb(var(--notion-color-gray) / <alpha-value>)',
+          brown: 'rgb(var(--notion-color-brown) / <alpha-value>)',
+          orange: 'rgb(var(--notion-color-orange) / <alpha-value>)',
+          yellow: 'rgb(var(--notion-color-yellow) / <alpha-value>)',
+          green: 'rgb(var(--notion-color-green) / <alpha-value>)',
+          blue: 'rgb(var(--notion-color-blue) / <alpha-value>)',
+          purple: 'rgb(var(--notion-color-purple) / <alpha-value>)',
+          pink: 'rgb(var(--notion-color-pink) / <alpha-value>)',
+          red: 'rgb(var(--notion-color-red) / <alpha-value>)',
+          code: 'rgb(var(--notion-color-code) / <alpha-value>)'
         }
       },
       backgroundColor: {
         notionColor: {
-          default: 'rgb(212, 212, 212)',
-          gray: 'rgba(155, 155, 155, 1)',
-          brown: 'rgba(186, 133, 111, 1)',
-          orange: 'rgba(199, 125, 72, 1)',
-          yellow: 'rgba(202, 152, 73, 1)',
-          green: 'rgba(82, 158, 114, 1)',
-          blue: 'rgba(94, 135, 201, 1)',
-          purple: 'rgba(157, 104, 211, 1)',
-          pink: 'rgba(209, 87, 150, 1)',
-          red: 'rgba(223, 84, 82, 1)',
-          gray_background: 'rgba(47, 47, 47, 1)',
-          brown_background: 'rgba(74, 50, 40, 1)',
-          orange_background: 'rgba(92, 59, 35, 1)',
-          yellow_background: 'rgba(86, 67, 40, 1)',
-          green_background: 'rgba(36, 61, 48, 1)',
-          blue_background: 'rgba(20, 58, 78, 1)',
-          purple_background: 'rgba(60, 45, 73, 1)',
-          pink_background: 'rgba(78, 44, 60, 1)',
-          red_background: 'rgba(82, 46, 42, 1)'
+          default: 'rgb(var(--notion-color-default_background) / <alpha-value>)',
+          gray: 'rgb(var(--notion-color-gray_background) / <alpha-value>)',
+          brown: 'rgb(var(--notion-color-brown_background) / <alpha-value>)',
+          orange: 'rgb(var(--notion-color-orange_background) / <alpha-value>)',
+          yellow: 'rgb(var(--notion-color-yellow_background) / <alpha-value>)',
+          green: 'rgb(var(--notion-color-green_background) / <alpha-value>)',
+          blue: 'rgb(var(--notion-color-blue_background) / <alpha-value>)',
+          purple: 'rgb(var(--notion-color-purple_background) / <alpha-value>)',
+          pink: 'rgb(var(--notion-color-pink_background) / <alpha-value>)',
+          red: 'rgb(var(--notion-color-red_background) / <alpha-value>)',
+          code: 'rgb(var(--notion-color-code_background) / 0.15)'
         }
       }
     }
   },
   daisyui: {
-    themes: ['light', 'dark', 'black', 'halloween']
+    darkTheme: 'dark',
+    themes: [
+      {
+        light: {
+          primary: '#fb923c',
+          secondary: '#f472b6',
+          accent: '#0891b2',
+          neutral: '#e5e7eb',
+          'base-100': '#f3f4f6',
+          info: '#3b82f6',
+          success: '#34d399',
+          warning: '#fde047',
+          error: '#e11d48'
+        }
+      },
+      {
+        dark: {
+          primary: '#fb923c',
+          secondary: '#f472b6',
+          accent: '#0891b2',
+          neutral: '#f5f5f4',
+          'base-100': '#131211',
+          info: '#3b82f6',
+          success: '#34d399',
+          warning: '#fde047',
+          error: '#e11d48'
+        }
+      }
+    ]
   },
   plugins: [require('@tailwindcss/line-clamp'), require('daisyui')]
 };

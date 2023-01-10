@@ -28,13 +28,13 @@ const Table: React.FC<TableProps> = ({
           'border-collapse',
           '[&>tbody>tr>td]:border',
           '[&>tbody>tr>td]:border-solid',
-          '[&>tbody>tr>td]:border-notionColor-gray_background',
+          '[&>tbody>tr>td]:border-notionColor-gray',
           '[&>tbody>tr>td]:py-1',
           '[&>tbody>tr>td]:px-2',
           Boolean(block.table.has_row_header) === true &&
-            '[&>tbody>tr>td:first-of-type]:bg-notionColor-gray_background/40',
+            '[&>tbody>tr>td:first-of-type]:bg-notionColor-gray/30',
           Boolean(block.table.has_column_header) === true &&
-            '[&>tbody>tr:first-of-type]:bg-notionColor-gray_background/40'
+            '[&>tbody>tr:first-of-type]:bg-notionColor-gray/30'
         )}
       >
         {/* <thead>

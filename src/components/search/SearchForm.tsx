@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { AiOutlineSearch } from 'react-icons/ai';
+import classNames from 'classnames';
 
 interface SearchFormProps {
   searchValue?: string;
@@ -20,39 +21,30 @@ export const SearchForm: React.FC<SearchFormProps> = ({
     evt.preventDefault();
     const form = evt.target as HTMLFormElement;
     const value = form?.search?.value?.trim();
-    if (value) {
-      router.push('/s/' + value);
-    }
+    router.push('/s/' + value);
   };
 
   return (
-    <form onSubmit={handleSearchSubmit}>
-      <div
-        className={
-          autoInputHidden
-            ? 'overflow-hidden rounded-lg sm:overflow-visible md:overflow-visible sm:rounded-md form-control sm:rounded-l-none'
-            : 'rounded-lg md:overflow-visible sm:rounded-md form-control sm:rounded-l-none'
-        }
-      >
-        <div
-          className={
-            autoInputHidden
-              ? 'max-w-lg mx-auto rounded-md sm:border border-white/10 input-group'
-              : 'max-w-lg mx-auto rounded-md border border-white/10 input-group'
-          }
-        >
+    <form
+      onSubmit={handleSearchSubmit}
+      className={classNames(
+        'rounded-lg',
+        autoInputHidden ? 'sm:bg-base-content/5' : 'bg-base-content/5'
+      )}
+    >
+      <div className={'form-control md:overflow-visible'}>
+        <div className={autoInputHidden ? 'sm:input-group' : 'input-group'}>
           <input
-            className={
-              autoInputHidden
-                ? 'hidden w-full bg-transparent input input-sm sm:block'
-                : 'w-full bg-transparent input input-sm'
-            }
+            className={classNames(
+              'input input-sm w-full bg-transparent focus:outline-none placeholder:text-base-content/60',
+              autoInputHidden ? 'hidden sm:block' : null
+            )}
             defaultValue={searchValue}
             type='text'
             name='search'
             placeholder='제목 검색'
           />
-          <button className='text-lg border-none btn btn-square bg-inherit btn-sm'>
+          <button className='btn btn-sm btn-ghost btn-circle sm:btn-square text-lg'>
             <AiOutlineSearch />
           </button>
         </div>

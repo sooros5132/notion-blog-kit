@@ -16,15 +16,6 @@ export interface ParagraphTextProps {
   children?: ReactNode;
 }
 
-const paragraphTextClasses = {
-  code: {
-    once: 'rounded-l rounded-r py-[0.0625rem] px-1 bg-notionColor-red_background font-mono',
-    first: 'rounded-l py-[0.0625rem] pl-1 bg-notionColor-red_background font-mono',
-    last: 'rounded-r py-[0.0625rem] pr-1 bg-notionColor-red_background font-mono',
-    middle: 'py-[0.0625rem] bg-notionColor-red_background font-mono'
-  }
-} as const;
-
 export const notionColorClasses = {
   default: 'text-notionColor-default',
   gray: 'text-notionColor-gray',
@@ -36,15 +27,26 @@ export const notionColorClasses = {
   purple: 'text-notionColor-purple',
   pink: 'text-notionColor-pink',
   red: 'text-notionColor-red',
-  gray_background: 'bg-notionColor-gray_background',
-  brown_background: 'bg-notionColor-brown_background',
-  orange_background: 'bg-notionColor-orange_background',
-  yellow_background: 'bg-notionColor-yellow_background',
-  green_background: 'bg-notionColor-green_background',
-  blue_background: 'bg-notionColor-blue_background',
-  purple_background: 'bg-notionColor-purple_background',
-  pink_background: 'bg-notionColor-pink_background',
-  red_background: 'bg-notionColor-red_background'
+  gray_background: 'bg-notionColor-gray',
+  brown_background: 'bg-notionColor-brown',
+  orange_background: 'bg-notionColor-orange',
+  yellow_background: 'bg-notionColor-yellow',
+  green_background: 'bg-notionColor-green',
+  blue_background: 'bg-notionColor-blue',
+  purple_background: 'bg-notionColor-purple',
+  pink_background: 'bg-notionColor-pink',
+  red_background: 'bg-notionColor-red',
+  code: 'text-notionColor-code',
+  code_background: 'bg-notionColor-code'
+} as const;
+
+const paragraphTextClasses = {
+  code: {
+    once: `rounded-l rounded-r py-[0.0625rem] px-1 font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`,
+    first: `rounded-l py-[0.0625rem] pl-1 font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`,
+    last: `rounded-r py-[0.0625rem] pr-1 font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`,
+    middle: `py-[0.0625rem] font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`
+  }
 } as const;
 
 export const ParagraphText: React.FC<ParagraphTextProps> = ({
@@ -147,13 +149,14 @@ const Paragraph: React.FC<ParagraphProps> = ({
         if (href) {
           return (
             <a
-              className='underline'
               key={`block-anchor-${blockId}-${i}`}
               href={notionBlockUrlToRelativePath(href)}
               rel='noreferrer'
               target='_blank'
             >
-              <ParagraphText {...annotations}>{plain_text}</ParagraphText>
+              <ParagraphText {...annotations} underline={'underline'}>
+                {plain_text}
+              </ParagraphText>
             </a>
           );
         }

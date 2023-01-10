@@ -5,8 +5,8 @@ import config from 'site-config';
 
 const Footer: React.FC = (): JSX.Element => {
   return (
-    <footer className='px-2 py-4 sm:px-4 bg-primary text-primary-content'>
-      <div className='max-w-screen-lg mx-auto flex justify-between align-center'>
+    <footer className='bg-base-200/50 text-base-content'>
+      <div className='flex justify-between align-center max-w-screen-lg mx-auto px-2 py-4'>
         <div className='text-2xl font-bold'>{config.infomation.blogname}</div>
         <div className='flex items-center gap-2 text-2xl'>
           {config.infomation.email && (

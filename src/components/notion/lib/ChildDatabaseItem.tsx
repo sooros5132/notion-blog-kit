@@ -66,7 +66,7 @@ export const ChildDatabaseItem: React.FC<{
     //   }
     // }
     <div>
-      <div className='rounded-xl min-w-[100px] bg-white/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
+      <div className='rounded-xl min-w-[100px] bg-base-content/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
         <Link
           href={
             title
@@ -76,7 +76,7 @@ export const ChildDatabaseItem: React.FC<{
               : `/${block.id}`
           }
         >
-          <div className='page-cover  h-48 transition-[filter] duration-200 ease-linear bg-white/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
+          <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-base-content/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
             {block?.cover ? (
               <NotionSecureImage
                 src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
@@ -98,12 +98,12 @@ export const ChildDatabaseItem: React.FC<{
                   alt={'page-icon'}
                 />
               ) : (
-                <div className='notion-database-item-empty-cover'>
+                <div className='notion-database-item-empty-cover text-base-content/10'>
                   <SiNotion />
                 </div>
               )
             ) : (
-              <div className='notion-database-item-empty-cover'>
+              <div className='notion-database-item-empty-cover text-base-content/10'>
                 <SiNotion />
               </div>
             )}

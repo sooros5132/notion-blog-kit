@@ -30,7 +30,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
   return (
     <div>
       {page?.cover?.[page?.cover?.type]?.url && (
-        <div className='relative h-[25vh] overflow-hidden pointer-events-none md:h-[30vh] [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
+        <div className='relative h-[25vh] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
           <NotionSecureImage
             blockId={page.id}
             src={page?.cover?.[page?.cover?.type]?.url ?? ''}
@@ -92,9 +92,9 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
             </NotionCopyHeadingLink>
           </NotionHeadingInner>
         </div>
-        <div className='flex items-center text-zinc-400'>
+        <div className='text-zinc-500 leading-none'>
           {userInfo?.avatar_url ? (
-            <div className='avatar leading-none'>
+            <div className='avatar leading-none align-bottom'>
               <div className='w-[1.2em] h-[1.2em] rounded-full'>
                 <img src={userInfo?.avatar_url} alt={`${userInfo?.name || 'author'}-avatar`} />
               </div>
@@ -106,7 +106,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
               </div>
             </div>
           ) : null}
-          {userInfo?.name && <span className='ml-1'>{userInfo?.name}</span>}
+          {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
           <span>
             {typeof page?.created_time === 'string' &&
               ` | ${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {

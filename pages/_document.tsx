@@ -4,7 +4,7 @@ import Document, { Html, Main, Head, NextScript } from 'next/document';
 class CustomDocument extends Document {
   render() {
     return (
-      <Html lang='ko' className='dark' data-theme='halloween'>
+      <Html lang='ko'>
         <Head></Head>
         <body>
           <Main />

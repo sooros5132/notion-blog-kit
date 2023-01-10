@@ -13,7 +13,7 @@ const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) 
   return (
     <div
       className={classnames(
-        'py-1.5 pr-3 pl-1.5',
+        'py-1.5 pr-3 pl-1.5 shadow-md',
         color && color !== 'default' && !color.match(/_background$/) && notionColorClasses[color],
         color && color.match(/_background$/) && notionColorClasses[color]
       )}

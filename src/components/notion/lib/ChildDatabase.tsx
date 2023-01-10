@@ -116,7 +116,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
                 </label>
                 <ul
                   tabIndex={0}
-                  className='p-2 text-xl shadow dropdown-content menu bg-base-300 rounded-box w-52'
+                  className='p-2 text-xl shadow dropdown-content menu bg-base-100 rounded-box w-52'
                 >
                   {orderedKeys.map((key) => {
                     return (

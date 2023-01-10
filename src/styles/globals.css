@@ -60,62 +60,117 @@
     font-family: emoji;
   }
 
+  :root {
+    --notion-color-default: #080808;
+    --notion-color-gray: 120 119 116;
+    --notion-color-brown: 159 107 83;
+    --notion-color-orange: 217 115 13;
+    --notion-color-yellow: 68 131 97;
+    --notion-color-green: 68 131 97;
+    --notion-color-blue: 51 126 169;
+    --notion-color-purple: 144 101 176;
+    --notion-color-pink: 212 76 71;
+    --notion-color-red: 212 76 71;
+    --notion-color-gray_background: 241 241 239;
+    --notion-color-brown_background: 244 238 238;
+    --notion-color-orange_background: 251 236 221;
+    --notion-color-yellow_background: 251 243 219;
+    --notion-color-green_background: 237 243 236;
+    --notion-color-blue_background: 231 243 248;
+    --notion-color-purple_background: 244 240 247;
+    --notion-color-pink_background: 244 240 247;
+    --notion-color-red_background: 253 235 236;
+    --notion-color-code: 235 87 87;
+    --notion-color-code_background: 135 131 120;
+  }
+
+  /* @media (prefers-color-scheme: dark) { */
+  :root.dark,
+  :root[data-theme='dark'] {
+    --notion-color-gray: 155 155 155;
+    --notion-color-brown: 186 133 111;
+    --notion-color-orange: 199 125 72;
+    --notion-color-yellow: 202 152 73;
+    --notion-color-green: 82 158 114;
+    --notion-color-blue: 94 135 201;
+    --notion-color-purple: 157 104 211;
+    --notion-color-pink: 209 87 150;
+    --notion-color-red: 223 84 82;
+    --notion-color-gray_background: 47 47 47;
+    --notion-color-brown_background: 74 50 40;
+    --notion-color-orange_background: 92 59 35;
+    --notion-color-yellow_background: 86 67 40;
+    --notion-color-green_background: 36 61 48;
+    --notion-color-blue_background: 20 58 78;
+    --notion-color-purple_background: 60 45 73;
+    --notion-color-pink_background: 78 44 60;
+    --notion-color-red_background: 82 46 42;
+    --notion-color-code: 235 87 87;
+    --notion-color-code_background: 135 131 120;
+  }
+
   .notion-color-default {
-    color: '#080808';
+    color: var(--notion-color-default);
   }
   .notion-color-gray {
-    color: 'rgba(120, 119, 116, 1)';
+    color: var(--notion-color-gray);
   }
   .notion-color-brown {
-    color: 'rgba(159, 107, 83, 1)';
+    color: var(--notion-color-brown);
   }
   .notion-color-orange {
-    color: 'rgba(217, 115, 13, 1)';
+    color: var(--notion-color-orange);
   }
   .notion-color-yellow {
-    color: 'rgba(68, 131, 97, 1)';
+    color: var(--notion-color-yellow);
   }
   .notion-color-green {
-    color: 'rgba(68, 131, 97, 1)';
+    color: var(--notion-color-green);
   }
   .notion-color-blue {
-    color: 'rgba(51, 126, 169, 1)';
+    color: var(--notion-color-blue);
   }
   .notion-color-purple {
-    color: 'rgba(144, 101, 176, 1)';
+    color: var(--notion-color-purple);
   }
   .notion-color-pink {
-    color: 'rgba(212, 76, 71, 1)';
+    color: var(--notion-color-pink);
   }
   .notion-color-red {
-    color: 'rgba(212, 76, 71, 1)';
+    color: var(--notion-color-red);
   }
   .notion-color-gray_background {
-    background-color: 'rgba(241, 241, 239, 1)';
+    background-color: var(--notion-color-gray_background);
   }
   .notion-color-brown_background {
-    background-color: 'rgba(244, 238, 238, 1)';
+    background-color: var(--notion-color-brown_background);
   }
   .notion-color-orange_background {
-    background-color: 'rgba(251, 236, 221, 1)';
+    background-color: var(--notion-color-orange_background);
   }
   .notion-color-yellow_background {
-    background-color: 'rgba(251, 243, 219, 1)';
+    background-color: var(--notion-color-yellow_background);
   }
   .notion-color-green_background {
-    background-color: 'rgba(237, 243, 236, 1)';
+    background-color: var(--notion-color-green_background);
   }
   .notion-color-blue_background {
-    background-color: 'rgba(231, 243, 248, 1)';
+    background-color: var(--notion-color-blue_background);
   }
   .notion-color-purple_background {
-    background-color: 'rgba(244, 240, 247, 0.8)';
+    background-color: var(--notion-color-purple_background);
   }
   .notion-color-pink_background {
-    background-color: 'rgba(244, 240, 247, 0.8)';
+    background-color: var(--notion-color-pink_background);
   }
   .notion-color-red_background {
-    background-color: 'rgba(253, 235, 236, 1)';
+    background-color: var(--notion-color-red_background);
+  }
+  .notion-color-code {
+    color: var(--notion-color-code);
+  }
+  .notion-color-code_background {
+    background-color: var(--notion-color-code_background);
   }
 
   .notion-toggle > summary {
@@ -136,7 +191,7 @@
   }
 
   .notion-database-item-empty-cover {
-    @apply flex-center text-[8em] text-gray-300 overflow-hidden h-full transition-[transform] duration-200 ease-linear;
+    @apply flex-center text-[8em] overflow-hidden h-full transition-[transform] duration-200 ease-linear;
   }
 
   .notion-heading-link-copy .heading-link {

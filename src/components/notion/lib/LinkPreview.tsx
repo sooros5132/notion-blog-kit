@@ -32,7 +32,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
 
   return (
     <a href={relativePath} rel='noreferrer' target='_blank'>
-      <div className='rounded-sm shadow-xl card card-side bg-base-100 flex-row h-[150px]'>
+      <div className='card card-side flex-row h-[150px] rounded-sm shadow-md bg-base-200/20 dark:bg-base-content/5'>
         <div className='px-4 py-3 card-body basis-[60%] md:basis-[65%]'>
           <h2 className='text-sm card-title line-clamp-2 md:text-lg'>
             <NotionParagraphText>{data?.title}</NotionParagraphText>

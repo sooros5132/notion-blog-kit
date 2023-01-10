@@ -52,7 +52,7 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
   if (isValidating || (!data?.video?.file?.url && !data?.video?.external?.url)) {
     return (
       <div className='w-full'>
-        <div className='flex-center h-[50vw] max-h-[20rem] bg-notionColor-gray_background'>
+        <div className='flex-center h-[50vw] max-h-[20rem] bg-notionColor-gray'>
           <p>비디오 정보를 불러오고 있습니다.</p>
         </div>
       </div>

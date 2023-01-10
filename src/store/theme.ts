@@ -1,54 +1,46 @@
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export interface Theme {
-  mode: 'dark' | 'light' | 'black' | 'halloween';
-  fontSize: number;
-  useDarkTheme: () => void;
-  useLightTheme: () => void;
-  changeFontSize: (fontSize: number) => void;
+export interface ThemeState {
+  mode: 'light' | 'dark';
 }
 
-const DEFAULT_FONT_SIZE = 14;
-const MIN_FONT_SIZE = 12;
-const MAX_FONT_SIZE = 18;
+export interface ThemeStore extends ThemeState {
+  changeTheme: (mode: ThemeState['mode']) => void;
+}
 
-const defaultState = {
-  mode: 'halloween' as Theme['mode'],
-  fontSize: DEFAULT_FONT_SIZE
-} as const;
+const defaultState: ThemeState = {
+  mode: 'dark'
+};
 
 const initialState = { ...defaultState };
 
 export const useThemeStore = create(
-  persist<Theme>(
+  persist<ThemeStore>(
     (set, get) => ({
       ...initialState,
-      useDarkTheme() {
-        set(() => ({
-          mode: 'dark'
-        }));
-      },
-      useLightTheme() {
-        set(() => ({
-          mode: 'light'
-        }));
-      },
-      changeFontSize: (fontSize: number) =>
-        set(() => ({
-          fontSize: isNaN(fontSize)
-            ? DEFAULT_FONT_SIZE
-            : fontSize < MIN_FONT_SIZE
-            ? MIN_FONT_SIZE
-            : fontSize > MAX_FONT_SIZE
-            ? MAX_FONT_SIZE
-            : fontSize
-        }))
+      changeTheme(mode) {
+        switch (mode) {
+          case 'dark':
+          case 'light': {
+            set(() => ({
+              mode
+            }));
+            break;
+          }
+          default: {
+            set(() => ({
+              mode: 'dark'
+            }));
+            break;
+          }
+        }
+      }
     }),
     {
       name: 'theme', // unique name
       getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
-      version: 0.3
+      version: 0.4
     }
   )
 );

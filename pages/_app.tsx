@@ -18,9 +18,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           title: config.infomation.blogname,
           locale: 'ko_KR',
           type: 'website',
-          description: 'notion blog 플랫폼입니다.'
+          description: config.infomation.blogname
+            ? `${config.infomation.blogname}의 블로그입니다.`
+            : 'notion blog 플랫폼입니다.'
         }}
-        description='notion blog 플랫폼입니다.'
+        description={
+          config.infomation.blogname
+            ? `${config.infomation.blogname}의 블로그입니다.`
+            : 'notion blog 플랫폼입니다.'
+        }
       />
       <Head>
         <meta
@@ -42,8 +48,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png' />
         <meta name='msapplication-TileImage' content='/ms-icon-144x144.png' /> */}
         <link rel='manifest' href='/manifest.json' />
-        <meta name='msapplication-TileColor' content='#151a19' />
-        <meta name='theme-color' content='#151a19' />
       </Head>
       {config.googleGTag && (
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${config.googleGTag}`} />
