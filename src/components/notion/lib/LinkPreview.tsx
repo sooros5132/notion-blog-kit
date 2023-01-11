@@ -48,6 +48,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
                     className='inline-block w-[1.1em] h-[1.1em] align-text-bottom mr-1'
                     src={data.icon.charAt(0) === '/' ? new URL(data.icon, url).href : data.icon}
                     alt={`${data?.title || ''}-favicon`}
+                    loading='lazy'
                   />
                 )}
                 {url}
@@ -65,6 +66,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
                   : data.image.url
               }
               alt={data?.image?.alt ?? undefined}
+              loading='lazy'
             />
           </figure>
         )}
