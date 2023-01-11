@@ -14,14 +14,14 @@ export const ColumnList: React.FC<ColumnListProps> = ({
 }) => {
   return (
     <div
-      className='grid gap-x-2 [&>*]:overflow-x-auto'
+      className='grid gap-x-1 md:gap-x-2 [&>*]:overflow-x-auto'
       style={{
         gridTemplateColumns: `repeat(${childrenBlocks[block.id]?.results.length ?? 1}, 1fr)`
       }}
     >
       {childrenBlocks[block.id]?.results.map((block, i) => {
         return (
-          <div className='mx-0.5' key={`block-${block.id}-${i}`}>
+          <div key={`block-${block.id}-${i}`}>
             <NotionBlocksRender
               blocks={childrenBlocks[block.id]}
               childrenBlocks={childrenBlocks}
