@@ -11,7 +11,7 @@ interface BulletedListItemProps {
 export const BulletedListItem: React.FC<BulletedListItemProps> = ({ block }) => {
   return (
     <div className='flex'>
-      <div className='flex-initial text-2xl flex-center max-h-7 basis-6 shrink-0'>{dots[0]}</div>
+      <div className='flex-center max-h-7 basis-6 shrink-0 grow-0 text-2xl'>{dots[0]}</div>
       <div className='flex-auto'>
         <NotionParagraphBlock
           blockId={block.id}

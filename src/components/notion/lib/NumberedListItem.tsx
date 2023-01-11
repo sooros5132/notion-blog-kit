@@ -10,7 +10,7 @@ interface NumberedListItemProps {
 const NumberedListItem: React.FC<NumberedListItemProps> = ({ block, numberOfSameTag }) => {
   return (
     <div className='flex'>
-      <div className='flex-initial pt-0.5 basis-6 text-right'>{numberOfSameTag + 1}.</div>
+      <div className='basis-6 grow-0 shrink-0 pt-0.5 text-right'>{numberOfSameTag + 1}.</div>
       <div className='flex-auto'>
         <NotionParagraphBlock
           blockId={block.id}
