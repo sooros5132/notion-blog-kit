@@ -1,6 +1,5 @@
 export { BlockRender as NotionBlockRender } from './BlockRender';
 export { BlocksRender as NotionBlocksRender } from './BlocksRender';
-export { BulletedListItem as NotionBulletedListItemBlock } from './BulletedListItem';
 export { default as NotionCalloutBlock } from './Callout';
 export { default as NotionChildDatabaseBlock } from './ChildDatabase';
 export { Code as NotionCodeBlock } from './Code';
@@ -22,7 +21,7 @@ export { default as NotionTableBlock } from './Table';
 export { default as NotionToggleBlock } from './Toggle';
 export { default as NotionVideoBlock } from './Video';
 export { default as NotionTodoBlock } from './Todo';
-export { default as NotionNumberedListItemBlock } from './NumberedListItem';
+export { default as NotionListItemBlock } from './ListItem';
 export { default as NotionQuoteBlock } from './Quote';
 export { default as NotionSeo } from './NotionSeo';
 export { default as NotionPageHeader } from './NotionPageHeader';

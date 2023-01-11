@@ -1,18 +1,17 @@
 'use client';
 
-import type React from 'react';
+import React from 'react';
 import { Fragment, useRef } from 'react';
 import type { IGetNotion } from 'src/types/notion';
 import {
   NotionBlockRender,
-  NotionBulletedListItemBlock,
   NotionCalloutBlock,
   NotionChildDatabaseBlock,
   NotionColumnListBlock,
   NotionHeadingBlock,
   NotionImageBlock,
   NotionLinkPreviewBlock,
-  NotionNumberedListItemBlock,
+  NotionListItemBlock,
   NotionParagraphBlock,
   NotionQuoteBlock,
   NotionTableBlock,
@@ -41,20 +40,6 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
         childrenDepth.current = block?.has_children ? childrenDepth.current + 1 : 0;
 
         switch (block.type) {
-          case 'bulleted_list_item': {
-            return (
-              <NotionBlockRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                blocks={blocks}
-                databaseBlocks={databaseBlocks}
-                childrenBlocks={childrenBlocks}
-                chilrenBlockDepth={childrenDepth.current}
-              >
-                <NotionBulletedListItemBlock block={block} />
-              </NotionBlockRender>
-            );
-          }
           case 'bookmark': {
             const url = block.bookmark.url;
             if (!url) {
@@ -205,21 +190,23 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
               </NotionBlockRender>
             );
           }
+          case 'bulleted_list_item':
           case 'numbered_list_item': {
+            // NotionListItemBlock안에서 재귀함수식으로 ul태그 안에 li중첩. 첫번째로 나온게 아니라면 return
+            if (blocks.results?.[i - 1]?.type === blocks.results?.[i]?.type) {
+              return <React.Fragment key={`block-${block.id}-${i}`} />;
+            }
+
             return (
-              <NotionBlockRender
+              <NotionListItemBlock
                 key={`block-${block.id}-${i}`}
                 block={block}
                 blocks={blocks}
                 databaseBlocks={databaseBlocks}
                 childrenBlocks={childrenBlocks}
+                startIndexForResultBlocks={i}
                 chilrenBlockDepth={childrenDepth.current}
-              >
-                <NotionNumberedListItemBlock
-                  block={block}
-                  numberOfSameTag={numberOfSameTag.current}
-                />
-              </NotionBlockRender>
+              />
             );
           }
           case 'paragraph': {

@@ -1,7 +1,6 @@
 export {
   NotionBlockRender,
   NotionBlocksRender,
-  NotionBulletedListItemBlock,
   NotionCalloutBlock,
   NotionChildDatabaseBlock,
   NotionCodeBlock,
@@ -11,7 +10,7 @@ export {
   NotionHeadingInner,
   NotionImageBlock,
   NotionLinkPreviewBlock,
-  NotionNumberedListItemBlock,
+  NotionListItemBlock,
   NotionPageHeader,
   NotionParagraphBlock,
   NotionParagraphText,
