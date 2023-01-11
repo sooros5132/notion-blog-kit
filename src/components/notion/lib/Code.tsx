@@ -12,6 +12,9 @@ interface CodeProps {
 }
 
 export const Code: React.FC<CodeProps> = ({ block }) => {
+  const language = block?.code?.language;
+  const cantion = block?.code?.caption;
+  const codes = block?.code?.rich_text;
   const { mode } = useThemeStore();
 
   const [isHydrated, setIsHydrated] = useState(false);
@@ -23,22 +26,24 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
   return (
     <>
       <div className='shadow-md rounded-lg overflow-hidden mt-[0.5em]'>
-        <div className='flex gap-x-2 items-center p-2 bg-base-content/10 text-[0.8em]'>
-          <div className='text-[#FF5F57]'>
-            <FaCircle />
+        <div className='flex justify-between items-center gap-x-2 py-2 px-3 bg-base-content/10 text-[0.8em]'>
+          <div className='flex items-center gap-x-2'>
+            <div className='text-[#FF5F57]'>
+              <FaCircle />
+            </div>
+            <div className='text-[#FFBC2E]'>
+              <FaCircle />
+            </div>
+            <div className='text-[#29C841]'>
+              <FaCircle />
+            </div>
           </div>
-          <div className='text-[#FFBC2E]'>
-            <FaCircle />
-          </div>
-          <div className='text-[#29C841]'>
-            <FaCircle />
-          </div>
+          <div className='text-base-content/70 select-none'>{language}</div>
         </div>
-        <div className=' bg-base-content/5'>
+        <div className=' bg-base-content/5 [&>pre]:scrollbar-hidden'>
           <SyntaxHighlighter
-            language={block?.code?.language || undefined}
+            language={language}
             style={!isHydrated || mode === 'dark' ? vscDarkPlus : prism}
-            // style={vscDarkPlus}
             customStyle={{
               fontSize: '1em',
               lineHeight: '1.25em',
@@ -54,17 +59,16 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
               style: {
                 fontSize: '1em',
                 lineHeight: '1.25em'
-              },
-              className: 'scroll'
+              }
             }}
           >
-            {block?.code?.rich_text?.map((text) => text?.plain_text ?? '').join('')}
+            {codes?.map((text) => text?.plain_text ?? '').join('')}
           </SyntaxHighlighter>
         </div>
       </div>
-      {Array.isArray(block?.code?.caption) && block?.code?.caption?.length > 0 && (
+      {Array.isArray(cantion) && cantion.length > 0 && (
         <div className='w-full'>
-          <NotionParagraphBlock blockId={block.id} richText={block.code.caption} color={'gray'} />
+          <NotionParagraphBlock blockId={block.id} richText={cantion} color='gray' />
         </div>
       )}
     </>
