@@ -2,10 +2,10 @@
 A statically generated blog using [Next.js](https://github.com/vercel/next.js/), [Notion Api](https://github.com/makenotion/notion-sdk-js).
 
 ## Live Demo
-[https://notion-blog-kit-demo.vercel.app/](https://notion-blog-kit-demo.vercel.app/)
+[https://notion-blog-kit-demo.vercel.app](https://notion-blog-kit-demo.vercel.app)
 
 ## ⚡️Getting Started
-[View images and detailed descriptions in live demo](https://notion-blog-kit-demo.vercel.app/Notion%20blog%20kit%20deploying%20step-51017154b8ad43188eb5994dd594b1c6)
+[View images and detailed descriptions in live demo](https://notion-blog-kit-demo.vercel.app/Notion%20Blog%20Kit%20Deploy%20Step-51017154b8ad43188eb5994dd594b1c6)
 1. Star this repo⭐️ 😉
 2. [Create notion integrations secret token](https://www.notion.so/my-integrations), Please check read only access and remember secret token.
 3. Go to the page you want to share and connection to the name of the integration
