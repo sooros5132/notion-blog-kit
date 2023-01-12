@@ -73,7 +73,7 @@ export const ChildDatabaseItem: React.FC<{
               ? `/${encodeURIComponent(
                   title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
                 )}-${block.id.replaceAll('-', '')}`
-              : `/${block.id}`
+              : `/${block.id.replaceAll('-', '')}`
           }
         >
           <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-base-content/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>

@@ -1,18 +1,10 @@
 import type React from 'react';
 import classnames from 'classnames';
-import { formatDistance } from 'date-fns';
-import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 import config from 'site-config';
 import Link from 'next/link';
-import NoSsrWrapper from 'src/lib/NoSsrWrapper';
+import { INotionSearchObject, URL_PAGE_TITLE_MAX_LENGTH, INotionUserInfo } from 'src/types/notion';
 import {
-  INotionSearchObject,
-  Color,
-  URL_PAGE_TITLE_MAX_LENGTH,
-  INotionUserInfo
-} from 'src/types/notion';
-import {
-  notionColorClasses,
   NotionCopyHeadingLink,
   NotionHeadingInner,
   NotionParagraphText,
@@ -23,7 +15,7 @@ import { ko as koLocale } from 'date-fns/locale';
 export interface NotionPageHeaderProps {
   page: INotionSearchObject;
   title: string | null;
-  userInfo: INotionUserInfo | null;
+  userInfo?: INotionUserInfo | null;
 }
 
 const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
@@ -78,17 +70,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
                   : `/${page.id}`
               }
             >
-              <Link
-                href={
-                  title
-                    ? `/${encodeURIComponent(
-                        title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
-                      )}-${page.id.replaceAll('-', '')}`
-                    : `/${page.id}`
-                }
-              >
-                &nbsp;🔗
-              </Link>
+              <span className='cursor-pointer'>&nbsp;🔗</span>
             </NotionCopyHeadingLink>
           </NotionHeadingInner>
         </div>

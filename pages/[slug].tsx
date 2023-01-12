@@ -2,147 +2,144 @@ import type React from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { NotionRender } from 'src/components/notion';
 import {
-  IGetNotion,
+  INotionPage,
   INotionSearchObject,
-  INotionUserInfo,
+  NotionBlocks,
+  NotionDatabase,
   URL_PAGE_TITLE_MAX_LENGTH
 } from 'src/types/notion';
-import { NotionService } from 'src-server/service/Notion';
+import { NotionClient } from 'lib/notion/Notion';
 import config from 'site-config';
+import { useNotionStore } from 'src/store/notion';
 
-interface SlugProps extends IGetNotion {
+interface SlugProps {
   slug: string;
-  pageInfo: INotionSearchObject;
-  userInfo: INotionUserInfo | null;
+  page: INotionPage;
 }
 
-export default function Slug({
-  slug,
-  blocks,
-  childrenBlocks,
-  databaseBlocks,
-  pageInfo,
-  userInfo
-}: SlugProps) {
-  return (
-    <NotionRender
-      slug={slug}
-      page={pageInfo}
-      blocks={blocks}
-      databaseBlocks={databaseBlocks}
-      childrenBlocks={childrenBlocks}
-      userInfo={userInfo}
-    />
-  );
+export default function Slug({ slug, page }: SlugProps) {
+  useNotionStore.setState({
+    slug,
+    baseBlock: page.block,
+    childrenRecord: page?.block?.childrenRecord,
+    databaseRecord: page?.block?.databaseRecord
+  });
+  return <NotionRender slug={slug} page={page} />;
 }
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const searchPage = async (slug: string) => {
-  const notionService = new NotionService();
+  const notionClient = new NotionClient();
 
   // pageId로 먼저 page 검색 database인 경우 오류가 발생.
-  const pageInfo = await notionService
-    .getPageInfoByPageId(slug)
-    //! 못 찾으면 에러로 나옴.
-    .catch(async () => {
-      //! database id를 종종 page에서 찾아내는 경우가 발생 함. database 우선 검색
-      return await notionService
-        .getSearchPagesByPageId({
-          searchValue: slug,
-          filterType: 'database'
-        })
-        .then(async (res) => {
-          const result = res?.results?.[0];
+  const pageInfo = await notionClient.getPageInfoByPageId(slug).then(async (res) => {
+    if (res) return res;
 
-          if (!result) {
-            return await notionService
-              .getSearchPagesByPageId({
-                searchValue: slug,
-                filterType: 'page'
-              })
-              .then((res) => {
-                return res?.results?.[0];
-              });
-          }
-          return result;
-        });
-    });
+    //! database id를 종종 page에서 찾아내는 경우가 발생 함. database 우선 검색
+    return await notionClient
+      .getSearchPagesByPageId({
+        searchValue: slug,
+        filterType: 'database'
+      })
+      .then(async (res) => {
+        const result = res?.results?.[0];
+
+        if (!result) {
+          return await notionClient
+            .getSearchPagesByPageId({
+              searchValue: slug,
+              filterType: 'page'
+            })
+            .then((res) => {
+              return res?.results?.[0];
+            });
+        }
+        return result;
+      });
+  });
 
   return pageInfo as INotionSearchObject;
 };
 
-const getBlocks = async (id: string, type: 'database' | 'page') => {
-  const notionService = new NotionService();
+const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<INotionPage> => {
+  const notionClient = new NotionClient();
 
+  // const page = await notionClient.getPageByPageId(blockId);
   switch (type) {
     case 'database': {
-      const database = {
-        blocks: (await notionService.getDatabasesById(id)) as unknown as IGetNotion['blocks'],
-        databaseBlocks: {},
-        childrenBlocks: {}
-      };
+      const database = await notionClient.getDatabaseByDatabaseId(blockId);
 
       return database;
     }
     case 'page': {
-      const blocks = await notionService.getAllBlocksAndChildrens(id);
-      return blocks;
+      const page = await notionClient.getPageByPageId(blockId);
+      return page;
     }
   }
+
+  // return await notionClient.getPageByPageId(blockId);
 };
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  if (!Array.isArray(config.headerNav) || config.headerNav.length === 0) {
-    return {
-      paths: [],
-      fallback: 'blocking'
-    };
+  const notionClient = new NotionClient();
+
+  const databases: Array<INotionSearchObject> = [];
+  {
+    // 모든 db 가져오기
+    let has_more = false;
+    let next_cursor = null;
+    do {
+      const database = await notionClient.getSearchPagesByPageId({
+        filterType: 'database',
+        searchValue: ''
+      });
+      has_more = database.has_more;
+      next_cursor = database.next_cursor;
+
+      if (Array.isArray(database.results)) {
+        databases.push(...database.results);
+      }
+    } while (next_cursor && has_more);
   }
 
-  const notionSevice = new NotionService();
   const paths: Awaited<ReturnType<GetStaticPaths<{ slug: string }>>>['paths'] = [];
 
-  for await (const database of config.headerNav) {
-    const pageInfo = await notionSevice.getSearchPagesByPageId({
-      filterType: 'database',
-      searchValue: database.slug
-    });
+  for (const database of databases) {
+    const pages: Array<NotionDatabase> = [];
+    {
+      // 데이터베이스에 있는 모든 page 가져오기
+      let has_more = false;
+      let next_cursor = null;
+      do {
+        const databaseInPages = await notionClient.getPagesInDatabaseByDatabaseId(database.id);
+        has_more = databaseInPages.has_more;
+        next_cursor = databaseInPages.next_cursor;
 
-    for (const page of pageInfo.results) {
-      switch (page.object) {
-        case 'database': {
-          const database = page;
-          const databaseItems = await getBlocks(database.id, database.object);
-          const pages = databaseItems?.blocks?.results as unknown as INotionSearchObject[];
-          if (!Array.isArray(pages) || pages.length === 0) {
-            continue;
-          }
-          for (const page of pages) {
-            const title =
-              page.object === 'page'
-                ? page?.properties?.title?.title
-                    ?.map((text) => text?.plain_text)
-                    .join('')
-                    .slice(0, URL_PAGE_TITLE_MAX_LENGTH) || ''
-                : '';
-
-            if (title && typeof title === 'string') {
-              paths.push({
-                params: {
-                  slug: `${title ? title + '-' : ''}${page.id.replaceAll('-', '')}`
-                }
-              });
-            }
-          }
-          break;
+        if (Array.isArray(databaseInPages.results)) {
+          pages.push(...databaseInPages.results);
         }
+      } while (next_cursor && has_more);
+    }
 
-        case 'page': {
-          break;
-        }
+    for (const page of pages) {
+      const title =
+        page.object === 'page'
+          ? page?.properties?.title?.title
+              ?.map((text) => text?.plain_text)
+              .join('')
+              .slice(0, URL_PAGE_TITLE_MAX_LENGTH) || ''
+          : '';
+
+      if (title && typeof title === 'string') {
+        paths.push({
+          params: {
+            slug: `${title ? title + '-' : ''}${page.id.replaceAll('-', '')}`
+          }
+        });
       }
     }
   }
+
   return {
     paths,
     fallback: 'blocking'
@@ -165,19 +162,12 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     if (!pageInfo?.id) {
       throw '';
     }
-    const [blocks, userInfo] = await Promise.all([
-      getBlocks(slug, pageInfo.object),
-      new NotionService().getUserProfile(pageInfo.created_by.id)
-    ]);
+    const page = await getBlock(slug, pageInfo.object);
 
     return {
       props: {
         slug,
-        blocks: blocks.blocks,
-        childrenBlocks: blocks.childrenBlocks,
-        databaseBlocks: blocks.databaseBlocks,
-        pageInfo,
-        userInfo
+        page
       },
       revalidate: 600
     };

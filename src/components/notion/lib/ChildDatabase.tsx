@@ -5,14 +5,14 @@ import { sortBy } from 'lodash';
 import { usePathname } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { BsArrowUpShort, BsArrowDownShort } from 'react-icons/bs';
-import { NotionBlock, IGetNotion, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { NotionBlock, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { CopyHeadingLink, HeadingContainer, HeadingInner } from './Heading';
 import { ChildDatabaseItem } from './ChildDatabaseItem';
+import { useNotionStore } from 'src/store/notion';
+import Link from 'next/link';
 
-export type NotionChildrenRenderProps = { block: NotionBlock };
-
-export interface ChildDatabaseProps extends NotionChildrenRenderProps {
-  databases: IGetNotion['databaseBlocks'];
+export interface ChildDatabaseProps {
+  block: NotionBlock;
 }
 
 type SortKeys = 'title' | 'created_time' | 'last_edited_time';
@@ -24,25 +24,26 @@ const KorKeyRecord = {
   last_edited_time: '수정일'
 } as const;
 
-const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
+const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
+  const { databaseRecord } = useNotionStore();
+  const database = databaseRecord[block.id];
+
   const pathname = usePathname();
+
   const [blocks, setBlocks] = useState(
     sortBy(
-      databases[block.id]?.results?.[0]?.properties?.isPublished?.type === 'checkbox'
-        ? databases[block.id]?.results
-            .filter((b) => b?.properties?.['isPublished']?.checkbox)
-            .map((databaseBlock) => {
-              const title =
-                databaseBlock?.properties?.title?.title
-                  ?.map((title) => title.plain_text)
-                  .join('') ?? '제목 없음';
-              const newBlock = {
-                ...databaseBlock,
-                title
-              };
-              return newBlock;
-            }) || []
-        : databases[block.id]?.results || [],
+      database?.results?.[0]?.properties?.isPublished?.type === 'checkbox'
+        ? database?.results.map((databaseBlock) => {
+            const title =
+              databaseBlock?.properties?.title?.title?.map((title) => title.plain_text).join('') ??
+              '제목 없음';
+            const newBlock = {
+              ...databaseBlock,
+              title
+            };
+            return newBlock;
+          }) || []
+        : database?.results || [],
       'created_time'
     ).reverse()
   );
@@ -103,7 +104,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databases }) => {
               <p className='break-all'>
                 {block?.child_database?.title || '제목 없음'}
                 <CopyHeadingLink href={href}>
-                  <a href={'#' + hash}>&nbsp;🔗</a>
+                  <Link href={'#' + hash}>&nbsp;🔗</Link>
                 </CopyHeadingLink>
               </p>
               <div className='dropdown dropdown-left'>

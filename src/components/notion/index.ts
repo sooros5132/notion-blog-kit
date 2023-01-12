@@ -1,5 +1,5 @@
 export {
-  NotionBlockRender,
+  NotionHasChildrenRender,
   NotionBlocksRender,
   NotionCalloutBlock,
   NotionChildDatabaseBlock,

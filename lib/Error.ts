@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextHandler } from 'next-connect';
-import { IErrorResponse } from 'src-server/types/response';
+import { IErrorResponse } from 'lib/types/response';
 
 export class Error {
   // eslint-disable-next-line @typescript-eslint/no-empty-function

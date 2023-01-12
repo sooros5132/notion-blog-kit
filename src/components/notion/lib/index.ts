@@ -1,4 +1,4 @@
-export { BlockRender as NotionBlockRender } from './BlockRender';
+export { HasChildrenRender as NotionHasChildrenRender } from './HasChildrenRender';
 export { BlocksRender as NotionBlocksRender } from './BlocksRender';
 export { default as NotionCalloutBlock } from './Callout';
 export { default as NotionChildDatabaseBlock } from './ChildDatabase';

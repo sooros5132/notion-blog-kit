@@ -3,18 +3,16 @@
 import type React from 'react';
 import type {
   NotionBlock,
-  IGetNotion,
   RichText,
   INotionSearchObject,
   NotionDatabasesQuery,
-  INotionUserInfo
+  INotionPage
 } from 'src/types/notion';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
 
-export interface NotionRenderProps extends IGetNotion {
+export interface NotionRenderProps {
   slug: string;
-  page: INotionSearchObject;
-  userInfo: INotionUserInfo | null;
+  page: INotionPage;
 }
 
 // export const EllipsisWrapperBox = styled('div')({
@@ -30,15 +28,14 @@ export interface NotionRenderProps extends IGetNotion {
 //   }
 // });
 
-export const NotionRender: React.FC<NotionRenderProps> = ({
-  slug,
-  blocks,
-  childrenBlocks,
-  databaseBlocks,
-  page,
-  userInfo
-}): JSX.Element => {
-  if (!blocks?.results || !page) {
+export const NotionRender: React.FC<NotionRenderProps> = (props): JSX.Element => {
+  const baseBlock = props?.page?.block;
+  const blocks = baseBlock.results;
+  const pageInfo = props?.page?.pageInfo;
+  const userInfo = props?.page?.userInfo;
+  const slug = pageInfo?.id.replaceAll('-', '');
+
+  if (!blocks || !props?.page.pageInfo) {
     return (
       <div className='flex-center'>
         <progress className='radial-progress'></progress>
@@ -47,12 +44,12 @@ export const NotionRender: React.FC<NotionRenderProps> = ({
   }
 
   const title =
-    page.object === 'page'
-      ? page?.properties?.title?.title?.map((text) => text?.plain_text).join('') || null
-      : page.object === 'database'
-      ? page.title?.map((text) => text?.plain_text).join('') || null
+    pageInfo.object === 'page'
+      ? pageInfo?.properties?.title?.title?.map((text) => text?.plain_text).join('') || null
+      : pageInfo.object === 'database'
+      ? pageInfo.title?.map((text) => text?.plain_text).join('') || null
       : null;
-  const description = blocks?.results
+  const description = blocks
     ?.slice(0, 10)
     ?.map((block: any) =>
       block?.[block.type]?.rich_text?.map((text: RichText) => text?.plain_text || '')?.join('')
@@ -62,44 +59,39 @@ export const NotionRender: React.FC<NotionRenderProps> = ({
 
   return (
     <div className='w-full mb-5 whitespace-pre-wrap'>
-      <NotionSeo page={page} title={title} description={description} slug={slug} />
-      <NotionPageHeader page={page} title={title} userInfo={userInfo} />
+      <NotionSeo page={pageInfo} title={title} description={description} slug={slug} />
+      <NotionPageHeader page={pageInfo} title={title} userInfo={userInfo} />
       <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
-        {page.object === 'page' ? (
-          <NotionBlocksRender
-            blocks={blocks}
-            databaseBlocks={databaseBlocks}
-            childrenBlocks={childrenBlocks}
-          />
-        ) : page.object === 'database' ? (
+        {pageInfo.object === 'page' ? (
+          <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
+        ) : pageInfo.object === 'database' ? (
           <NotionChildDatabaseBlock
             //! key로 useState 초기화 + 리렌더링 강제유발
-            key={page.id}
+            key={pageInfo.id}
             //! key로 useState 초기화 + 리렌더링 강제유발
             block={
               {
-                ...page,
+                ...pageInfo,
                 child_database: {
                   title: title
                 }
               } as unknown as NotionBlock
             }
-            databases={{ [page.id]: blocks as unknown as NotionDatabasesQuery }}
           />
         ) : null}
-        {/* {page?.id && <NotionHits page={page} />} */}
+        {/* {pageInfo?.id && <NotionHits pageInfo={pageInfo} />} */}
       </div>
     </div>
   );
 };
 
-const NotionHits: React.FC<{ page: INotionSearchObject }> = ({ page }) => {
+const NotionHits: React.FC<{ pageInfo: INotionSearchObject }> = ({ pageInfo }) => {
   return (
     <div className='flex justify-end pt-5'>
       {process.env.NODE_ENV === 'production' ? (
         <img
           src={`https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(
-            `/${page.id}`
+            `/${pageInfo.id}`
           )}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false`}
         />
       ) : (

@@ -2,8 +2,8 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
-import { Error } from 'src-server/middleware/Error';
-import { IResponseSuccess } from 'src-server/types/response';
+import { Error } from 'lib/Error';
+import { IResponseSuccess } from 'lib/types/response';
 import { parse } from 'node-html-parser';
 import type { HTMLElement as ParsedHTMLElement } from 'node-html-parser';
 import { LinkPreview } from 'src/types/types';

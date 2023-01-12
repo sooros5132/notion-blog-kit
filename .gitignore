@@ -34,3 +34,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# notion block cache
+/lib/notion/cache/*
+!/lib/notion/cache/cache.js

@@ -28,12 +28,19 @@ const Video: React.FC<VideoProps> = ({ block }) => {
 };
 
 const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
+  const isExternalVideo = Boolean(block?.video?.external);
   const { data, error, isValidating } = useSWR<NotionBlock>(
     `${config.path}/notion/blocks/${block.id}`,
-    fetcher,
+    async (url) => {
+      if (isExternalVideo) {
+        return block;
+      }
+      return await fetcher(url);
+    },
     {
+      fallbackData: block,
       revalidateOnFocus: false,
-      refreshInterval: 54 * 60 * 1000 // 54분
+      refreshInterval: isExternalVideo ? undefined : 54 * 60 * 1000 // 54분
     }
   );
   if (error) {

@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 import { notionBlockUrlToRelativePath } from 'src/lib/notion';
 import type { Color, RichText } from 'src/types/notion';
 import { NotionCopyHeadingLink } from '.';
+import Link from 'next/link';
 
 export interface ParagraphTextProps {
   bold?: string;
@@ -168,7 +169,7 @@ const Paragraph: React.FC<ParagraphProps> = ({
       })}
       {headingLink && (
         <NotionCopyHeadingLink href={headingLink}>
-          <a href={headingLink}>&nbsp;🔗</a>
+          <Link href={headingLink}>&nbsp;🔗</Link>
         </NotionCopyHeadingLink>
       )}
     </div>

@@ -49,7 +49,7 @@ export const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode
   children
 }) => {
   const handleClick = (url: string) => () => {
-    const href = new URL(url /* , config.origin */).href;
+    const href = new URL(location.origin + url).href;
 
     href && copyTextAtClipBoard(href);
   };

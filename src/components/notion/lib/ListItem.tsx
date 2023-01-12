@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import type React from 'react';
-import type { IGetNotion, NotionBlock } from 'src/types/notion';
-import { NotionBlockRender, NotionParagraphBlock } from '.';
+import type { NotionBlock, NotionBlocks } from 'src/types/notion';
+import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 
-interface NumberedListItemProps extends IGetNotion {
+interface NumberedListItemProps {
   block: NotionBlock;
+  baseBlock: NotionBlocks;
   startIndexForResultBlocks: number;
   chilrenBlockDepth: number;
   children?: React.ReactNode;
@@ -12,9 +13,7 @@ interface NumberedListItemProps extends IGetNotion {
 
 const NumberedListItem: React.FC<NumberedListItemProps> = ({
   block,
-  blocks,
-  childrenBlocks,
-  databaseBlocks,
+  baseBlock,
   chilrenBlockDepth: chilrenBlockDepthProps,
   startIndexForResultBlocks
 }) => {
@@ -24,8 +23,9 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
     : chilrenBlockDepthProps;
   const prevIndexForResultBlocks = startIndexForResultBlocks - 1;
   const nextIndexForResultBlocks = startIndexForResultBlocks + 1;
+  const blocks = baseBlock?.results;
 
-  if (blocks?.results?.[prevIndexForResultBlocks]?.type !== block.type) {
+  if (blocks?.[prevIndexForResultBlocks]?.type !== block.type) {
     return (
       <ul
         className={classNames(
@@ -35,11 +35,8 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
         )}
       >
         <li>
-          <NotionBlockRender
-            block={blocks?.results?.[startIndexForResultBlocks]}
-            blocks={blocks}
-            databaseBlocks={databaseBlocks}
-            childrenBlocks={childrenBlocks}
+          <NotionHasChildrenRender
+            block={blocks?.[startIndexForResultBlocks]}
             chilrenBlockDepth={chilrenBlockDepth}
             parentBlockType={block.type}
           >
@@ -48,16 +45,14 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
               richText={block[LIST_TYPE]?.rich_text}
               color={block[LIST_TYPE]?.color}
             />
-          </NotionBlockRender>
+          </NotionHasChildrenRender>
         </li>
-        {block.type === blocks?.results?.[nextIndexForResultBlocks]?.type && (
+        {block.type === blocks?.[nextIndexForResultBlocks]?.type && (
           <NumberedListItem
-            block={blocks?.results?.[nextIndexForResultBlocks]}
-            blocks={blocks}
-            databaseBlocks={databaseBlocks}
-            childrenBlocks={childrenBlocks}
+            block={blocks?.[nextIndexForResultBlocks]}
             startIndexForResultBlocks={nextIndexForResultBlocks}
             chilrenBlockDepth={chilrenBlockDepth}
+            baseBlock={baseBlock}
           />
         )}
       </ul>
@@ -66,11 +61,8 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
     return (
       <>
         <li>
-          <NotionBlockRender
-            block={blocks?.results?.[startIndexForResultBlocks]}
-            blocks={blocks}
-            databaseBlocks={databaseBlocks}
-            childrenBlocks={childrenBlocks}
+          <NotionHasChildrenRender
+            block={blocks?.[startIndexForResultBlocks]}
             chilrenBlockDepth={chilrenBlockDepth}
             parentBlockType={block.type}
           >
@@ -79,16 +71,14 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
               richText={block[LIST_TYPE]?.rich_text}
               color={block[LIST_TYPE]?.color}
             />
-          </NotionBlockRender>
+          </NotionHasChildrenRender>
         </li>
-        {block?.type === blocks?.results?.[nextIndexForResultBlocks]?.type && (
+        {block?.type === blocks?.[nextIndexForResultBlocks]?.type && (
           <NumberedListItem
-            block={blocks?.results?.[nextIndexForResultBlocks]}
-            blocks={blocks}
-            databaseBlocks={databaseBlocks}
-            childrenBlocks={childrenBlocks}
+            block={blocks?.[nextIndexForResultBlocks]}
             startIndexForResultBlocks={nextIndexForResultBlocks}
             chilrenBlockDepth={chilrenBlockDepth}
+            baseBlock={baseBlock}
           />
         )}
       </>

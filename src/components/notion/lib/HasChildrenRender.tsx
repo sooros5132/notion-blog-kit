@@ -1,8 +1,9 @@
 import type React from 'react';
-import type { NotionBlock, IGetNotion, BlockType } from 'src/types/notion';
+import { useNotionStore } from 'src/store/notion';
+import type { NotionBlock, BlockType, INotionPage } from 'src/types/notion';
 import { NotionBlocksRender } from '.';
 
-interface NotionBlockProps extends IGetNotion {
+interface HasChildrenRenderProps {
   block: NotionBlock;
   children?: React.ReactNode;
   chilrenBlockDepth?: number;
@@ -11,15 +12,13 @@ interface NotionBlockProps extends IGetNotion {
 
 const notPaddingBlockType: Array<BlockType> = ['bulleted_list_item', 'numbered_list_item'];
 
-export const BlockRender: React.FC<NotionBlockProps> = ({
+export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
   block,
-  blocks,
-  childrenBlocks,
-  databaseBlocks,
   children,
   chilrenBlockDepth,
   parentBlockType
 }) => {
+  const { childrenRecord } = useNotionStore();
   return (
     <>
       {children}
@@ -28,9 +27,8 @@ export const BlockRender: React.FC<NotionBlockProps> = ({
           className={parentBlockType && notPaddingBlockType.includes(parentBlockType) ? '' : 'pl-6'}
         >
           <NotionBlocksRender
-            blocks={childrenBlocks[block.id]}
-            childrenBlocks={childrenBlocks}
-            databaseBlocks={databaseBlocks}
+            blocks={childrenRecord[block.id]?.results}
+            baseBlock={childrenRecord[block.id]}
           />
         </div>
       )}

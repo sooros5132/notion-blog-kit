@@ -1,4 +1,4 @@
-import { IErrorResponse } from 'src-server/types/response';
+import { IErrorResponse } from 'lib/types/response';
 
 export const ERROR_NOT_FOUND_FILE: IErrorResponse = {
   status: 404,

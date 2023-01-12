@@ -7,7 +7,7 @@ import { fetcher } from 'src/lib/swr';
 import { useRouter } from 'next/router';
 import { ChildDatabaseItem } from 'src/components/notion/lib/ChildDatabaseItem';
 import { SearchForm } from 'src/components/search/SearchForm';
-import { NotionService } from 'src-server/service/Notion';
+import { NotionClient } from 'lib/notion/Notion';
 
 interface SearchResult {
   searchValue?: string;
@@ -60,8 +60,8 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
     };
   }
 
-  const notionService = new NotionService();
-  const result = await notionService.getSearchPagesByPageTitle({
+  const notionClient = new NotionClient();
+  const result = await notionClient.getSearchPagesByPageTitle({
     filterType: 'page',
     searchValue: slug
   });

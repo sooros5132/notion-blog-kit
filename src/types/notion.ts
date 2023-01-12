@@ -1,5 +1,5 @@
 export declare type ID = string;
-export const URL_PAGE_TITLE_MAX_LENGTH = 50;
+export const URL_PAGE_TITLE_MAX_LENGTH = 100;
 
 export declare type Code =
   | 'abap'
@@ -199,7 +199,7 @@ export declare type MentionObject = {
   type: 'user' | 'page' | 'database' | 'date' | 'link_preview';
 };
 
-interface FileObject {
+export interface FileObject {
   type: 'external' | 'file';
   external?: {
     url: string;
@@ -299,13 +299,7 @@ export declare type NotionBlockTypes =
   | 'property_item'
   | 'page_or_database';
 
-export interface IGetNotion {
-  blocks: NotionBlocksChildrenList;
-  databaseBlocks: Record<string, NotionDatabasesQuery>;
-  childrenBlocks: Record<string, NotionBlocksChildrenList>;
-}
-
-export interface NotionBlocksChildrenList {
+export interface NotionBlocks {
   object: 'list'; // Always "list".
   results: Array<NotionBlock>;
   next_cursor?: string | null; // Only available when "has_more" is true.
@@ -313,8 +307,18 @@ export interface NotionBlocksChildrenList {
   type: NotionBlockTypes;
   block: Record<string, any>;
 }
+export interface NotionBlockAndChilrens extends NotionBlocks {
+  databaseRecord: Record<string, NotionDatabasesQuery>;
+  childrenRecord: Record<string, NotionBlocks>;
+}
 
-export interface IGetSearchNotion extends NotionBlocksChildrenList {
+export type INotionPage = {
+  block: NotionBlockAndChilrens;
+  pageInfo: INotionSearchObject;
+  userInfo?: INotionUserInfo | null;
+};
+
+export interface IGetSearchNotion extends NotionBlocks {
   type: 'page_or_database';
   page_or_database: Record<string, any>;
 }
@@ -347,6 +351,9 @@ export interface Properties extends Partial<Record<PropertyType | string, any>> 
   title?: Property & {
     title?: Array<RichText>;
   };
+  isPublished?: Property & {
+    checkbox?: boolean;
+  };
   createdAt?: Property & {
     created_time?: string;
   };
@@ -356,7 +363,7 @@ export interface Properties extends Partial<Record<PropertyType | string, any>> 
 }
 
 export interface NotionDatabase {
-  object: string; // Always "database"
+  object: 'database' | 'page';
   id: string; // uuid
   created_time: string;
   created_by: UserObject;
@@ -429,8 +436,14 @@ export interface INotionSearch {
   results: Array<INotionSearchObject>;
   next_cursor: string | null;
   has_more: boolean;
-  type: 'page_or_database';
+  type: 'child_database' | 'child_page' | 'page_or_database';
   page_or_database: Record<string, any>;
+  child_database?: {
+    title: string;
+  };
+  child_page?: {
+    title: string;
+  };
 }
 
 export interface INotionUserInfo {

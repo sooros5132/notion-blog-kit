@@ -1,51 +1,36 @@
 import type React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 import config from 'site-config';
-import { NotionService } from 'src-server/service/Notion';
+import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
-import { IGetNotion, INotionSearchObject, INotionUserInfo } from 'src/types/notion';
+import { INotionPage } from 'src/types/notion';
+import { useNotionStore } from 'src/store/notion';
 
-interface HomeProps extends IGetNotion {
+interface HomeProps {
   slug: string;
-  pageInfo: INotionSearchObject;
-  userInfo: INotionUserInfo | null;
+  page: INotionPage;
 }
-const Home: NextPage<HomeProps> = ({
-  slug,
-  blocks,
-  childrenBlocks,
-  databaseBlocks,
-  pageInfo,
-  userInfo
-}) => {
-  return (
-    <NotionRender
-      slug={slug}
-      page={pageInfo}
-      blocks={blocks}
-      databaseBlocks={databaseBlocks}
-      childrenBlocks={childrenBlocks}
-      userInfo={userInfo}
-    />
-  );
+const Home: NextPage<HomeProps> = ({ slug, page }) => {
+  useNotionStore.setState({
+    slug,
+    baseBlock: page.block,
+    childrenRecord: page?.block?.childrenRecord,
+    databaseRecord: page?.block?.databaseRecord
+  });
+
+  return <NotionRender slug={slug} page={page} />;
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
-    const notionService = new NotionService();
-    const [blocks, pageInfo] = await Promise.all([
-      notionService.getAllBlocksAndChildrens(config.notion.baseBlock),
-      notionService.getPageInfoByPageId(config.notion.baseBlock)
-    ]);
-    const userInfo = await new NotionService().getUserProfile(pageInfo.created_by.id);
+    const notionClient = new NotionClient();
+
+    const page = await notionClient.getPageByPageId(config.notion.baseBlock);
+
     return {
       props: {
         slug: config.notion.baseBlock,
-        blocks: blocks.blocks,
-        childrenBlocks: blocks.childrenBlocks,
-        databaseBlocks: blocks.databaseBlocks,
-        pageInfo,
-        userInfo
+        page
       },
       revalidate: 600
     };

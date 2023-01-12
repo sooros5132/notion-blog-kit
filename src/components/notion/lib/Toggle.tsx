@@ -1,19 +1,13 @@
 import type React from 'react';
-import type { NotionBlock, IGetNotion } from 'src/types/notion';
-import { NotionBlockRender, NotionParagraphBlock, notionColorClasses } from '.';
+import type { NotionBlock } from 'src/types/notion';
+import { NotionHasChildrenRender, NotionParagraphBlock, notionColorClasses } from '.';
 
-interface ToggleProps extends IGetNotion {
+interface ToggleProps {
   block: NotionBlock;
   chilrenBlockDepth?: number;
 }
 
-const Toggle: React.FC<ToggleProps> = ({
-  block,
-  blocks,
-  chilrenBlockDepth,
-  childrenBlocks,
-  databaseBlocks
-}) => {
+const Toggle: React.FC<ToggleProps> = ({ block, chilrenBlockDepth }) => {
   return (
     <div
       className={
@@ -27,13 +21,7 @@ const Toggle: React.FC<ToggleProps> = ({
           </div>
         </summary>
         <div className='pb-2 pr-2'>
-          <NotionBlockRender
-            block={block}
-            blocks={blocks}
-            databaseBlocks={databaseBlocks}
-            childrenBlocks={childrenBlocks}
-            chilrenBlockDepth={chilrenBlockDepth}
-          />
+          <NotionHasChildrenRender block={block} chilrenBlockDepth={chilrenBlockDepth} />
         </div>
       </details>
     </div>
