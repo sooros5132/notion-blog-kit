@@ -14,11 +14,12 @@ const Home: NextPage<HomeProps> = ({ slug, page }) => {
   useNotionStore.setState({
     slug,
     baseBlock: page.block,
-    childrenRecord: page?.block?.childrenRecord,
-    databaseRecord: page?.block?.databaseRecord
+    childrenRecord: page?.block?.childrenRecord || {},
+    databaseRecord: page?.block?.databaseRecord || {}
   });
 
-  return <NotionRender slug={slug} page={page} />;
+  //! key 지우면 에러가 남. https://reactjs.org/link/setstate-in-render
+  return <NotionRender key={slug} slug={slug} page={page} />;
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
