@@ -13,7 +13,7 @@ export type NotionImageFetcherParams = {
 
 function isExpired({ expiry_time, url }: NonNullable<FileObject['file']>) {
   const now = Date.now();
-  if (!url && !expiry_time && new Date(expiry_time).getTime() < now) {
+  if (url && expiry_time && new Date(expiry_time).getTime() < now) {
     return true;
   }
   return false;
