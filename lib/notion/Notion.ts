@@ -281,8 +281,15 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const page = cachePage;
+      const { cachedTime, ...page } = cachePage as INotionPage & { cachedTime: string };
       if (!page?.pageInfo?.last_edited_time) {
+        throw NO_CACHED;
+      }
+
+      const now = Date.now();
+
+      // 캐시된 시간이 1시간 지났으면 다시
+      if (!cachedTime || now - Date.parse(cachedTime) > 60 * 60 * 1000) {
         throw NO_CACHED;
       }
 
@@ -308,8 +315,12 @@ export class NotionClient {
         pageInfo,
         userInfo
       };
-      if (e === 'NO_CACHED') {
-        notionCache.set(blockId, page);
+
+      if (e === NO_CACHED) {
+        notionCache.set(blockId, {
+          cachedTime: Date.now(),
+          ...page
+        });
       }
 
       return page;
@@ -321,13 +332,20 @@ export class NotionClient {
       if (!notionCache.exists(blockId)) {
         throw NO_CACHED;
       }
-      const cachePage = notionCache.get(blockId) as INotionPage;
+      const cachePage = notionCache.get(blockId);
       if (!cachePage) {
         throw NO_CACHED;
       }
 
-      const page = cachePage;
+      const { cachedTime, ...page } = cachePage as INotionPage & { cachedTime: string };
       if (!page?.pageInfo?.last_edited_time) {
+        throw NO_CACHED;
+      }
+
+      const now = Date.now();
+
+      // 캐시된 시간이 1시간 지났으면 다시
+      if (!cachedTime || now - Date.parse(cachedTime) > 60 * 60 * 1000) {
         throw NO_CACHED;
       }
 
@@ -358,8 +376,11 @@ export class NotionClient {
         userInfo
       };
 
-      if (e === 'NO_CACHED') {
-        notionCache.set(blockId, page);
+      if (e === NO_CACHED) {
+        notionCache.set(blockId, {
+          cachedTime: Date.now(),
+          ...page
+        });
       }
 
       return page;
