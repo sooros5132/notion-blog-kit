@@ -33,6 +33,10 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
   depthOfNestedList,
   baseBlock
 }) => {
+  // useRef를 쓰면 children 렌더링 할 때 다음 block이 리스트 타입이여도
+  // children에 다른 타입의 블록이 있다면 렌더링 중 초기화 시켜서 일반 변수로 사용.
+  let newDepthOfNestedList = depthOfNestedList;
+
   return (
     <>
       {blocks?.map((block, i) => {
@@ -116,8 +120,20 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
           }
           case 'bulleted_list_item':
           case 'numbered_list_item': {
-            // NotionListBlock안에서 재귀함수식으로 ul태그 안에 li중첩. 첫번째로 나온게 아니라면 return
-            if (blocks?.[i - 1]?.type === blocks?.[i]?.type) {
+            const prevBlockIsListItem = blocks?.[i - 1]?.type === blocks?.[i]?.type;
+            const nextBlockIsListItem = blocks?.[i]?.type === blocks?.[i + 1]?.type;
+            if (
+              // 첫번째 블록이 아니고, 이전 블록은 있지만 리스트가 아니거나 다음 블록은 있지만 리스트가 아니면 초기화
+              i !== 0 &&
+              ((Boolean(blocks?.[i - 1]) && !prevBlockIsListItem) ||
+                (Boolean(blocks?.[i + 1]) && !nextBlockIsListItem))
+            ) {
+              newDepthOfNestedList = 0;
+            }
+
+            // NotionListBlock안에서 재귀함수식으로 ul태그 안에 li중첩 시킨다.
+            // 제일 처음 나온 list item이 렌더링 하는 방식
+            if (prevBlockIsListItem) {
               return <React.Fragment key={`block-${block.id}-${i}`} />;
             }
 
@@ -127,7 +143,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
                 block={block}
                 baseBlock={baseBlock}
                 startIndexForResultBlocks={i}
-                depthOfNestedList={depthOfNestedList}
+                depthOfNestedList={newDepthOfNestedList}
               />
             );
           }
