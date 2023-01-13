@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Fragment, useRef } from 'react';
+import { Fragment } from 'react';
 import { NotionBlock, NotionBlocks } from 'src/types/notion';
 import {
   NotionHasChildrenRender,
@@ -25,27 +25,21 @@ import {
 export type NotionBlocksProps = {
   blocks: NotionBlock[];
   baseBlock: NotionBlocks;
+  hasChildrenDepth?: number;
 };
 
-export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock }) => {
-  const numberOfSameTag = useRef(0);
-  const childrenDepth = useRef(0);
-
+export const BlocksRender: React.FC<NotionBlocksProps> = ({
+  blocks,
+  hasChildrenDepth,
+  baseBlock
+}) => {
   return (
     <>
       {blocks?.map((block, i) => {
-        numberOfSameTag.current =
-          blocks?.[i - 1]?.type === block.type ? numberOfSameTag.current + 1 : 0;
-        childrenDepth.current = block?.has_children ? childrenDepth.current + 1 : 0;
-
         switch (block.type) {
           case 'bookmark': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionLinkPreviewBlock url={block.bookmark.url} />
                 {Array.isArray(block?.bookmark?.caption) &&
                   block?.bookmark?.caption?.length > 0 && (
@@ -61,24 +55,14 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
             );
           }
           case 'callout': {
-            return (
-              <NotionCalloutBlock
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              />
-            );
+            return <NotionCalloutBlock key={`block-${block.id}-${i}`} block={block} />;
           }
           case 'child_database': {
             return <NotionChildDatabaseBlock key={`block-${block.id}-${i}`} block={block} />;
           }
           case 'code': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionCodeBlock block={block} />
               </NotionHasChildrenRender>
             );
@@ -93,21 +77,11 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
             );
           }
           case 'column': {
-            return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              />
-            );
+            return <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block} />;
           }
           case 'divider': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <hr className='border-gray-500' />
               </NotionHasChildrenRender>
             );
@@ -116,22 +90,14 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
           case 'heading_2':
           case 'heading_3': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionHeadingBlock block={block} />
               </NotionHasChildrenRender>
             );
           }
           case 'image': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionImageBlock block={block} />
               </NotionHasChildrenRender>
             );
@@ -143,11 +109,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
             }
 
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionLinkPreviewBlock url={url} />
               </NotionHasChildrenRender>
             );
@@ -165,17 +127,13 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
                 block={block}
                 baseBlock={baseBlock}
                 startIndexForResultBlocks={i}
-                chilrenBlockDepth={childrenDepth.current}
+                hasChildrenDepth={hasChildrenDepth}
               />
             );
           }
           case 'paragraph': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionParagraphBlock
                   blockId={block.id}
                   richText={block.paragraph.rich_text}
@@ -187,50 +145,27 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
           case 'quote': {
             return (
               <NotionQuoteBlock key={`block-${block.id}-${i}`} block={block}>
-                <NotionHasChildrenRender
-                  block={block}
-                  chilrenBlockDepth={childrenDepth.current}
-                ></NotionHasChildrenRender>
+                <NotionHasChildrenRender block={block}></NotionHasChildrenRender>
               </NotionQuoteBlock>
             );
           }
           case 'table': {
-            return (
-              <NotionTableBlock
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              />
-            );
+            return <NotionTableBlock key={`block-${block.id}-${i}`} block={block} />;
           }
           case 'to_do': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionTodoBlock block={block} />
               </NotionHasChildrenRender>
             );
           }
           case 'toggle': {
             // 토글은 안에서 BlockRender시킴.
-            return (
-              <NotionToggleBlock
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              />
-            );
+            return <NotionToggleBlock key={`block-${block.id}-${i}`} block={block} />;
           }
           case 'video': {
             return (
-              <NotionHasChildrenRender
-                key={`block-${block.id}-${i}`}
-                block={block}
-                chilrenBlockDepth={childrenDepth.current}
-              >
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <NotionVideoBlock block={block} />
               </NotionHasChildrenRender>
             );

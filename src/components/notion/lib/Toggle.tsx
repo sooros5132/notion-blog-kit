@@ -4,10 +4,9 @@ import { NotionHasChildrenRender, NotionParagraphBlock, notionColorClasses } fro
 
 interface ToggleProps {
   block: NotionBlock;
-  chilrenBlockDepth?: number;
 }
 
-const Toggle: React.FC<ToggleProps> = ({ block, chilrenBlockDepth }) => {
+const Toggle: React.FC<ToggleProps> = ({ block }) => {
   return (
     <div
       className={
@@ -21,7 +20,7 @@ const Toggle: React.FC<ToggleProps> = ({ block, chilrenBlockDepth }) => {
           </div>
         </summary>
         <div className='pb-2 pr-2'>
-          <NotionHasChildrenRender block={block} chilrenBlockDepth={chilrenBlockDepth} />
+          <NotionHasChildrenRender block={block} />
         </div>
       </details>
     </div>

@@ -6,10 +6,9 @@ import { useNotionStore } from 'src/store/notion';
 
 interface TableProps {
   block: NotionBlock;
-  chilrenBlockDepth?: number;
 }
 
-const Table: React.FC<TableProps> = ({ block, chilrenBlockDepth }) => {
+const Table: React.FC<TableProps> = ({ block }) => {
   const { childrenRecord } = useNotionStore();
   const tbodyBlock = childrenRecord[block.id];
 

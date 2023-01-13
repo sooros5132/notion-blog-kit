@@ -6,8 +6,8 @@ import { NotionBlocksRender } from '.';
 interface HasChildrenRenderProps {
   block: NotionBlock;
   children?: React.ReactNode;
-  chilrenBlockDepth?: number;
   parentBlockType?: BlockType;
+  hasChildrenDepth?: number;
 }
 
 const notPaddingBlockType: Array<BlockType> = ['bulleted_list_item', 'numbered_list_item'];
@@ -15,20 +15,22 @@ const notPaddingBlockType: Array<BlockType> = ['bulleted_list_item', 'numbered_l
 export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
   block,
   children,
-  chilrenBlockDepth,
-  parentBlockType
+  parentBlockType,
+  hasChildrenDepth
 }) => {
   const { childrenRecord } = useNotionStore();
+
   return (
     <>
       {children}
-      {block?.has_children && typeof chilrenBlockDepth === 'number' && chilrenBlockDepth > 0 && (
+      {block?.has_children && (
         <div
           className={parentBlockType && notPaddingBlockType.includes(parentBlockType) ? '' : 'pl-6'}
         >
           <NotionBlocksRender
             blocks={childrenRecord[block.id]?.results}
             baseBlock={childrenRecord[block.id]}
+            hasChildrenDepth={(hasChildrenDepth || 0) + 1}
           />
         </div>
       )}

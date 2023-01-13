@@ -11,7 +11,7 @@ export interface ColumnListProps {
 export const ColumnList: React.FC<ColumnListProps> = ({ block, baseBlock }) => {
   const { childrenRecord } = useNotionStore();
 
-  const columns = childrenRecord[block.id].results;
+  const columns = childrenRecord[block.id]?.results;
   return (
     <div
       className='grid gap-x-1 md:gap-x-2 [&>*]:overflow-x-auto'

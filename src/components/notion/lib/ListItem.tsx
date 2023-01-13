@@ -7,20 +7,20 @@ interface NumberedListItemProps {
   block: NotionBlock;
   baseBlock: NotionBlocks;
   startIndexForResultBlocks: number;
-  chilrenBlockDepth: number;
+  hasChildrenDepth?: number;
   children?: React.ReactNode;
 }
+
+const numberedListStyles = ['decimal', 'lower-alpha', 'lower-roman'];
+const bulletedListStyles = ['outside', 'circle', 'square'];
 
 const NumberedListItem: React.FC<NumberedListItemProps> = ({
   block,
   baseBlock,
-  chilrenBlockDepth: chilrenBlockDepthProps,
+  hasChildrenDepth,
   startIndexForResultBlocks
 }) => {
   const LIST_TYPE = block.type as 'bulleted_list_item' | 'numbered_list_item';
-  const chilrenBlockDepth = block.has_children
-    ? chilrenBlockDepthProps + 1
-    : chilrenBlockDepthProps;
   const prevIndexForResultBlocks = startIndexForResultBlocks - 1;
   const nextIndexForResultBlocks = startIndexForResultBlocks + 1;
   const blocks = baseBlock?.results;
@@ -28,17 +28,19 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
   if (blocks?.[prevIndexForResultBlocks]?.type !== block.type) {
     return (
       <ul
-        className={classNames(
-          //? 0번째 depth는 백의 자리부터 공간이 부족해 보임. 추가 공간 주기
-          chilrenBlockDepth ? 'pl-8' : 'pl-6',
-          LIST_TYPE === 'numbered_list_item' ? 'list-decimal' : 'list-disc'
-        )}
+        className={'pl-6'}
+        style={{
+          listStyle:
+            LIST_TYPE === 'numbered_list_item'
+              ? numberedListStyles[(hasChildrenDepth || 0) % 3]
+              : bulletedListStyles[(hasChildrenDepth || 0) % 3]
+        }}
       >
-        <li>
+        <li className=''>
           <NotionHasChildrenRender
             block={blocks?.[startIndexForResultBlocks]}
-            chilrenBlockDepth={chilrenBlockDepth}
             parentBlockType={block.type}
+            hasChildrenDepth={hasChildrenDepth}
           >
             <NotionParagraphBlock
               blockId={block.id}
@@ -51,8 +53,8 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
           <NumberedListItem
             block={blocks?.[nextIndexForResultBlocks]}
             startIndexForResultBlocks={nextIndexForResultBlocks}
-            chilrenBlockDepth={chilrenBlockDepth}
             baseBlock={baseBlock}
+            hasChildrenDepth={hasChildrenDepth}
           />
         )}
       </ul>
@@ -63,8 +65,8 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
         <li>
           <NotionHasChildrenRender
             block={blocks?.[startIndexForResultBlocks]}
-            chilrenBlockDepth={chilrenBlockDepth}
             parentBlockType={block.type}
+            hasChildrenDepth={hasChildrenDepth}
           >
             <NotionParagraphBlock
               blockId={block.id}
@@ -77,8 +79,8 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
           <NumberedListItem
             block={blocks?.[nextIndexForResultBlocks]}
             startIndexForResultBlocks={nextIndexForResultBlocks}
-            chilrenBlockDepth={chilrenBlockDepth}
             baseBlock={baseBlock}
+            hasChildrenDepth={hasChildrenDepth}
           />
         )}
       </>
