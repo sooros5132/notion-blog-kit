@@ -273,7 +273,8 @@ export class NotionClient {
   async getPageByPageId(blockId: string): Promise<INotionPage> {
     const NO_CACHED = 'no cached';
     try {
-      if (!notionCache.exists(blockId)) {
+      const exists = notionCache.exists(blockId);
+      if (!exists) {
         throw NO_CACHED;
       }
       const cachePage = notionCache.get(blockId) as INotionPage;
@@ -281,7 +282,7 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const { cachedTime, ...page } = cachePage as INotionPage & { cachedTime: string };
+      const { cachedTime, ...page } = (cachePage || {}) as INotionPage & { cachedTime: string };
       if (!page?.pageInfo?.last_edited_time) {
         throw NO_CACHED;
       }
@@ -316,7 +317,7 @@ export class NotionClient {
         userInfo
       };
 
-      if (e === NO_CACHED) {
+      if (process.env.VERCEL !== '1') {
         notionCache.set(blockId, {
           cachedTime: Date.now(),
           ...page
@@ -329,7 +330,8 @@ export class NotionClient {
   async getDatabaseByDatabaseId(blockId: string): Promise<INotionPage> {
     const NO_CACHED = 'no cached';
     try {
-      if (!notionCache.exists(blockId)) {
+      const exists = notionCache.exists(blockId);
+      if (!exists) {
         throw NO_CACHED;
       }
       const cachePage = notionCache.get(blockId);
@@ -337,7 +339,7 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const { cachedTime, ...page } = cachePage as INotionPage & { cachedTime: string };
+      const { cachedTime, ...page } = (cachePage || {}) as INotionPage & { cachedTime: string };
       if (!page?.pageInfo?.last_edited_time) {
         throw NO_CACHED;
       }
@@ -376,7 +378,7 @@ export class NotionClient {
         userInfo
       };
 
-      if (e === NO_CACHED) {
+      if (process.env.VERCEL !== '1') {
         notionCache.set(blockId, {
           cachedTime: Date.now(),
           ...page
