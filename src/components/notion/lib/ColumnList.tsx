@@ -15,7 +15,7 @@ export const ColumnList: React.FC<ColumnListProps> = ({ block, baseBlock }) => {
   const columns = childrenRecord[block.id]?.results;
   return (
     <div
-      className='grid gap-x-1 md:gap-x-2 [&>*]:overflow-x-auto'
+      className='sm:grid sm:gap-x-1 md:gap-x-2 [&>*]:overflow-x-auto'
       style={{
         gridTemplateColumns: `repeat(${columns?.length ?? 1}, 1fr)`
       }}

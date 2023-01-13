@@ -55,7 +55,7 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
     <div className='w-full mb-5 whitespace-pre-wrap'>
       <NotionSeo page={pageInfo} title={title} description={description} slug={slug} />
       <NotionPageHeader page={pageInfo} title={title} userInfo={userInfo} />
-      <div className='max-w-screen-lg px-4 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
+      <div className='max-w-screen-lg px-3 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
         {pageInfo.object === 'page' ? (
           <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
         ) : pageInfo.object === 'database' ? (

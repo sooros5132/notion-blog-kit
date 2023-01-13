@@ -11,7 +11,7 @@ import {
   NotionHeadingBlock,
   NotionImageBlock,
   NotionLinkPreviewBlock,
-  NotionListItemBlock,
+  NotionListBlock,
   NotionParagraphBlock,
   NotionQuoteBlock,
   NotionTableBlock,
@@ -25,12 +25,12 @@ import {
 export type NotionBlocksProps = {
   blocks: NotionBlock[];
   baseBlock: NotionBlocks;
-  hasChildrenDepth?: number;
+  depthOfNestedList?: number;
 };
 
 export const BlocksRender: React.FC<NotionBlocksProps> = ({
   blocks,
-  hasChildrenDepth,
+  depthOfNestedList,
   baseBlock
 }) => {
   return (
@@ -116,18 +116,18 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
           }
           case 'bulleted_list_item':
           case 'numbered_list_item': {
-            // NotionListItemBlock안에서 재귀함수식으로 ul태그 안에 li중첩. 첫번째로 나온게 아니라면 return
+            // NotionListBlock안에서 재귀함수식으로 ul태그 안에 li중첩. 첫번째로 나온게 아니라면 return
             if (blocks?.[i - 1]?.type === blocks?.[i]?.type) {
               return <React.Fragment key={`block-${block.id}-${i}`} />;
             }
 
             return (
-              <NotionListItemBlock
+              <NotionListBlock
                 key={`block-${block.id}-${i}`}
                 block={block}
                 baseBlock={baseBlock}
                 startIndexForResultBlocks={i}
-                hasChildrenDepth={hasChildrenDepth}
+                depthOfNestedList={depthOfNestedList}
               />
             );
           }

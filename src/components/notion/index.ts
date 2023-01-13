@@ -10,7 +10,7 @@ export {
   NotionHeadingInner,
   NotionImageBlock,
   NotionLinkPreviewBlock,
-  NotionListItemBlock,
+  NotionListBlock,
   NotionPageHeader,
   NotionParagraphBlock,
   NotionParagraphText,

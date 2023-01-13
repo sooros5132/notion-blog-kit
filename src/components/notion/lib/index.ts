@@ -21,7 +21,7 @@ export { default as NotionTableBlock } from './Table';
 export { default as NotionToggleBlock } from './Toggle';
 export { default as NotionVideoBlock } from './Video';
 export { default as NotionTodoBlock } from './Todo';
-export { default as NotionListItemBlock } from './ListItem';
+export { default as NotionListBlock } from './List';
 export { default as NotionQuoteBlock } from './Quote';
 export { default as NotionSeo } from './NotionSeo';
 export { default as NotionPageHeader } from './NotionPageHeader';
