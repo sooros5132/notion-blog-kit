@@ -5,9 +5,8 @@ import config from 'site-config';
 import Link from 'next/link';
 import { useState, useMemo, memo, useEffect } from 'react';
 import { SiNotion } from 'react-icons/si';
-import { NotionDatabase, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { FileObject, NotionDatabase, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import isEqual from 'react-fast-compare';
-import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
 import { ko as koLocale } from 'date-fns/locale';
 
@@ -79,8 +78,10 @@ export const ChildDatabaseItem: React.FC<{
           <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-base-content/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
             {block?.cover ? (
               <NotionSecureImage
-                src={block?.cover?.file?.url ?? block?.cover?.external?.url ?? ''}
                 blockId={block.id}
+                blockType={'page'}
+                useType={'cover'}
+                initialFileObject={block?.cover}
                 alt={'page-cover'}
               />
             ) : block?.icon ? (
@@ -88,13 +89,10 @@ export const ChildDatabaseItem: React.FC<{
                 <div className='notion-database-item-empty-cover'>{block?.icon?.emoji}</div>
               ) : block?.icon?.file ? (
                 <NotionSecureImage
-                  src={
-                    awsImageObjectUrlToNotionUrl({
-                      blockId: block.id,
-                      s3ObjectUrl: block?.icon.file?.url
-                    }) ?? ''
-                  }
                   blockId={block.id}
+                  blockType={'page'}
+                  useType={'icon'}
+                  initialFileObject={block?.icon as FileObject}
                   alt={'page-icon'}
                 />
               ) : (

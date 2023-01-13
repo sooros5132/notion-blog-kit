@@ -7,17 +7,20 @@ interface ImageProps {
 }
 
 export const Image: React.FC<ImageProps> = ({ block }) => {
+  const caption = Array.isArray(block.image.caption)
+    ? block.image.caption
+        .map((richText) => richText.plain_text)
+        .join('')
+        .slice(0, 100) || ''
+    : '';
   return (
     <figure>
       <NotionSecureImage
-        alt={
-          block.image.caption
-            .map((richText) => richText.plain_text)
-            .join('')
-            .slice(0, 100) || ''
-        }
+        alt={caption}
         blockId={block.id}
-        src={block.image?.file?.url ?? block.image?.external?.url ?? ''}
+        blockType={'image'}
+        useType={'image'}
+        initialFileObject={block.image}
       />
       {Array.isArray(block?.image?.caption) && block?.image?.caption?.length > 0 && (
         <figcaption className='flex w-full'>
@@ -27,51 +30,3 @@ export const Image: React.FC<ImageProps> = ({ block }) => {
     </figure>
   );
 };
-
-// export type IsExpiredImageParams = NonNullable<FileObject>;
-
-// export function isExpiredImage({ file }: IsExpiredImageParams) {}
-
-// type NotionImageFetcherParams = {
-//   blockId: string;
-//   blockType: BlockType;
-//   imageType: 'image' | 'icon' | 'cover';
-//   initialFileObject?: FileObject;
-// };
-
-// export const useNotionRenewExpirationImageFetcher = ({
-//   blockId,
-//   blockType,
-//   imageType,
-//   initialFileObject
-// }: NotionImageFetcherParams): FileObject | undefined => {
-//   const fileObject = useSWR<FileObject | undefined>(
-//     `${config.path}/notion/blocks/${blockId}`,
-//     async (fetchUrl) => {
-//       if (
-//         !blockId ||
-//         !blockType ||
-//         !initialFileObject?.file?.url ||
-//         !initialFileObject?.file?.expiry_time
-//       ) {
-//         return undefined;
-//       }
-
-//       const { url, expiry_time } = initialFileObject.file;
-
-//       const now = Date.now();
-//       if (!url && !expiry_time && now < Date.parse(expiry_time)) {
-//         return true;
-//       }
-
-//       const block = await axios.get(fetchUrl).then((res) => res.data);
-
-//       return block?.[blockType]?.file || block?.[blockType]?.[imageType]?.file || initialFileObject;
-//     },
-//     {
-//       fallbackData: initialFileObject
-//     }
-//   );
-
-//   return fileObject.data;
-// };

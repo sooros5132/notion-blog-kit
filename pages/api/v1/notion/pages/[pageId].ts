@@ -3,24 +3,24 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { Error } from 'lib/Error';
 import { Client, LogLevel } from '@notionhq/client';
-import { NotionBlock } from 'src/types/notion';
+import { INotionSearchObject } from 'src/types/notion';
 
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError: Error.handleError,
   onNoMatch: Error.handleNoMatch
-}).get(async (req: NextApiRequest, res: NextApiResponse<NotionBlock>) => {
-  const { blockId } = req.query;
-  if (typeof blockId !== 'string') {
-    throw 'type error "blockId"';
+}).get(async (req: NextApiRequest, res: NextApiResponse<INotionSearchObject>) => {
+  const { pageId } = req.query;
+  if (typeof pageId !== 'string') {
+    throw 'type error "pageId"';
   }
   const notion = new Client({
     auth: process.env.NOTION_API_SECRET_KEY,
     logLevel: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : undefined
   });
 
-  const result = (await notion.blocks.retrieve({
-    block_id: blockId
-  })) as NotionBlock;
+  const result = (await notion.pages.retrieve({
+    page_id: pageId
+  })) as INotionSearchObject;
 
   res.status(200).json(result);
 });

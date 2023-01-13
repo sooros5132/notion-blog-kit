@@ -1,7 +1,7 @@
 import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
-import type { Color, NotionBlock } from 'src/types/notion';
+import type { Color, FileObject, NotionBlock } from 'src/types/notion';
 import {
   NotionHasChildrenRender,
   NotionParagraphBlock,
@@ -30,21 +30,22 @@ const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) 
 
 interface CalloutProps {
   block: NotionBlock;
-  chilrenBlockDepth?: number;
 }
 
-const Callout: React.FC<CalloutProps> = ({ block, chilrenBlockDepth }) => {
+const Callout: React.FC<CalloutProps> = ({ block }) => {
   return (
     <CalloutBlockContainer color={block.callout.color}>
-      <NotionHasChildrenRender block={block} chilrenBlockDepth={chilrenBlockDepth}>
+      <NotionHasChildrenRender block={block}>
         <div className='flex'>
           <div className='pt-0.5 basis-6 flex justify-center'>
             <div className='text-xl leading-6 font-emoji'>
-              {block.callout?.icon?.file && block.callout?.icon?.type === 'file' && (
+              {block.callout.icon.file && block.callout.icon.type === 'file' && (
                 <NotionSecureImage
                   alt='callout-icon'
                   blockId={block.id}
-                  src={block.callout?.icon.file.url}
+                  blockType={'callout'}
+                  useType={'icon'}
+                  initialFileObject={block.callout.icon as FileObject}
                 />
               )}
               {block.callout?.icon?.emoji &&

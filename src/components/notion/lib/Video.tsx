@@ -1,12 +1,10 @@
 import type React from 'react';
 import { IoClose } from 'react-icons/io5';
-import config from 'site-config';
 import NoSsrWrapper from 'src/lib/NoSsrWrapper';
-import { fetcher } from 'src/lib/swr';
 import type { NotionBlock } from 'src/types/notion';
-import useSWR from 'swr';
 import { NotionParagraphBlock } from '.';
 import queryString from 'querystring';
+import { useRenewExpiredFile } from './utils';
 
 interface VideoProps {
   block: NotionBlock;
@@ -28,22 +26,14 @@ const Video: React.FC<VideoProps> = ({ block }) => {
 };
 
 const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
-  const isExternalVideo = Boolean(block?.video?.external);
-  const { data, error, isValidating } = useSWR<NotionBlock>(
-    `${config.path}/notion/blocks/${block.id}`,
-    async (url) => {
-      if (isExternalVideo) {
-        return block;
-      }
-      return await fetcher(url);
-    },
-    {
-      fallbackData: block,
-      revalidateOnFocus: false,
-      refreshInterval: isExternalVideo ? undefined : 54 * 60 * 1000 // 54분
-    }
-  );
-  if (error) {
+  const fileObject = useRenewExpiredFile({
+    blockId: block.id,
+    blockType: 'video',
+    useType: 'video',
+    initialFileObject: block.video
+  });
+
+  if (!fileObject) {
     return (
       <div className='flex-center py-0.5 bg-gray-900'>
         <div className='flex items-center text-notionColor-red'>
@@ -55,19 +45,12 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
     );
   }
 
-  if (isValidating || (!data?.video?.file?.url && !data?.video?.external?.url)) {
-    return (
-      <div className='flex-center h-[50vw] max-h-[20rem] bg-notionColor-gray'>
-        <p>비디오 정보를 불러오고 있습니다.</p>
-      </div>
-    );
-  }
-  if (data?.video.type === 'file') {
-    return <video className='w-full aspect-video' controls src={data?.video.file?.url} />;
+  if (fileObject?.type === 'file') {
+    return <video className='w-full aspect-video' controls src={fileObject?.file?.url} />;
   } else {
     return (
       <div className='w-full [&>iframe]:w-full [&>iframe]:aspect-video '>
-        <EmbedVideo url={data?.video.external?.url || ''} />
+        <EmbedVideo url={fileObject?.external?.url || ''} />
       </div>
     );
   }

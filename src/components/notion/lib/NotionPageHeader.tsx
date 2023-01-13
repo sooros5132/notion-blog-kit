@@ -2,8 +2,12 @@ import type React from 'react';
 import classnames from 'classnames';
 import { formatInTimeZone } from 'date-fns-tz';
 import config from 'site-config';
-import Link from 'next/link';
-import { INotionSearchObject, URL_PAGE_TITLE_MAX_LENGTH, INotionUserInfo } from 'src/types/notion';
+import {
+  INotionSearchObject,
+  URL_PAGE_TITLE_MAX_LENGTH,
+  INotionUserInfo,
+  FileObject
+} from 'src/types/notion';
 import {
   NotionCopyHeadingLink,
   NotionHeadingInner,
@@ -25,8 +29,11 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
         <div className='relative h-[25vh] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
           <NotionSecureImage
             blockId={page.id}
-            src={page?.cover?.[page?.cover?.type]?.url ?? ''}
+            blockType={'page'}
+            useType={'cover'}
+            initialFileObject={page?.cover}
             alt={'page-cover'}
+            loading='eager'
           />
         </div>
       )}
@@ -45,7 +52,14 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
       >
         {page.icon?.file && page.icon?.type === 'file' && (
           <div className='w-[100px] h-[100px] rounded-md overflow-hidden'>
-            <NotionSecureImage blockId={page.id} src={page.icon.file.url} alt={'page-icon'} />
+            <NotionSecureImage
+              blockId={page.id}
+              blockType={'page'}
+              useType={'icon'}
+              initialFileObject={page?.icon as FileObject}
+              alt={'page-icon'}
+              loading='eager'
+            />
           </div>
         )}
         {page.icon?.emoji && page.icon?.type === 'emoji' && (
