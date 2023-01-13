@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import { BlockType, FileObject, INotionSearchObject, NotionBlock } from 'src/types/notion';
+import { FileObject, INotionSearchObject, NotionBlock } from 'src/types/notion';
 import useSWR from 'swr';
 
 export type NotionImageFetcherParams = {
@@ -40,6 +40,7 @@ export const useRenewExpiredFile = ({
         ) {
           return initialFileObject;
         }
+
         switch (blockType) {
           case 'database':
           case 'page': {

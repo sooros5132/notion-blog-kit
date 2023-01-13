@@ -25,7 +25,8 @@ const KorKeyRecord = {
 } as const;
 
 const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
-  const { databaseRecord } = useNotionStore();
+  const databaseRecord = useNotionStore.getState().databaseRecord;
+  // useNotionStore((state) => state.databaseRecord, shallow);
   const database = databaseRecord[block.id];
 
   const pathname = usePathname();

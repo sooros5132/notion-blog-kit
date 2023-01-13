@@ -50,7 +50,7 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
   } else {
     return (
       <div className='w-full [&>iframe]:w-full [&>iframe]:aspect-video '>
-        <EmbedVideo url={fileObject?.external?.url || ''} />
+        <EmbedVideo url={block.video?.external?.url || ''} />
       </div>
     );
   }

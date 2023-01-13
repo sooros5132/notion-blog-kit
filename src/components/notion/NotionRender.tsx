@@ -1,13 +1,7 @@
 'use client';
 
 import type React from 'react';
-import type {
-  NotionBlock,
-  RichText,
-  INotionSearchObject,
-  NotionDatabasesQuery,
-  INotionPage
-} from 'src/types/notion';
+import type { NotionBlock, RichText, INotionSearchObject, INotionPage } from 'src/types/notion';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
 
 export interface NotionRenderProps {
@@ -28,7 +22,7 @@ export interface NotionRenderProps {
 //   }
 // });
 
-export const NotionRender: React.FC<NotionRenderProps> = (props): JSX.Element => {
+export const NotionRender: React.FC<NotionRenderProps> = (props) => {
   const baseBlock = props?.page?.block;
   const blocks = baseBlock.results;
   const pageInfo = props?.page?.pageInfo;
@@ -142,5 +136,3 @@ const NotionHits: React.FC<{ pageInfo: INotionSearchObject }> = ({ pageInfo }) =
     </div>
   );
 };
-
-NotionRender.displayName = 'NotionRender';

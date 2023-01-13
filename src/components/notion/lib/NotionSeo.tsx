@@ -45,6 +45,15 @@ const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, slug })
       <Head>
         {page.icon?.file && page.icon?.type === 'file' && (
           <link
+            rel='apple-touch-icon'
+            href={awsImageObjectUrlToNotionUrl({
+              blockId: page.id,
+              s3ObjectUrl: page.icon.file.url
+            })}
+          />
+        )}
+        {page.icon?.file && page.icon?.type === 'file' && (
+          <link
             rel='shortcut icon'
             href={awsImageObjectUrlToNotionUrl({
               blockId: page.id,

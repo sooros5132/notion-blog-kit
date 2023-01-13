@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useNotionStore } from 'src/store/notion';
-import type { NotionBlock, BlockType, INotionPage } from 'src/types/notion';
+import type { NotionBlock, BlockType } from 'src/types/notion';
 import { NotionBlocksRender } from '.';
 
 interface HasChildrenRenderProps {
@@ -18,7 +18,8 @@ export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
   parentBlockType,
   hasChildrenDepth
 }) => {
-  const { childrenRecord } = useNotionStore();
+  const childrenRecord = useNotionStore.getState().childrenRecord;
+  // ((state) => state.childrenRecord, shallow);
 
   return (
     <>
