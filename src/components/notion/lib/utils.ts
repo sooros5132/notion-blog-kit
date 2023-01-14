@@ -1,8 +1,8 @@
 import axios from 'axios';
 import config from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import { FileObject, INotionSearchObject, NotionBlock } from 'src/types/notion';
-import useSWR from 'swr';
+import { FileObject, IconObject, INotionSearchObject, NotionBlock } from 'src/types/notion';
+import useSWR, { SWRResponse } from 'swr';
 
 export type NotionImageFetcherParams = {
   blockId: string;
@@ -24,15 +24,15 @@ export const useRenewExpiredFile = ({
   blockType,
   useType,
   initialFileObject
-}: NotionImageFetcherParams): FileObject | undefined => {
-  const fileObject = useSWR(
+}: NotionImageFetcherParams) => {
+  // const EXTERNAL_IS_AVAILABLE = 'external is available.';
+  return useSWR(
     `${config.path}/notion/${blockType}/${blockId}?useType=${useType}`,
     async () => {
       try {
         if (initialFileObject?.external?.url) {
-          throw 'external is available.';
+          return initialFileObject;
         }
-
         if (
           initialFileObject?.file?.url &&
           initialFileObject?.file?.expiry_time &&
@@ -73,17 +73,22 @@ export const useRenewExpiredFile = ({
           }
         }
       } catch (e) {
-        const fileObject = initialFileObject as any;
+        // switch (e) {
+        //   case EXTERNAL_IS_AVAILABLE: {
+        //     return initialFileObject;
+        //   }
+        // }
+        if (blockType === 'video') {
+          throw e;
+        }
+
         return {
+          type: 'file',
           file: {
             url: awsImageObjectUrlToNotionUrl({
-              blockId: blockId,
-              s3ObjectUrl:
-                fileObject?.file?.url ||
-                fileObject?.external?.url ||
-                fileObject?.icon?.file?.url ||
-                fileObject?.icon?.url ||
-                ''
+              s3ObjectUrl: initialFileObject?.file?.url || initialFileObject?.external?.url || '',
+              blockId,
+              table: 'block'
             }),
             expiry_time: ''
           }
@@ -91,10 +96,10 @@ export const useRenewExpiredFile = ({
       }
     },
     {
+      errorRetryCount: 1,
       fallbackData: initialFileObject,
       revalidateOnFocus: false,
       refreshInterval: 5 * 60 * 1000 // 5분
     }
-  );
-  return fileObject.data as FileObject;
+  ) as SWRResponse<FileObject & IconObject>;
 };

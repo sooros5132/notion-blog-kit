@@ -5,6 +5,8 @@ import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 import queryString from 'querystring';
 import { useRenewExpiredFile } from './utils';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { useEffect, useRef } from 'react';
 
 interface VideoProps {
   block: NotionBlock;
@@ -26,21 +28,43 @@ const Video: React.FC<VideoProps> = ({ block }) => {
 };
 
 const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
-  const fileObject = useRenewExpiredFile({
+  const cachedFileObject = useRef(block.video);
+
+  const {
+    data: fileObject,
+    isValidating,
+    error
+  } = useRenewExpiredFile({
     blockId: block.id,
     blockType: 'video',
     useType: 'video',
-    initialFileObject: block.video
+    initialFileObject: cachedFileObject.current
   });
 
-  if (!fileObject) {
+  useEffect(() => {
+    cachedFileObject.current = fileObject as typeof cachedFileObject.current;
+  }, [fileObject]);
+
+  if (!fileObject || error) {
     return (
       <div className='flex-center py-0.5 bg-gray-900'>
         <div className='flex items-center text-notionColor-red'>
           <IoClose />
         </div>
         &nbsp;
-        <p>비디오 정보를 불러올 수 없습니다.</p>
+        <p>Not found video.</p>
+      </div>
+    );
+  }
+
+  if (isValidating) {
+    return (
+      <div className='flex-center py-2 bg-gray-900'>
+        <div className='flex items-center animate-spin'>
+          <AiOutlineLoading3Quarters />
+        </div>
+        &nbsp;
+        <p>Validating...</p>
       </div>
     );
   }
