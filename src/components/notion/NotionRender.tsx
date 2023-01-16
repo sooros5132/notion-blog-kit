@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import type React from 'react';
@@ -87,6 +88,7 @@ const NotionHits: React.FC<{ pageInfo: INotionSearchObject }> = ({ pageInfo }) =
           src={`https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(
             `/${pageInfo.id}`
           )}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false`}
+          alt='seeyoufarm'
         />
       ) : (
         <svg
