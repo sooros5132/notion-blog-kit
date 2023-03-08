@@ -1,10 +1,6 @@
 import React from 'react';
-import { GetServerSideProps, NextPage } from 'next';
-import useSWR from 'swr';
-import { INotionSearch, INotionSearchObject, NotionDatabase } from 'src/types/notion';
-import config from 'site-config';
-import { fetcher } from 'src/lib/swr';
-import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { INotionSearchObject, NotionDatabase } from 'src/types/notion';
 import { ChildDatabaseItem } from 'src/components/notion/lib/ChildDatabaseItem';
 import { SearchForm } from 'src/components/search/SearchForm';
 import { NotionClient } from 'lib/notion/Notion';
@@ -26,6 +22,7 @@ export default function Search({ searchValue, searchResult }: SearchResult) {
               key={`search-${new Date().getTime()}`}
               //! key로 리렌더링 강제유발
               searchValue={searchValue}
+              autoFocus
             />
           </div>
         </div>
