@@ -19,7 +19,8 @@ import {
   NotionToggleBlock,
   NotionVideoBlock,
   NotionParagraphText,
-  NotionCodeBlock
+  NotionCodeBlock,
+  NotionSyncedBlock
 } from '.';
 
 export type NotionBlocksProps = {
@@ -185,6 +186,9 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
                 <NotionVideoBlock block={block} />
               </NotionHasChildrenRender>
             );
+          }
+          case 'synced_block': {
+            return <NotionSyncedBlock key={`block-${block.id}`} block={block} />;
           }
           default: {
             return <Fragment key={`block-${block.id}-${i}`}></Fragment>;

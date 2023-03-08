@@ -10,7 +10,11 @@ interface HasChildrenRenderProps {
   depthOfNestedList?: number;
 }
 
-const notPaddingBlockType: Array<BlockType> = ['bulleted_list_item', 'numbered_list_item'];
+const notPaddingBlockType: Array<BlockType> = [
+  'bulleted_list_item',
+  'numbered_list_item',
+  'synced_block'
+];
 
 export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
   block,
