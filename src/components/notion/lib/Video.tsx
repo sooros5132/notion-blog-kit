@@ -64,7 +64,7 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
           <AiOutlineLoading3Quarters />
         </div>
         &nbsp;
-        <p>Validating...</p>
+        <p>video validating...</p>
       </div>
     );
   }

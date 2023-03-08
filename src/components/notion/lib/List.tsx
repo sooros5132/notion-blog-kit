@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import type React from 'react';
 import type { NotionBlock, NotionBlocks } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
@@ -39,7 +38,7 @@ const NumberedListItem: React.FC<NumberedListItemProps> = ({
               : bulletedListStyles[(depthOfNestedList || 0) % 3]
         }}
       >
-        <li className=''>
+        <li>
           <NotionHasChildrenRender
             block={blocks?.[startIndexForResultBlocks]}
             parentBlockType={block.type}
