@@ -157,6 +157,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     if (!pageInfo?.id) {
       throw '';
     }
+
     const page = await getBlock(slug, pageInfo.object);
 
     return {
@@ -167,6 +168,14 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       revalidate: 600
     };
   } catch (e) {
+    if (params?.slug) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/s/' + params?.slug
+        }
+      };
+    }
     return {
       notFound: true
     };
