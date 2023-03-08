@@ -14,7 +14,7 @@ export interface HeadingContainerProps {
 
 export const HeadingContainer = ({ id, children }: HeadingContainerProps) => {
   return (
-    <div id={id} className='pt-[2.1em] mb-1'>
+    <div id={id} className='pt-[3.1em] mb-1'>
       {children}
     </div>
   );
