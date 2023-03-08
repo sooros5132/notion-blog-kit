@@ -4,12 +4,10 @@ import { NotionRender } from 'src/components/notion';
 import {
   INotionPage,
   INotionSearchObject,
-  NotionBlocks,
   NotionDatabase,
   URL_PAGE_TITLE_MAX_LENGTH
 } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
-import config from 'site-config';
 import { useNotionStore } from 'src/store/notion';
 
 interface SlugProps {
@@ -38,26 +36,21 @@ const searchPage = async (slug: string) => {
     if (res) return res;
 
     //! database id를 종종 page에서 찾아내는 경우가 발생 함. database 우선 검색
-    return await notionClient
-      .getSearchPagesByPageId({
-        searchValue: slug,
-        filterType: 'database'
-      })
-      .then(async (res) => {
-        const result = res?.results?.[0];
+    return await notionClient.getDatabaseInfoByBlockId(slug).then(async (res) => {
+      const result = res;
 
-        if (!result) {
-          return await notionClient
-            .getSearchPagesByPageId({
-              searchValue: slug,
-              filterType: 'page'
-            })
-            .then((res) => {
-              return res?.results?.[0];
-            });
-        }
-        return result;
-      });
+      if (!result) {
+        return await notionClient
+          .getSearchPagesByPageId({
+            searchValue: slug,
+            filterType: 'page'
+          })
+          .then((res) => {
+            return res?.results?.[0];
+          });
+      }
+      return result;
+    });
   });
 
   return pageInfo as INotionSearchObject;
