@@ -107,7 +107,7 @@ export const ChildDatabaseItem: React.FC<{
             )}
           </div>
           <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
-            <div className='overflow-hidden max-h-[3.3em] [&>div>p]:line-clamp-2 [&>div>a]:line-clamp-2 [&>div>span]:line-clamp-2'>
+            <div className='overflow-hidden max-h-[3.3em] [&>div]:line-clamp-2'>
               {block?.properties?.title?.title && (
                 <NotionParagraphBlock
                   blockId={block.id}
