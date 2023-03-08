@@ -241,10 +241,13 @@ export class NotionClient {
       if (search?.properties?.isPublished?.checkbox === false) {
         return false;
       }
-      const title = search?.properties.title?.title?.map((t) => t?.plain_text)?.join('');
+      const title = search?.properties.title?.title
+        ?.map((t) => t?.plain_text)
+        ?.join('')
+        .replaceAll(' ', '');
 
       if (title) {
-        return new RegExp(searchValue, 'mgi').test(title);
+        return new RegExp(searchValue.replaceAll(' ', ''), 'mgi').test(title);
       }
       return false;
     });
