@@ -54,13 +54,13 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 
 function getIcon(html: ParsedHTMLElement) {
   {
-    const iconHref = html.querySelector('link[rel=icon]')?.getAttribute('href');
+    const iconHref = html.querySelector('link[rel~=icon]')?.getAttribute('href');
     if (iconHref) {
       return iconHref;
     }
   }
   {
-    const metaContent = html.querySelector('meta[property=og:title]')?.getAttribute('content');
+    const metaContent = html.querySelector('meta[property=og:icon]')?.getAttribute('content');
     if (metaContent) {
       return metaContent;
     }
@@ -96,7 +96,9 @@ function getDescription(html: ParsedHTMLElement) {
     }
   }
   {
-    const metaContent = html.querySelector('meta[property=og:title]')?.getAttribute('content');
+    const metaContent = html
+      .querySelector('meta[property=og:description]')
+      ?.getAttribute('content');
     if (metaContent) {
       return metaContent;
     }
