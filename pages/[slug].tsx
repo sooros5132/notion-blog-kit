@@ -149,7 +149,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     const slug = encodeURIComponent(
       uuidRegex.test(params.slug)
         ? params.slug.replaceAll('-', '')
-        : params.slug.replaceAll('-', '').slice(-32)
+        : (/-?[-a-f0-9]+$/i.exec(params.slug)?.[0] || params.slug).replaceAll('-', '').slice(-32)
     );
 
     const pageInfo = await searchPage(slug);
@@ -168,11 +168,11 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       revalidate: 600
     };
   } catch (e) {
-    if (params?.slug) {
+    if (typeof params?.slug === 'string') {
       return {
         redirect: {
           permanent: false,
-          destination: '/s/' + params?.slug
+          destination: '/s/' + params.slug.replace(/-[-a-f0-9]+$/i, '')
         }
       };
     }
