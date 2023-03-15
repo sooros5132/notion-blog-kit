@@ -41,6 +41,9 @@
     background-color: transparent;
   }
   .scrollbar-hidden:hover::-webkit-scrollbar-thumb {
+    background-color: #434343;
+  }
+  .scrollbar-hidden::-webkit-scrollbar-thumb:hover {
     background-color: #717171;
   }
 
