@@ -1,14 +1,15 @@
+import classNames from 'classnames';
 import type React from 'react';
-import { CSSProperties, useEffect, useRef, useState } from 'react';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { useEffect, useRef, useState } from 'react';
+import { NEXT_IMAGE_DOMAINS } from 'site-config';
+import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import { FileObject, IconObject } from 'src/types/notion';
-import { NotionImageFetcherParams, useRenewExpiredFile } from './utils';
+import { isExpired, NotionImageFetcherParams, useRenewExpiredFile } from './utils';
 
 /* eslint-disable @next/next/no-img-element */
 interface NotionSecureImageProps extends NotionImageFetcherParams {
   alt?: HTMLImageElement['alt'];
   loading?: HTMLImageElement['loading'];
-  loadingHeight?: CSSProperties['height'];
 }
 
 // placeholder = 'blur',
@@ -19,51 +20,67 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   useType,
   initialFileObject,
   alt,
-  loading,
-  loadingHeight
+  loading
 }) => {
-  const [isHydrated, setHydrated] = useState(false);
+  const [isOriginalImageLoaded, setOriginalImageLoaded] = useState(
+    initialFileObject?.file?.url ? !isExpired(initialFileObject?.file) : true
+  );
   const cachedFileObject = useRef<(FileObject & IconObject) | undefined>(
     initialFileObject as FileObject & IconObject
   );
 
-  const { data: fileObject, isValidating } = useRenewExpiredFile({
+  const { data: fileObject } = useRenewExpiredFile({
     blockId,
     blockType,
     useType,
-    initialFileObject
+    initialFileObject: cachedFileObject.current,
+    autoRefresh: loading === 'eager' ? false : true // eager은 refresh 제외
   });
 
-  useEffect(() => {
-    cachedFileObject.current = fileObject;
-  }, [fileObject]);
+  let bulrImage: string | null = null;
+  {
+    if (fileObject?.file?.url) {
+      const s3AmazonImageSrc = fileObject?.file?.url;
+      const { host } = new URL(s3AmazonImageSrc);
+      if (NEXT_IMAGE_DOMAINS.includes(host)) {
+        const notiomImageSrc = awsImageObjectUrlToNotionUrl({
+          s3ObjectUrl: s3AmazonImageSrc,
+          blockId
+        });
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  if (isHydrated && isValidating) {
-    return (
-      <div
-        className='flex-center text-[1em] bg-base-content/10 rounded-sm overflow-hidden animate-pulse'
-        style={{ height: loadingHeight || '100%' }}
-      >
-        <span className='animate-spin '>
-          <AiOutlineLoading3Quarters />
-        </span>
-      </div>
-    );
+        bulrImage = notiomImageSrc + '&width=30';
+      }
+    }
   }
 
+  useEffect(() => {
+    if (isOriginalImageLoaded) {
+      cachedFileObject.current = fileObject;
+    }
+  }, [fileObject, isOriginalImageLoaded]);
+
   return (
-    <div className='image-wrapper'>
-      <img
-        className={'image'}
-        alt={alt}
-        // src={}
-        src={fileObject?.file?.url || fileObject?.external?.url || ''}
-        loading={loading || 'lazy'}
-      />
+    <div className='image-wrapper relative'>
+      {bulrImage && !isOriginalImageLoaded && !fileObject?.external?.url && (
+        <img className={'image w-full'} alt={alt} src={bulrImage} loading='eager' />
+      )}
+      {(fileObject?.file && !isExpired(fileObject?.file)) || fileObject?.external?.url ? (
+        <img
+          key={'originImage'}
+          className={classNames(
+            'image',
+            isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
+          )}
+          loading={loading || 'lazy'}
+          src={fileObject?.file?.url || fileObject?.external?.url || ''}
+          alt={alt}
+          onLoad={() => {
+            if (!isOriginalImageLoaded) {
+              setOriginalImageLoaded(true);
+            }
+          }}
+        />
+      ) : null}
     </div>
   );
 };

@@ -21,8 +21,6 @@ export const Image: React.FC<ImageProps> = ({ block }) => {
         useType='image'
         initialFileObject={block.image}
         alt={caption}
-        loading='eager'
-        loadingHeight='15em'
       />
       {Array.isArray(block?.image?.caption) && block?.image?.caption?.length > 0 && (
         <figcaption className='flex w-full'>
