@@ -26,17 +26,11 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
   return (
     <>
       <div className='shadow-md rounded-lg overflow-hidden mt-[0.5em]'>
-        <div className='flex justify-between items-center gap-x-2 py-2 px-3 bg-base-content/10 text-[0.8em]'>
+        <div className='flex justify-between items-center gap-x-2 py-2 px-3 bg-base-content/10 text-xs'>
           <div className='flex items-center gap-x-2'>
-            <div className='text-[#FF5F57]'>
-              <FaCircle />
-            </div>
-            <div className='text-[#FFBC2E]'>
-              <FaCircle />
-            </div>
-            <div className='text-[#29C841]'>
-              <FaCircle />
-            </div>
+            <FaCircle className='text-[#FF5F57]' />
+            <FaCircle className='text-[#FFBC2E]' />
+            <FaCircle className='text-[#29C841]' />
           </div>
           <div className='text-base-content/70 select-none'>{language}</div>
         </div>
