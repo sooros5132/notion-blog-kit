@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { NEXT_IMAGE_DOMAINS } from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import { FileObject, IconObject } from 'src/types/notion';
@@ -48,7 +49,7 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
           blockId
         });
 
-        bulrImage = notiomImageSrc + '&width=30';
+        bulrImage = notiomImageSrc + '&width=24';
       }
     }
   }
@@ -62,11 +63,18 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   return (
     <div className='image-wrapper relative'>
       {bulrImage && !isOriginalImageLoaded && !fileObject?.external?.url && (
-        <img className={'image w-full'} alt={alt} src={bulrImage} loading='eager' />
+        <>
+          <img className='image w-full h-full blur-md' alt={alt} src={bulrImage} loading='eager' />
+          <div className='absolute top-0 left-0 w-full h-full flex-center text-4xl text-white rounded-xl opacity-70 pointer-events-none md:text-5xl md:rounded-3xl'>
+            <div className='animate-spin'>
+              <AiOutlineLoading3Quarters className='drop-shadow-[0_0_2px_#000000]' />
+            </div>
+          </div>
+        </>
       )}
       {(fileObject?.file && !isExpired(fileObject?.file)) || fileObject?.external?.url ? (
         <img
-          key={'originImage'}
+          key='originImage'
           className={classNames(
             'image',
             isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
