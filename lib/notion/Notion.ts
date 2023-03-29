@@ -120,9 +120,14 @@ export class NotionClient {
       switch (block.type) {
         case 'child_database': {
           moreFetch.push(
-            this.getPagesInDatabaseByDatabaseId(block.id).then((database) => {
-              databaseRecord[block.id] = database as NotionDatabasesQuery;
-            })
+            this.getPagesInDatabaseByDatabaseId(block.id)
+              .then((database) => {
+                databaseRecord[block.id] = database as NotionDatabasesQuery;
+              })
+              .catch(() => {
+                // TODO 링크 데이터베이스 지원하면 수정하기.
+                console.warn('Linked Database is not supported.');
+              })
           );
           continue;
         }
@@ -140,9 +145,14 @@ export class NotionClient {
       for (const block of children.results) {
         if (block.type === 'child_database') {
           childDatabaseFetching.push(
-            this.getPagesInDatabaseByDatabaseId(block.id).then((database) => {
-              databaseRecord[block.id] = database as NotionDatabasesQuery;
-            })
+            this.getPagesInDatabaseByDatabaseId(block.id)
+              .then((database) => {
+                databaseRecord[block.id] = database as NotionDatabasesQuery;
+              })
+              .catch(() => {
+                // TODO 링크 데이터베이스 지원하면 수정하기.
+                console.warn('Linked Database is not supported.');
+              })
           );
         }
       }
