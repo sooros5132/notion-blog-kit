@@ -172,7 +172,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       return {
         redirect: {
           permanent: false,
-          destination: '/s/' + params.slug.replace(/-[-a-f0-9]+$/i, '')
+          destination: '/s/' + encodeURIComponent(params.slug.replace(/-[-a-f0-9]+$/i, ''))
         }
       };
     }
