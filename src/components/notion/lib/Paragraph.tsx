@@ -43,10 +43,10 @@ export const notionColorClasses = {
 
 const paragraphTextClasses = {
   code: {
-    once: `rounded-l rounded-r py-[0.0625rem] px-1 font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`,
-    first: `rounded-l py-[0.0625rem] pl-1 font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`,
-    last: `rounded-r py-[0.0625rem] pr-1 font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`,
-    middle: `py-[0.0625rem] font-mono ${notionColorClasses['code']} ${notionColorClasses['code_background']}`
+    once: `py-[0.0625rem] px-1 font-mono rounded-l rounded-r`,
+    first: `py-[0.0625rem] pl-1 font-mono rounded-l`,
+    last: `py-[0.0625rem] pr-1 font-mono rounded-r`,
+    middle: `py-[0.0625rem] font-mono`
   }
 } as const;
 
@@ -59,6 +59,9 @@ export const ParagraphText: React.FC<ParagraphTextProps> = ({
   underline,
   children
 }) => {
+  const colorClass =
+    color && color !== 'default' && !color.match(/_background$/) && notionColorClasses[color];
+  const backgroundClass = color && color.match(/_background$/) && notionColorClasses[color];
   return (
     <span
       className={classnames(
@@ -67,8 +70,10 @@ export const ParagraphText: React.FC<ParagraphTextProps> = ({
         strikethrough && 'line-through',
         underline && 'underline',
         code && paragraphTextClasses.code[code],
-        color && color !== 'default' && !color.match(/_background$/) && notionColorClasses[color],
-        color && color.match(/_background$/) && notionColorClasses[color]
+        code && !colorClass && notionColorClasses['code'],
+        code && !backgroundClass && notionColorClasses['code_background'],
+        colorClass,
+        backgroundClass
       )}
     >
       {children}
