@@ -100,7 +100,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
     <div>
       <HeadingContainer id={hash}>
         <HeadingInner type={block.type as 'child_database'}>
-          <div className='flex-auto'>
+          <div className='flex-auto mb-1'>
             <div className='flex items-center justify-between'>
               <p className='break-all'>
                 {block?.child_database?.title || '제목 없음'}
@@ -111,19 +111,19 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
               <div className='dropdown dropdown-left'>
                 <label
                   tabIndex={0}
-                  className='m-1 text-xl whitespace-nowrap flex-nowrap btn btn-ghost btn-sm text-inherit'
+                  className='text-xl btn btn-ghost btn-sm text-inherit flex-nowrap whitespace-nowrap'
                 >
                   {KorKeyRecord[sortKey]}
                   {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
                 </label>
                 <ul
                   tabIndex={0}
-                  className='p-2 text-xl shadow dropdown-content menu bg-base-100 rounded-box w-52'
+                  className='p-2 text-lg shadow dropdown-content menu bg-base-100 rounded-box w-52'
                 >
                   {orderedKeys.map((key) => {
                     return (
                       <li key={key} onClick={handleCloseSortMenu(key)}>
-                        <div className='gap-x-0.5'>
+                        <div className='gap-x-0.5 px-3 py-2'>
                           {KorKeyRecord[key]}
                           {sortKey === key ? (
                             isOrderAsc ? (
