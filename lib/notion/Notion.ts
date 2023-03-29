@@ -349,8 +349,8 @@ export class NotionClient {
 
       const now = Date.now();
 
-      // 캐시된 시간이 1시간 지났으면 다시
-      if (!cachedTime || now - Date.parse(cachedTime) > 60 * 60 * 1000) {
+      // 캐시된 시간이 55분이 지났으면 다시
+      if (!cachedTime || now - new Date(cachedTime).getTime() > 55 * 60 * 1000) {
         throw NO_CACHED;
       }
 
