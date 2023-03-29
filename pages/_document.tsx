@@ -12,19 +12,19 @@ class CustomDocument extends Document {
 (function(){
   const themeStore = localStorage.getItem('theme');
 
-  if(typeof themeStore !== 'string') {
-    document.documentElement.dataset.theme = 'dark';
-    return;
+  if(typeof themeStore === 'string') {
+    const theme = JSON.parse(themeStore);
+    const mode = theme?.state?.mode || null;
+    
+    if(mode){
+      document.documentElement.dataset.theme = mode;
+      document.documentElement.classList.add(mode);
+      return;
+    }
   }
-  
-  const theme = JSON.parse(themeStore);
-  const mode = theme?.state?.mode || null;
-
-  if(mode){
-    document.documentElement.dataset.theme = mode;
-  } else {
-    document.documentElement.dataset.theme = 'dark';
-  }
+  document.documentElement.classList.remove('light');
+  document.documentElement.classList.add('dark');
+  document.documentElement.dataset.theme = 'dark';
 })()
 `
             }}
