@@ -88,46 +88,48 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
             </NotionCopyHeadingLink>
           </NotionHeadingInner>
         </div>
-        <div className='text-zinc-500 leading-none'>
-          {userInfo?.avatar_url ? (
-            <div className='avatar leading-none align-bottom'>
-              <div className='w-[1.2em] h-[1.2em] rounded-full'>
-                <img src={userInfo?.avatar_url} alt={`${userInfo?.name || 'author'}-avatar`} />
+        {page?.object !== 'database' && (
+          <div className='text-zinc-500 leading-none'>
+            {userInfo?.avatar_url ? (
+              <div className='avatar leading-none align-bottom'>
+                <div className='w-[1.2em] h-[1.2em] rounded-full'>
+                  <img src={userInfo?.avatar_url} alt={`${userInfo?.name || 'author'}-avatar`} />
+                </div>
               </div>
-            </div>
-          ) : userInfo?.name ? (
-            <div className='avatar placeholder'>
-              <div className='bg-neutral-focus text-neutral-content rounded-full w-24'>
-                <span className='text-3xl'>{userInfo.name.slice(0, 1)}</span>
+            ) : userInfo?.name ? (
+              <div className='avatar placeholder'>
+                <div className='bg-neutral-focus text-neutral-content rounded-full w-24'>
+                  <span className='text-3xl'>{userInfo.name.slice(0, 1)}</span>
+                </div>
               </div>
-            </div>
-          ) : null}
-          {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
-          <span>
-            {typeof page?.created_time === 'string' &&
-              ` | ${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
-                locale: koLocale
-              })}`}
-          </span>
-
-          {Array.isArray(page?.properties?.tags?.multi_select) && (
+            ) : null}
+            {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
             <span>
-              {Boolean(page?.properties?.tags?.multi_select?.length) && ' | '}
-              {page?.properties?.tags?.multi_select?.map((select) => {
-                // const color = select?.color as Color;
-
-                return (
-                  <span
-                    key={`${page.id}-${select.id}`}
-                    // className={classnames(notionColorClasses[color], 'opacity-60')}
-                  >
-                    {`#${select.name} `}
-                  </span>
-                );
-              })}
+              {typeof page?.created_time === 'string' &&
+                ` | ${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
+                  locale: koLocale
+                })}`}
             </span>
-          )}
-        </div>
+
+            {Array.isArray(page?.properties?.tags?.multi_select) && (
+              <span>
+                {Boolean(page?.properties?.tags?.multi_select?.length) && ' | '}
+                {page?.properties?.tags?.multi_select?.map((select) => {
+                  // const color = select?.color as Color;
+
+                  return (
+                    <span
+                      key={`${page.id}-${select.id}`}
+                      // className={classnames(notionColorClasses[color], 'opacity-60')}
+                    >
+                      {`#${select.name} `}
+                    </span>
+                  );
+                })}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import classNames from 'classnames';
 import type React from 'react';
-import type { NotionBlock, RichText, INotionSearchObject, INotionPage } from 'src/types/notion';
+import type {
+  NotionBlock,
+  RichText,
+  INotionSearchObject,
+  INotionPage,
+  NotionDatabasesQuery
+} from 'src/types/notion';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
+import { NotionDatabasePageView } from './lib';
 
 export interface NotionRenderProps {
   slug: string;
@@ -56,24 +64,30 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
     <div className='w-full mb-5 whitespace-pre-wrap'>
       <NotionSeo page={pageInfo} title={title} description={description} slug={slug} />
       <NotionPageHeader page={pageInfo} title={title} userInfo={userInfo} />
-      <div className='max-w-screen-lg px-3 mx-auto mt-10 sm:px-6 lg:px-10 [&>*]:m-0.5'>
-        {pageInfo.object === 'page' ? (
-          <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
-        ) : pageInfo.object === 'database' ? (
-          <NotionChildDatabaseBlock
-            //! key로 useState 초기화 + 리렌더링 강제유발
-            key={pageInfo.id}
-            //! key로 useState 초기화 + 리렌더링 강제유발
-            block={
-              {
-                ...pageInfo,
-                child_database: {
-                  title: title
-                }
-              } as unknown as NotionBlock
-            }
-          />
-        ) : null}
+      <div className='max-w-[var(--article-max-width)] mx-auto mt-10 sm:px-4 lg:px-6 [&>*]:m-0.5'>
+        <div className={classNames(pageInfo.object === 'page' ? 'px-3' : null)}>
+          {pageInfo.object === 'page' ? (
+            <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
+          ) : pageInfo.object === 'database' ? (
+            <NotionDatabasePageView
+              pageInfo={pageInfo}
+              baseBlock={baseBlock as unknown as NotionDatabasesQuery}
+            />
+          ) : // <NotionChildDatabaseBlock
+          //   //! key로 useState 초기화 + 리렌더링 강제유발
+          //   key={pageInfo.id}
+          //   //! key로 useState 초기화 + 리렌더링 강제유발
+          //   block={
+          //     {
+          //       ...pageInfo,
+          //       child_database: {
+          //         title: title
+          //       }
+          //     } as unknown as NotionBlock
+          //   }
+          // />
+          null}
+        </div>
         {/* {pageInfo?.id && <NotionHits pageInfo={pageInfo} />} */}
       </div>
     </div>

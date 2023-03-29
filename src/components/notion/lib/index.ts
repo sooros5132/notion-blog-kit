@@ -26,3 +26,4 @@ export { default as NotionQuoteBlock } from './Quote';
 export { default as NotionSeo } from './NotionSeo';
 export { default as NotionPageHeader } from './NotionPageHeader';
 export { default as NotionSyncedBlock } from './Synced';
+export { NotionDatabasePageView } from './DatabaseView';
