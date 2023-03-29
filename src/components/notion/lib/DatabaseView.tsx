@@ -91,7 +91,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
   }, [baseBlock.results, pageInfo.properties.category?.type]);
 
   return (
-    <div className='w-full flex flex-col gap-y-4 sm:gap-x-4 sm:flex-row min-h-screen'>
+    <div className='w-full flex flex-col gap-y-4 sm:gap-x-4 sm:flex-row min-h-[50vh]'>
       {categorys && (
         <aside className='sticky top-[var(--header-height)] left-0 p-2 gap-x-2 z-10 bg-base-100 flex grow-0 shrink-0 sm:z-0 sm:p-0 sm:mb-0 sm:flex-col sm:w-[200px] sm:gap-y-4 md:w-[220px]'>
           <ul className='flex gap-x-2 overflow-x-auto scrollbar-hidden text-sm sm:flex-col sm:px-2 sm:overflow-hidden sm:gap-y-1 sm:order-2'>
