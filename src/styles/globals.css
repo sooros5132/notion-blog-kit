@@ -64,6 +64,8 @@
   }
 
   :root {
+    --header-height: 50px;
+    --article-max-width: 900px;
     --notion-color-gray: 155 155 155;
     --notion-color-brown: 186 133 111;
     --notion-color-orange: 199 125 72;

@@ -32,8 +32,8 @@ const Header: React.FC = (): JSX.Element => {
   }, []);
 
   return (
-    <nav className='sticky top-0 left-0 z-10 bg-base-200/50 backdrop-blur-xl'>
-      <div className='flex justify-between items-center max-w-screen-lg mx-auto p-2 gap-x-1'>
+    <nav className='sticky top-0 left-0 h-[var(--header-height)] bg-base-200/50 backdrop-blur-xl z-10'>
+      <div className='flex justify-between items-center max-w-[var(--article-max-width)] mx-auto p-2 gap-x-1'>
         <div className='flex-1'>
           <Link className='text-xl rounded-md btn btn-ghost btn-sm h-full normal-case' href='/'>
             {/* <AiFillThunderbolt />&nbsp; */}

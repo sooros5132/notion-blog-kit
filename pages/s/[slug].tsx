@@ -12,7 +12,7 @@ interface SearchResult {
 
 export default function Search({ searchValue, searchResult }: SearchResult) {
   return (
-    <div className='w-full max-w-screen-lg px-5 m-auto my-6'>
+    <div className='w-full max-w-[var(--article-max-width)] px-5 m-auto my-6 px-3'>
       <div>
         <div className='max-w-screen-sm mt-4 mx-auto text-center'>
           <h1 className='text-2xl'>검색어를 입력해주세요.</h1>

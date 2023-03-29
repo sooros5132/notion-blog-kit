@@ -39,7 +39,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
       )}
       <div
         className={classnames(
-          'relative max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-10',
+          'relative max-w-[var(--article-max-width)] mx-auto px-4 sm:px-6 lg:px-10',
           page?.cover
             ? page.icon?.type === 'emoji'
               ? 'mt-[-50px]'
