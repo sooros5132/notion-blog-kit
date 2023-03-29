@@ -101,7 +101,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
                 <li
                   key={category}
                   className={classNames(
-                    'flex items-center cursor-pointer py-[0.2em] px-[0.7em] rounded-full bg-base-content/10 sm:p-0 sm:bg-[initial] sm:rounded-none sm:hover:bg-base-content/5 sm:border-l-4 sm:pl-2',
+                    'flex items-center cursor-pointer py-[0.2em] px-[0.7em] rounded-full bg-base-content/10 sm:p-0 sm:bg-[initial] sm:rounded-none sm:hover:bg-base-content/5 sm:border-l-[3px] sm:pl-2 sm:py-0.5 border-base-content/10',
                     filterKey === category ? 'bg-success/50 sm:font-bold sm:border-success' : null
                   )}
                   onClick={handleClickCategoryItem(category)}
