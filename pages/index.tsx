@@ -26,7 +26,9 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
     const notionClient = new NotionClient();
 
-    const page = await notionClient.getPageByPageId(config.notion.baseBlock);
+    const page = await notionClient
+      .getPageByPageId(config.notion.baseBlock)
+      .catch(async () => await notionClient.getDatabaseByDatabaseId(config.notion.baseBlock));
 
     return {
       props: {
