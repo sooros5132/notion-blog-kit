@@ -21,10 +21,6 @@ function Layout({ children }: any) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = mode;
-    document.documentElement.classList.add(mode);
-    return () => {
-      document.documentElement.classList.remove(mode);
-    };
   }, [mode]);
 
   return (

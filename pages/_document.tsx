@@ -5,7 +5,31 @@ class CustomDocument extends Document {
   render() {
     return (
       <Html lang='ko'>
-        <Head></Head>
+        <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+(function(){
+  const themeStore = localStorage.getItem('theme');
+
+  if(typeof themeStore !== 'string') {
+    document.documentElement.dataset.theme = 'dark';
+    return;
+  }
+  
+  const theme = JSON.parse(themeStore);
+  const mode = theme?.state?.mode || null;
+
+  if(mode){
+    document.documentElement.dataset.theme = mode;
+  } else {
+    document.documentElement.dataset.theme = 'dark';
+  }
+})()
+`
+            }}
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />
