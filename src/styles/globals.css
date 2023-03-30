@@ -59,10 +59,6 @@
     @apply flex items-center justify-center;
   }
 
-  .font-emoji {
-    font-family: emoji;
-  }
-
   :root {
     --header-height: 50px;
     --article-max-width: 900px;

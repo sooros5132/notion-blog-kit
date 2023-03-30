@@ -68,6 +68,9 @@ module.exports = {
             red: 'rgb(var(--notion-color-tag-red_background) / <alpha-value>)'
           }
         }
+      },
+      fontFamily: {
+        emoji: 'emoji'
       }
     }
   },
