@@ -86,6 +86,7 @@
     --notion-color-tag-default: 255 255 255;
     --notion-color-tag-brown: 255 255 255;
     --notion-color-tag-yellow: 255 255 255;
+    --notion-color-tag-orange: 255 255 255;
     --notion-color-tag-green: 255 255 255;
     --notion-color-tag-blue: 255 255 255;
     --notion-color-tag-purple: 255 255 255;
@@ -95,6 +96,7 @@
     --notion-color-tag-default_background: 55 55 55;
     --notion-color-tag-brown_background: 96 59 44;
     --notion-color-tag-yellow_background: 137 99 42;
+    --notion-color-tag-orange_background: 133 76 29;
     --notion-color-tag-green_background: 43 89 63;
     --notion-color-tag-blue_background: 40 69 108;
     --notion-color-tag-purple_background: 73 47 100;
@@ -129,6 +131,7 @@
     --notion-color-tag-default: 50 48 44;
     --notion-color-tag-brown: 68 42 30;
     --notion-color-tag-yellow: 64 44 27;
+    --notion-color-tag-orange: 73 41 14;
     --notion-color-tag-green: 28 56 41;
     --notion-color-tag-blue: 24 51 71;
     --notion-color-tag-purple: 65 36 84;
@@ -138,6 +141,7 @@
     --notion-color-tag-default_background: 227 226 224;
     --notion-color-tag-brown_background: 238 224 218;
     --notion-color-tag-yellow_background: 253 236 200;
+    --notion-color-tag-orange_background: 250 222 201;
     --notion-color-tag-green_background: 219 237 219;
     --notion-color-tag-blue_background: 211 229 239;
     --notion-color-tag-purple_background: 232 222 238;
