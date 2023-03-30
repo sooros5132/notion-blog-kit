@@ -1,6 +1,5 @@
 import { INotionPage, NotionBlocks, NotionDatabasesQuery } from 'src/types/notion';
 import create from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export interface NotionState {
   slug?: string;

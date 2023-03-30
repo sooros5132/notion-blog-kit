@@ -17,6 +17,7 @@ export interface NotionPageHeaderProps {
 
 const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
   const description = page.description?.map((richText) => richText.plain_text).join() || null;
+  const tags = page?.properties?.tags?.multi_select;
 
   return (
     <div>
@@ -24,7 +25,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
         <div className='relative h-[25vh] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
           <NotionSecureImage
             blockId={page.id}
-            blockType={'page'}
+            blockType={page.object}
             useType={'cover'}
             initialFileObject={page?.cover}
             alt={'page-cover'}
@@ -46,7 +47,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
         )}
       >
         {page.icon?.file && page.icon?.type === 'file' && (
-          <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden'>
+          <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden [&>div]:h-full'>
             <NotionSecureImage
               blockId={page.id}
               blockType={'page'}
@@ -59,7 +60,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
         )}
         {page.icon?.emoji && page.icon?.type === 'emoji' && (
           <div className='text-center'>
-            <span className='px-3 text-[100px] leading-none font-emoji'>{page.icon?.emoji}</span>
+            <span className='px-3 text-[100px] leading-none font-emoji'>{page.icon.emoji}</span>
           </div>
         )}
         <div
@@ -78,7 +79,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
           </div>
         )}
         {page?.object !== 'database' && (
-          <div className='text-zinc-500 leading-none'>
+          <div className='text-zinc-500 leading-5'>
             {userInfo?.avatar_url ? (
               <div className='avatar leading-none align-bottom'>
                 <div className='w-[1.2em] h-[1.2em] rounded-full'>
@@ -93,36 +94,32 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
               </div>
             ) : null}
             {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
+            <span>{typeof page?.created_time === 'string' && ' | '}</span>
             <span>
               {typeof page?.created_time === 'string' &&
-                ` | ${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
+                `${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
                   locale: koLocale
                 })}`}
             </span>
-
-            {Array.isArray(page?.properties?.tags?.multi_select) && (
+            <span>{Boolean(tags?.length) && ' | '}</span>
+            {Array.isArray(tags) && (
               <span className='text-sm'>
-                {Boolean(page?.properties?.tags?.multi_select?.length) && ' | '}
-                {page?.properties?.tags?.multi_select?.map((tag, idx) => {
-                  // const color = tag?.color as Color;
-
-                  return (
-                    <Fragment key={tag.id}>
-                      <span
-                        className={classNames(
-                          'px-1.5 rounded-md',
-                          notionTagColorClasses[tag.color],
-                          notionTagColorClasses[
-                            (tag.color + '_background') as keyof typeof notionTagColorClasses
-                          ]
-                        )}
-                      >
-                        {tag.name}
-                      </span>
-                      {page?.properties?.tags?.multi_select?.length !== idx && ' '}
-                    </Fragment>
-                  );
-                })}
+                {tags.map((tag, idx) => (
+                  <Fragment key={tag.id}>
+                    <span
+                      className={classNames(
+                        'px-1.5 rounded-md',
+                        notionTagColorClasses[tag.color],
+                        notionTagColorClasses[
+                          (tag.color + '_background') as keyof typeof notionTagColorClasses
+                        ]
+                      )}
+                    >
+                      {tag.name}
+                    </span>
+                    {tags?.length !== idx && ' '}
+                  </Fragment>
+                ))}
               </span>
             )}
           </div>

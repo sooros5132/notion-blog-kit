@@ -65,7 +65,7 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
       <NotionSeo page={pageInfo} title={title} description={description} slug={slug} />
       <NotionPageHeader page={pageInfo} title={title} userInfo={userInfo} />
       <div className='max-w-[var(--article-max-width)] mx-auto mt-10 sm:px-4 lg:px-6'>
-        <div className={classNames('[&>*]:m-0.5', pageInfo.object === 'page' ? 'px-3' : null)}>
+        <div className={classNames(pageInfo.object === 'page' ? 'px-3 [&>*]:m-0.5' : null)}>
           {pageInfo.object === 'page' ? (
             <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
           ) : pageInfo.object === 'database' ? (
