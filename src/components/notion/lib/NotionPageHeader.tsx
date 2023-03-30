@@ -2,18 +2,8 @@ import type React from 'react';
 import classnames from 'classnames';
 import { formatInTimeZone } from 'date-fns-tz';
 import config from 'site-config';
-import {
-  INotionSearchObject,
-  URL_PAGE_TITLE_MAX_LENGTH,
-  INotionUserInfo,
-  FileObject
-} from 'src/types/notion';
-import {
-  NotionCopyHeadingLink,
-  NotionHeadingInner,
-  NotionParagraphText,
-  NotionSecureImage
-} from '.';
+import { INotionSearchObject, INotionUserInfo, FileObject } from 'src/types/notion';
+import { NotionParagraphText, NotionSecureImage } from '.';
 import { ko as koLocale } from 'date-fns/locale';
 import { notionTagColorClasses } from './Paragraph';
 import classNames from 'classnames';
@@ -26,6 +16,8 @@ export interface NotionPageHeaderProps {
 }
 
 const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
+  const description = page.description?.map((richText) => richText.plain_text).join() || null;
+
   return (
     <div>
       {page?.cover?.[page?.cover?.type]?.url && (
@@ -42,7 +34,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
       )}
       <div
         className={classnames(
-          'relative max-w-[var(--article-max-width)] mx-auto px-4 sm:px-6 lg:px-10',
+          'relative max-w-[var(--article-max-width)] mx-auto px-4 text-center sm:px-6 lg:px-10',
           page?.cover
             ? page.icon?.type === 'emoji'
               ? 'mt-[-50px]'
@@ -54,7 +46,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
         )}
       >
         {page.icon?.file && page.icon?.type === 'file' && (
-          <div className='w-[100px] h-[100px] rounded-md overflow-hidden'>
+          <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden'>
             <NotionSecureImage
               blockId={page.id}
               blockType={'page'}
@@ -66,32 +58,25 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
           </div>
         )}
         {page.icon?.emoji && page.icon?.type === 'emoji' && (
-          <span className='px-3 text-[100px] leading-none font-emoji'>{page.icon?.emoji}</span>
+          <div className='text-center'>
+            <span className='px-3 text-[100px] leading-none font-emoji'>{page.icon?.emoji}</span>
+          </div>
         )}
         <div
           className={classnames(
             'mb-3 text-[40px] font-bold break-all',
             Boolean(page?.cover) && ['emoji', 'file'].includes(page.icon?.type)
               ? 'mt-[20px]'
-              : 'mt-[20px]',
-            'mb-3 text-[40px] font-bold'
+              : 'mt-[20px]'
           )}
         >
-          <NotionHeadingInner type={'normal'}>
-            <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
-            <NotionCopyHeadingLink
-              href={
-                title
-                  ? `/${encodeURIComponent(
-                      title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
-                    )}-${page.id.replaceAll('-', '')}`
-                  : `/${page.id}`
-              }
-            >
-              <span className='cursor-pointer'>&nbsp;🔗</span>
-            </NotionCopyHeadingLink>
-          </NotionHeadingInner>
+          <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
         </div>
+        {description && (
+          <div className='mb-2 text-zinc-500'>
+            <NotionParagraphText>{description}</NotionParagraphText>
+          </div>
+        )}
         {page?.object !== 'database' && (
           <div className='text-zinc-500 leading-none'>
             {userInfo?.avatar_url ? (
