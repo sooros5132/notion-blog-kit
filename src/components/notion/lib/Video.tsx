@@ -48,7 +48,7 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
   if (!fileObject || error) {
     return (
       <div className='flex-center py-0.5 bg-gray-900'>
-        <div className='flex items-center text-notionColor-red'>
+        <div className='flex items-center text-notion-red'>
           <IoClose />
         </div>
         &nbsp;

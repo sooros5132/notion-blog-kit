@@ -55,7 +55,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
                 <NotionParagraphText>{data?.title}</NotionParagraphText>
               )}
             </h2>
-            <p className='flex-grow-0 hidden text-xs sm:line-clamp-2 sm:block text-notionColor-gray'>
+            <p className='flex-grow-0 hidden text-xs sm:line-clamp-2 sm:block text-notion-gray'>
               <NotionParagraphText>{data?.description}</NotionParagraphText>
             </p>
             <div className='mt-auto text-xs'>
