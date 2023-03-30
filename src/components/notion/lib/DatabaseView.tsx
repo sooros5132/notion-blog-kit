@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import formatInTimeZone from 'date-fns-tz/formatInTimeZone';
 import type React from 'react';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { SiNotion } from 'react-icons/si';
 import {
   FileObject,
@@ -14,6 +14,7 @@ import { NotionSecureImage } from '.';
 import config from 'site-config';
 import Link from 'next/link';
 import { AiOutlineSearch } from 'react-icons/ai';
+import { notionTagColorClasses } from './Paragraph';
 
 type NotionDatabasePageViewProps = {
   baseBlock: NotionDatabasesQuery;
@@ -162,9 +163,10 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
             )}`
           : `/${id.replaceAll('-', '')}`
       }
+      className='[&_.cover-image]:hover:brightness-110 [&_.cover-image>div]:transition-transform [&_.cover-image>div]:duration-[400ms] [&_.cover-image>div]:hover:scale-[1.2]'
     >
-      <div className='w-full flex flex-col bg-base-content/5 shadow-md rounded-md transition-transform overflow-hidden sm:hover:-translate-y-0.5 sm:flex-row'>
-        <div className='h-[200px] grow-0 shrink-0 bg-base-content/5 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full sm:w-[100px] md:w-[150px] lg:w-[200px] sm:h-[84px]'>
+      <div className='w-full flex flex-col bg-base-content/5 shadow-md overflow-hidden rounded-md isolate sm:flex-row'>
+        <div className='cover-image shrink-0 h-[200px] bg-base-content/5 overflow-hidden brightness-95 transition-[filter] ease-linear duration-300 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full sm:w-[100px] md:w-[150px] lg:w-[200px] sm:h-[84px]'>
           {cover ? (
             <NotionSecureImage
               blockId={id}
@@ -195,16 +197,31 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
             </div>
           )}
         </div>
-        <div className='flex-auto flex flex-col justify-between p-4 py-3 sm:py-2'>
-          <div className='line-clamp-2 break-all'>{title}</div>
-          <div className='mt-auto flex items-end justify-between gap-x-2 break-all'>
-            <div className='flex-1 text-zinc-500 text-sm line-clamp-1'>
+        <div className='flex-auto flex flex-col justify-between p-4 py-3 sm:py-2 break-all'>
+          <div className='line-clamp-2'>{title}</div>
+          <div className='mt-auto flex items-end justify-between gap-x-2 text-sm'>
+            <div className='flex-1 line-clamp-1'>
               {haveTagProperty &&
-                tags.multi_select?.map((tag) => <span key={tag.name}>#{tag.name}&nbsp;</span>)}
+                tags.multi_select?.map((tag, idx) => (
+                  <Fragment key={tag.name}>
+                    <span
+                      className={classNames(
+                        'px-1.5 rounded-md',
+                        notionTagColorClasses[tag.color],
+                        notionTagColorClasses[
+                          (tag.color + '_background') as keyof typeof notionTagColorClasses
+                        ]
+                      )}
+                    >
+                      {tag.name}
+                    </span>
+                    {tags.multi_select?.length !== idx && ' '}
+                  </Fragment>
+                ))}
             </div>
             <div>
               {created_time && (
-                <div className='flex-auto grow-0 shrink-0 text-zinc-500 text-sm sm:self-end'>
+                <div className='flex-auto grow-0 shrink-0 text-zinc-500'>
                   {formatInTimeZone(new Date(created_time), config.TZ, 'yyyy-MM-dd')}
                 </div>
               )}

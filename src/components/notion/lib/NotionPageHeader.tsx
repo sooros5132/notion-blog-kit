@@ -15,6 +15,9 @@ import {
   NotionSecureImage
 } from '.';
 import { ko as koLocale } from 'date-fns/locale';
+import { notionTagColorClasses } from './Paragraph';
+import classNames from 'classnames';
+import { Fragment } from 'react';
 
 export interface NotionPageHeaderProps {
   page: INotionSearchObject;
@@ -67,6 +70,7 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
         )}
         <div
           className={classnames(
+            'mb-3 text-[40px] font-bold break-all',
             Boolean(page?.cover) && ['emoji', 'file'].includes(page.icon?.type)
               ? 'mt-[20px]'
               : 'mt-[20px]',
@@ -112,18 +116,26 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
             </span>
 
             {Array.isArray(page?.properties?.tags?.multi_select) && (
-              <span>
+              <span className='text-sm'>
                 {Boolean(page?.properties?.tags?.multi_select?.length) && ' | '}
-                {page?.properties?.tags?.multi_select?.map((select) => {
-                  // const color = select?.color as Color;
+                {page?.properties?.tags?.multi_select?.map((tag, idx) => {
+                  // const color = tag?.color as Color;
 
                   return (
-                    <span
-                      key={`${page.id}-${select.id}`}
-                      // className={classnames(notionColorClasses[color], 'opacity-60')}
-                    >
-                      {`#${select.name} `}
-                    </span>
+                    <Fragment key={tag.id}>
+                      <span
+                        className={classNames(
+                          'px-1.5 rounded-md',
+                          notionTagColorClasses[tag.color],
+                          notionTagColorClasses[
+                            (tag.color + '_background') as keyof typeof notionTagColorClasses
+                          ]
+                        )}
+                      >
+                        {tag.name}
+                      </span>
+                      {page?.properties?.tags?.multi_select?.length !== idx && ' '}
+                    </Fragment>
                   );
                 })}
               </span>

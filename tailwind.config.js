@@ -16,7 +16,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        notionColor: {
+        notion: {
           default: 'rgb(var(--notion-color-default) / <alpha-value>)',
           gray: 'rgb(var(--notion-color-gray) / <alpha-value>)',
           brown: 'rgb(var(--notion-color-brown) / <alpha-value>)',
@@ -27,11 +27,23 @@ module.exports = {
           purple: 'rgb(var(--notion-color-purple) / <alpha-value>)',
           pink: 'rgb(var(--notion-color-pink) / <alpha-value>)',
           red: 'rgb(var(--notion-color-red) / <alpha-value>)',
-          code: 'rgb(var(--notion-color-code) / <alpha-value>)'
+          code: 'rgb(var(--notion-color-code) / <alpha-value>)',
+          tag: {
+            default: 'rgb(var(--notion-color-tag-default) / <alpha-value>)',
+            gray: 'rgb(var(--notion-color-tag-gray) / <alpha-value>)',
+            brown: 'rgb(var(--notion-color-tag-brown) / <alpha-value>)',
+            orange: 'rgb(var(--notion-color-tag-orange) / <alpha-value>)',
+            yellow: 'rgb(var(--notion-color-tag-yellow) / <alpha-value>)',
+            green: 'rgb(var(--notion-color-tag-green) / <alpha-value>)',
+            blue: 'rgb(var(--notion-color-tag-blue) / <alpha-value>)',
+            purple: 'rgb(var(--notion-color-tag-purple) / <alpha-value>)',
+            pink: 'rgb(var(--notion-color-tag-pink) / <alpha-value>)',
+            red: 'rgb(var(--notion-color-tag-red) / <alpha-value>)'
+          }
         }
       },
       backgroundColor: {
-        notionColor: {
+        notion: {
           default: 'rgb(var(--notion-color-default_background) / <alpha-value>)',
           gray: 'rgb(var(--notion-color-gray_background) / <alpha-value>)',
           brown: 'rgb(var(--notion-color-brown_background) / <alpha-value>)',
@@ -42,7 +54,19 @@ module.exports = {
           purple: 'rgb(var(--notion-color-purple_background) / <alpha-value>)',
           pink: 'rgb(var(--notion-color-pink_background) / <alpha-value>)',
           red: 'rgb(var(--notion-color-red_background) / <alpha-value>)',
-          code: 'rgb(var(--notion-color-code_background) / 0.15)'
+          code: 'rgb(var(--notion-color-code_background) / 0.15)',
+          tag: {
+            default: 'rgb(var(--notion-color-tag-default_background) / <alpha-value>)',
+            gray: 'rgb(var(--notion-color-tag-gray_background) / <alpha-value>)',
+            brown: 'rgb(var(--notion-color-tag-brown_background) / <alpha-value>)',
+            orange: 'rgb(var(--notion-color-tag-orange_background) / <alpha-value>)',
+            yellow: 'rgb(var(--notion-color-tag-yellow_background) / <alpha-value>)',
+            green: 'rgb(var(--notion-color-tag-green_background) / <alpha-value>)',
+            blue: 'rgb(var(--notion-color-tag-blue_background) / <alpha-value>)',
+            purple: 'rgb(var(--notion-color-tag-purple_background) / <alpha-value>)',
+            pink: 'rgb(var(--notion-color-tag-pink_background) / <alpha-value>)',
+            red: 'rgb(var(--notion-color-tag-red_background) / <alpha-value>)'
+          }
         }
       }
     }
