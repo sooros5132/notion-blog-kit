@@ -1,6 +1,6 @@
 import type React from 'react';
 import { BsLink45Deg } from 'react-icons/bs';
-import { AWS_SECURE_NOTION_STATIC, PROXY_PUBLIC_NOTION_STATIC } from 'src/lib/notion';
+import { AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC } from 'src/lib/notion';
 import type { NotionBlock } from 'src/types/notion';
 
 interface FileProps {
@@ -17,7 +17,7 @@ export const File: React.FC<FileProps> = ({ block }) => {
       : null;
   const proxyFileUrl =
     fileUrl && fileUrl?.includes(AWS_SECURE_NOTION_STATIC)
-      ? fileUrl.replace(AWS_SECURE_NOTION_STATIC, PROXY_PUBLIC_NOTION_STATIC)
+      ? fileUrl.replace(AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC)
       : null;
 
   return (
