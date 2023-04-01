@@ -20,7 +20,8 @@ import {
   NotionVideoBlock,
   NotionParagraphText,
   NotionCodeBlock,
-  NotionSyncedBlock
+  NotionSyncedBlock,
+  NotionFile
 } from '.';
 
 export type NotionBlocksProps = {
@@ -88,6 +89,13 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
             return (
               <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <hr className='border-gray-500' />
+              </NotionHasChildrenRender>
+            );
+          }
+          case 'file': {
+            return (
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
+                <NotionFile block={block} />
               </NotionHasChildrenRender>
             );
           }

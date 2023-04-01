@@ -33,7 +33,16 @@ const nextConfig = {
     minimumCacheTTL: 1800
   },
   async rewrites() {
-    return [];
+    return [
+      {
+        source: '/aws-secure-notion-static/:path*',
+        destination: 'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/:path*'
+      },
+      {
+        source: '/aws-public-notion-static/:path*',
+        destination: 'https://s3.us-west-2.amazonaws.com/public.notion-static.com/:path*'
+      }
+    ];
   }
 };
 

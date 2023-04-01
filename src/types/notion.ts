@@ -260,7 +260,7 @@ export interface NotionBlockItem
   embed: RichTextObject;
   image: FileObject & CaptionObject;
   video: FileObject & CaptionObject;
-  file: RichTextObject;
+  file: FileObject;
   pdf: RichTextObject;
   bookmark: BookmarkObject;
   callout: RichTextObject & { icon: IconObject };
