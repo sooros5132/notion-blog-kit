@@ -89,7 +89,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
           case 'divider': {
             return (
               <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
-                <hr className='border-gray-500' />
+                <hr className='border-base-content/60' />
               </NotionHasChildrenRender>
             );
           }
