@@ -57,7 +57,7 @@ export function awsImageObjectUrlToNotionUrl({
     }
 
     return `https://www.notion.so/image/${encodeURIComponent(
-      'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/' + s3FileUuid
+      AWS_SECURE_NOTION_STATIC + s3FileUuid
     )}?table=${table}&id=${blockId}`;
   } catch (e) {
     return s3ObjectUrl;
