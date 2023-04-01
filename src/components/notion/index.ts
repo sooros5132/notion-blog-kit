@@ -7,7 +7,6 @@ export {
   NotionColumnListBlock,
   NotionCopyHeadingLink,
   NotionHeadingBlock,
-  NotionHeadingInner,
   NotionImageBlock,
   NotionLinkPreviewBlock,
   NotionListBlock,
@@ -21,7 +20,11 @@ export {
   NotionTodoBlock,
   NotionToggleBlock,
   NotionVideoBlock,
-  notionColorClasses
+  notionColorClasses,
+  NotionDatabasePageView,
+  NotionEquationBlock,
+  NotionFileBlock,
+  NotionSyncedBlock
 } from './lib';
 
 export { NotionRender } from './NotionRender';

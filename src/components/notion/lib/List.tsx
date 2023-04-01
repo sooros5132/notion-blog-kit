@@ -2,92 +2,28 @@ import type React from 'react';
 import type { NotionBlock, NotionBlocks } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 
-interface NumberedListItemProps {
+interface ListProps {
   block: NotionBlock;
   baseBlock: NotionBlocks;
-  startIndexForResultBlocks: number;
-  depthOfNestedList?: number;
   children?: React.ReactNode;
+  startValue?: number;
 }
 
-const numberedListStyles = ['decimal', 'lower-alpha', 'lower-roman'];
-const bulletedListStyles = ['outside', 'circle', 'square'];
-
-const NumberedListItem: React.FC<NumberedListItemProps> = ({
-  block,
-  baseBlock,
-  depthOfNestedList,
-  startIndexForResultBlocks
-}) => {
+export const List: React.FC<ListProps> = ({ block, baseBlock, startValue }) => {
   const LIST_TYPE = block.type as 'bulleted_list_item' | 'numbered_list_item';
-  const prevIndexForResultBlocks = startIndexForResultBlocks - 1;
-  const nextIndexForResultBlocks = startIndexForResultBlocks + 1;
-  const blocks = baseBlock?.results;
-  const newDepthOfNestedList = block.has_children
-    ? (depthOfNestedList || 0) + 1
-    : depthOfNestedList;
+  const ListTagName = LIST_TYPE === 'numbered_list_item' ? 'ol' : 'ul';
 
-  if (blocks?.[prevIndexForResultBlocks]?.type !== block.type) {
-    return (
-      <ul
-        className={'pl-6'}
-        style={{
-          listStyle:
-            LIST_TYPE === 'numbered_list_item'
-              ? numberedListStyles[(depthOfNestedList || 0) % 3]
-              : bulletedListStyles[(depthOfNestedList || 0) % 3]
-        }}
-      >
-        <li>
-          <NotionHasChildrenRender
-            block={blocks?.[startIndexForResultBlocks]}
-            parentBlockType={block.type}
-            depthOfNestedList={newDepthOfNestedList}
-          >
-            <NotionParagraphBlock
-              blockId={block.id}
-              richText={block[LIST_TYPE]?.rich_text}
-              color={block[LIST_TYPE]?.color}
-            />
-          </NotionHasChildrenRender>
-        </li>
-        {block.type === blocks?.[nextIndexForResultBlocks]?.type && (
-          <NumberedListItem
-            block={blocks?.[nextIndexForResultBlocks]}
-            startIndexForResultBlocks={nextIndexForResultBlocks}
-            baseBlock={baseBlock}
-            depthOfNestedList={depthOfNestedList}
+  return (
+    <ListTagName className='list-style-type pl-6'>
+      <li value={startValue}>
+        <NotionHasChildrenRender block={block} noLeftPadding>
+          <NotionParagraphBlock
+            blockId={block.id}
+            richText={block[LIST_TYPE]?.rich_text}
+            color={block[LIST_TYPE]?.color}
           />
-        )}
-      </ul>
-    );
-  } else {
-    return (
-      <>
-        <li>
-          <NotionHasChildrenRender
-            block={blocks?.[startIndexForResultBlocks]}
-            parentBlockType={block.type}
-            depthOfNestedList={newDepthOfNestedList}
-          >
-            <NotionParagraphBlock
-              blockId={block.id}
-              richText={block[LIST_TYPE]?.rich_text}
-              color={block[LIST_TYPE]?.color}
-            />
-          </NotionHasChildrenRender>
-        </li>
-        {block?.type === blocks?.[nextIndexForResultBlocks]?.type && (
-          <NumberedListItem
-            block={blocks?.[nextIndexForResultBlocks]}
-            startIndexForResultBlocks={nextIndexForResultBlocks}
-            baseBlock={baseBlock}
-            depthOfNestedList={depthOfNestedList}
-          />
-        )}
-      </>
-    );
-  }
+        </NotionHasChildrenRender>
+      </li>
+    </ListTagName>
+  );
 };
-
-export default NumberedListItem;

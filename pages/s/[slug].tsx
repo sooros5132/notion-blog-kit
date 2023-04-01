@@ -17,13 +17,7 @@ export default function Search({ searchValue, searchResult }: SearchResult) {
         <div className='max-w-screen-sm mt-4 mx-auto text-center'>
           <h1 className='text-2xl'>검색어를 입력해주세요.</h1>
           <div className='mt-10'>
-            <SearchForm
-              //! key로 리렌더링 강제유발
-              key={`search-${new Date().getTime()}`}
-              //! key로 리렌더링 강제유발
-              searchValue={searchValue}
-              autoFocus
-            />
+            <SearchForm key={searchValue} searchValue={searchValue} autoFocus />
           </div>
         </div>
         <div className='mt-10'>

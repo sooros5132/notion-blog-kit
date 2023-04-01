@@ -6,6 +6,7 @@ import { NotionParagraphBlock } from '.';
 import { useThemeStore } from 'src/store/theme';
 import { useEffect, useState } from 'react';
 import { FaCircle } from 'react-icons/fa';
+import { CopyButtonWrapper } from 'src/lib/CopyButtonWrapper';
 
 interface CodeProps {
   block: NotionBlock;
@@ -14,10 +15,11 @@ interface CodeProps {
 export const Code: React.FC<CodeProps> = ({ block }) => {
   const language = block?.code?.language;
   const cantion = block?.code?.caption;
-  const codes = block?.code?.rich_text;
   const { mode } = useThemeStore();
 
   const [isHydrated, setIsHydrated] = useState(false);
+
+  const codes = block?.code?.rich_text?.map((text) => text?.plain_text ?? '').join('') || '';
 
   useEffect(() => {
     setIsHydrated(true);
@@ -34,31 +36,33 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
           </div>
           <div className='text-base-content/70 select-none'>{language}</div>
         </div>
-        <div className=' bg-base-content/5 [&>pre]:scrollbar-hidden'>
-          <SyntaxHighlighter
-            language={language}
-            style={!isHydrated || mode === 'dark' ? vscDarkPlus : prism}
-            customStyle={{
-              fontSize: '1em',
-              lineHeight: '1.25em',
-              margin: 0,
-              fontFamily:
-                'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
-              background: 'none'
-            }}
-            lineProps={{
-              style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' }
-            }}
-            codeTagProps={{
-              style: {
+        <CopyButtonWrapper content={codes}>
+          <div className='bg-base-content/5 [&>pre]:scrollbar-hidden'>
+            <SyntaxHighlighter
+              language={language}
+              style={!isHydrated || mode === 'dark' ? vscDarkPlus : prism}
+              customStyle={{
                 fontSize: '1em',
-                lineHeight: '1.25em'
-              }
-            }}
-          >
-            {codes?.map((text) => text?.plain_text ?? '').join('')}
-          </SyntaxHighlighter>
-        </div>
+                lineHeight: '1.25em',
+                margin: 0,
+                fontFamily:
+                  'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace',
+                background: 'none'
+              }}
+              lineProps={{
+                style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' }
+              }}
+              codeTagProps={{
+                style: {
+                  fontSize: '1em',
+                  lineHeight: '1.25em'
+                }
+              }}
+            >
+              {codes}
+            </SyntaxHighlighter>
+          </div>
+        </CopyButtonWrapper>
       </div>
       {Array.isArray(cantion) && cantion.length > 0 && (
         <div className='w-full'>

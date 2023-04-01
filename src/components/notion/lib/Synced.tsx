@@ -6,8 +6,6 @@ export interface SyncedProps {
   block: NotionBlock;
 }
 
-const Synced: React.FC<SyncedProps> = ({ block }) => {
-  return <NotionHasChildrenRender block={block} parentBlockType={block.type} />;
+export const Synced: React.FC<SyncedProps> = ({ block }) => {
+  return <NotionHasChildrenRender block={block} noLeftPadding />;
 };
-
-export default Synced;

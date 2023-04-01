@@ -1,24 +1,44 @@
 import type React from 'react';
-import { BsLink45Deg } from 'react-icons/bs';
+import { useEffect, useRef } from 'react';
 import { AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC } from 'src/lib/notion';
-import type { NotionBlock } from 'src/types/notion';
+import type { FileObject, NotionBlock } from 'src/types/notion';
+import { useRenewExpiredFile } from './utils';
 
 interface FileProps {
   block: NotionBlock;
 }
 
 export const File: React.FC<FileProps> = ({ block }) => {
-  const file = block.file;
-  const fileType = file.type;
-  const fileUrl = file.file?.url || file.external?.url;
+  const cachedFileObject = useRef<FileObject>(block.file);
+
+  const { data: file } = useRenewExpiredFile({
+    blockId: block.id,
+    blockType: 'file',
+    useType: 'file',
+    initialFileObject: cachedFileObject.current,
+    autoRefresh: true,
+    refreshInterval: cachedFileObject.current.file?.expiry_time
+      ? new Date(cachedFileObject.current.file?.expiry_time).getTime() -
+          Date.now() -
+          60 * 5 * 1000 || 60 * 5 * 1000
+      : undefined
+  });
+
+  const fileType = file?.type;
+  const fileUrl = file?.file?.url || file?.external?.url;
   const filename =
     fileType === 'file'
-      ? file.file?.url?.match(/(notion-static.com\/[-0-9a-z]+\/)(.+)(\?)/)?.[2] || null
+      ? file?.file?.url?.match(/(notion-static.com\/[-0-9a-z]+\/)(.+)(\?)/)?.[2] || null
       : null;
+
   const proxyFileUrl =
     fileUrl && fileUrl?.includes(AWS_SECURE_NOTION_STATIC)
       ? fileUrl.replace(AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC)
       : null;
+
+  useEffect(() => {
+    if (file) cachedFileObject.current = file;
+  }, [file]);
 
   return (
     <div>
@@ -27,9 +47,10 @@ export const File: React.FC<FileProps> = ({ block }) => {
         rel='noreferrer'
         target='_blank'
         download={fileType === 'file' ? filename || undefined : undefined}
-        className='inline-flex items-center gap-x-0.5 px-1.5 rounded-md bg-base-content/10 hover:bg-base-content/20'
+        className='inline-flex items-center gap-x-0.5 px-1.5 my-1.5 rounded-md bg-base-content/10 hover:bg-base-content/20'
       >
-        <BsLink45Deg className='text-[1.2em]' />
+        {/* <BsLink45Deg className='text-[1.2em]' /> */}
+        🔗&nbsp;
         {decodeURIComponent(filename || 'File')}
       </a>
     </div>

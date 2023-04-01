@@ -15,7 +15,7 @@ export interface NotionPageHeaderProps {
   userInfo?: INotionUserInfo | null;
 }
 
-const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
+export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
   const description = page.description?.map((richText) => richText.plain_text).join() || null;
   const tags = page?.properties?.tags?.multi_select;
 
@@ -128,5 +128,3 @@ const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userIn
     </div>
   );
 };
-
-export default NotionPageHeader;

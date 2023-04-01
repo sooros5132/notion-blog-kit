@@ -6,10 +6,11 @@ import useSWR, { SWRResponse } from 'swr';
 
 export type NotionImageFetcherParams = {
   blockId: string;
-  blockType: 'page' | 'database' | 'video' | 'image' | 'callout';
-  useType: 'image' | 'video' | 'cover' | 'icon';
+  blockType: 'page' | 'database' | 'video' | 'image' | 'callout' | 'file';
+  useType: 'image' | 'video' | 'cover' | 'icon' | 'file';
   initialFileObject?: FileObject;
   autoRefresh?: boolean;
+  refreshInterval?: number;
 };
 
 export function isExpired({ expiry_time, url }: NonNullable<FileObject['file']>) {
@@ -25,9 +26,11 @@ export const useRenewExpiredFile = ({
   blockType,
   useType,
   initialFileObject,
-  autoRefresh = true
+  autoRefresh = true,
+  refreshInterval = 5 * 60 * 1000 // 5분
 }: NotionImageFetcherParams) => {
   // const EXTERNAL_IS_AVAILABLE = 'external is available.';
+
   return useSWR(
     `${config.path}/notion/${blockType}/${blockId}?useType=${useType}`,
     async () => {
@@ -58,6 +61,7 @@ export const useRenewExpiredFile = ({
             }
             return page[useType];
           }
+          case 'file':
           case 'video':
           case 'callout':
           case 'image': {
@@ -101,7 +105,7 @@ export const useRenewExpiredFile = ({
       errorRetryCount: 1,
       fallbackData: initialFileObject,
       revalidateOnFocus: false,
-      refreshInterval: autoRefresh ? 5 * 60 * 1000 : undefined // 5분
+      refreshInterval: autoRefresh ? refreshInterval : undefined
     }
   ) as SWRResponse<FileObject & IconObject>;
 };

@@ -171,13 +171,13 @@
   }
 
   .notion-heading-link-copy .heading-link {
-    @apply hidden;
+    @apply invisible opacity-0;
   }
 
   .notion-heading-link-copy:hover .heading-link,
   .notion-heading-link-copy:active .heading-link,
   .notion-heading-link-copy:focus .heading-link {
-    @apply inline;
+    @apply visible opacity-100;
   }
 
   .image-wrapper {
@@ -186,6 +186,54 @@
 
   .image-wrapper img {
     @apply max-w-full object-cover object-center;
+  }
+
+  ul.list-style-type {
+    list-style-type: disc;
+  }
+
+  ul.list-style-type ul {
+    list-style-type: circle;
+  }
+
+  ul.list-style-type ul ul {
+    list-style-type: square;
+  }
+
+  ul.list-style-type ul ul ul {
+    list-style-type: disc;
+  }
+
+  ul.list-style-type ul ul ul ul {
+    list-style-type: circle;
+  }
+
+  ul.list-style-type ul ul ul ul ul {
+    list-style-type: square;
+  }
+
+  ol.list-style-type {
+    list-style-type: decimal;
+  }
+
+  ol.list-style-type ol {
+    list-style-type: lower-alpha;
+  }
+
+  ol.list-style-type ol ol {
+    list-style-type: lower-roman;
+  }
+
+  ol.list-style-type ol ol ol {
+    list-style-type: decimal;
+  }
+
+  ol.list-style-type ol ol ol ol {
+    list-style-type: lower-alpha;
+  }
+
+  ol.list-style-type ol ol ol ol ol {
+    list-style-type: lower-roman;
   }
 }
 

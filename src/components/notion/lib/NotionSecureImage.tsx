@@ -19,7 +19,7 @@ interface NotionSecureImageProps extends NotionImageFetcherParams {
 
 // placeholder = 'blur',
 // blurDataURL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
+export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   blockId,
   blockType,
   useType,
@@ -101,5 +101,3 @@ const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
     </div>
   );
 };
-
-export default NotionSecureImage;

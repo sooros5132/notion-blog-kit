@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
 import config from 'site-config';
-import { SearchForm } from '../search/SearchForm';
+import { SearchForm } from 'src/components/search/SearchForm';
 import { useThemeStore } from 'src/store/theme';
 import { HiSun, HiMoon } from 'react-icons/hi';
 import classNames from 'classnames';

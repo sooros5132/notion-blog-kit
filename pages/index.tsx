@@ -18,8 +18,7 @@ const Home: NextPage<HomeProps> = ({ slug, page }) => {
     databaseRecord: page?.block?.databaseRecord || {}
   });
 
-  //! key 지우면 에러가 남. https://reactjs.org/link/setstate-in-render
-  return <NotionRender key={slug} slug={slug} page={page} />;
+  return <NotionRender slug={slug} page={page} />;
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {

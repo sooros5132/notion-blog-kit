@@ -8,7 +8,7 @@ interface TableProps {
   block: NotionBlock;
 }
 
-const Table: React.FC<TableProps> = ({ block }) => {
+export const Table: React.FC<TableProps> = ({ block }) => {
   const childrenRecord = useNotionStore.getState().childrenRecord;
   // ((state) => state.childrenRecord, shallow);
   const tbodyBlock = childrenRecord[block.id];

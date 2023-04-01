@@ -6,15 +6,16 @@ interface TodoProps {
   block: NotionBlock;
 }
 
-const Todo: React.FC<TodoProps> = ({ block }) => {
+export const Todo: React.FC<TodoProps> = ({ block }) => {
   return (
     <div className='form-control'>
-      <label className='label p-0 items-start justify-start cursor-pointer'>
-        <div className='pt-1 pr-1 text-right basis-6 shrink-0 grow-0'>
+      <label className='label p-0'>
+        <div className='shrink-0 grow-0 pt-0.5 pr-1 self-start'>
           <input
             type='checkbox'
-            defaultChecked={block?.to_do?.checked ?? false}
-            className='w-4 h-4 rounded-sm checkbox'
+            checked={block?.to_do?.checked ?? false}
+            readOnly
+            className='rounded-sm checkbox checkbox-xs'
           />
         </div>
         <div className='flex-auto'>
@@ -36,5 +37,3 @@ const Todo: React.FC<TodoProps> = ({ block }) => {
     </div>
   );
 };
-
-export default Todo;

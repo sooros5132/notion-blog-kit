@@ -23,8 +23,7 @@ export default function Slug({ slug, page }: SlugProps) {
     databaseRecord: page?.block?.databaseRecord || {}
   });
 
-  //! key 지우면 에러가 남. https://reactjs.org/link/setstate-in-render
-  return <NotionRender key={slug} slug={slug} page={page} />;
+  return <NotionRender slug={slug} page={page} />;
 }
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

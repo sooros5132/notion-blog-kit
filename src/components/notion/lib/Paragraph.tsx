@@ -1,11 +1,11 @@
 import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
-import { Fragment } from 'react';
 import { notionBlockUrlToRelativePath } from 'src/lib/notion';
 import type { Color, RichText } from 'src/types/notion';
 import { NotionCopyHeadingLink } from '.';
 import Link from 'next/link';
+import { FiArrowUpRight } from 'react-icons/fi';
 
 export interface ParagraphTextProps {
   bold?: string;
@@ -112,7 +112,7 @@ interface ParagraphProps {
   headingLink?: string;
 }
 
-const Paragraph: React.FC<ParagraphProps> = ({
+export const Paragraph: React.FC<ParagraphProps> = ({
   blockId,
   richText,
   color,
@@ -127,8 +127,6 @@ const Paragraph: React.FC<ParagraphProps> = ({
     <div
       className={classnames(
         'break-all',
-        'min-h-[1.25em]',
-        'p-0.5',
         color && color !== 'default' && !color.match(/_background$/)
           ? notionColorClasses[color]
           : annotationsProps?.color
@@ -138,15 +136,6 @@ const Paragraph: React.FC<ParagraphProps> = ({
       )}
     >
       {richText.map((text, i) => {
-        if (text.type === 'mention') {
-          return (
-            <Fragment key={`block-mention-${blockId}-${i}`}></Fragment>
-            // <ParagraphText key={`block-${block.id}-${block.type}-${text.type}-${i}`}>
-            //   mention
-            // </ParagraphText>
-          );
-        }
-
         const {
           type,
           plain_text,
@@ -174,7 +163,22 @@ const Paragraph: React.FC<ParagraphProps> = ({
               : 'last'
             : undefined
         };
-
+        if (text.type === 'mention') {
+          return (
+            <a
+              key={`block-anchor-${blockId}-${i}`}
+              className='inline-flex items-center bg-base-content/10 rounded-md px-1'
+              href={href ? notionBlockUrlToRelativePath(href) : undefined}
+              rel='noreferrer'
+              target='_blank'
+            >
+              <FiArrowUpRight />
+              <ParagraphText {...annotations} underline={'underline'}>
+                {plain_text}
+              </ParagraphText>
+            </a>
+          );
+        }
         if (href) {
           return (
             <a
@@ -203,5 +207,3 @@ const Paragraph: React.FC<ParagraphProps> = ({
     </div>
   );
 };
-
-export default Paragraph;

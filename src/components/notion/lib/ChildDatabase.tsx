@@ -24,7 +24,7 @@ const KorKeyRecord = {
   last_edited_time: '수정일'
 } as const;
 
-const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
+export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
   const databaseRecord = useNotionStore.getState().databaseRecord;
   // useNotionStore((state) => state.databaseRecord, shallow);
   const database = databaseRecord[block.id];
@@ -91,6 +91,7 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
       }
     }
   };
+  const type = block.type as 'child_database';
   const hash = `${
     block?.child_database?.title.slice(0, URL_PAGE_TITLE_MAX_LENGTH) || ''
   }-${block.id.replaceAll('-', '')}`;
@@ -98,8 +99,8 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
 
   return (
     <div>
-      <HeadingContainer id={hash}>
-        <HeadingInner type={block.type as 'child_database'}>
+      <HeadingContainer id={hash} type={type}>
+        <HeadingInner type={type}>
           <div className='flex-auto mb-1'>
             <div className='flex items-center justify-between'>
               <p className='break-all'>
@@ -150,5 +151,3 @@ const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
     </div>
   );
 };
-
-export default ChildDatabase;

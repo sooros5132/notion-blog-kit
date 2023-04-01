@@ -11,7 +11,7 @@ export interface NotionSeoProps {
   slug: string;
 }
 
-const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, slug }) => {
+export const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, slug }) => {
   const url = page?.cover
     ? page?.cover?.type === 'external'
       ? page.cover.external?.url ?? ''
@@ -66,5 +66,3 @@ const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, slug })
     </>
   );
 };
-
-export default NotionSeo;

@@ -1,31 +1,27 @@
 export { HasChildrenRender as NotionHasChildrenRender } from './HasChildrenRender';
 export { BlocksRender as NotionBlocksRender } from './BlocksRender';
-export { default as NotionCalloutBlock } from './Callout';
-export { default as NotionChildDatabaseBlock } from './ChildDatabase';
+export { Callout as NotionCalloutBlock } from './Callout';
+export { ChildDatabase as NotionChildDatabaseBlock } from './ChildDatabase';
 export { Code as NotionCodeBlock } from './Code';
 export { ColumnList as NotionColumnListBlock } from './ColumnList';
-export {
-  default as NotionHeadingBlock,
-  HeadingInner as NotionHeadingInner,
-  CopyHeadingLink as NotionCopyHeadingLink
-} from './Heading';
+export { Heading as NotionHeadingBlock, CopyHeadingLink as NotionCopyHeadingLink } from './Heading';
 export { Image as NotionImageBlock } from './Image';
 export { LinkPreview as NotionLinkPreviewBlock } from './LinkPreview';
-export { default as NotionSecureImage } from './NotionSecureImage';
+export { NotionSecureImage } from './NotionSecureImage';
 export {
-  default as NotionParagraphBlock,
+  Paragraph as NotionParagraphBlock,
   ParagraphText as NotionParagraphText,
   notionColorClasses
 } from './Paragraph';
-export { default as NotionTableBlock } from './Table';
-export { default as NotionToggleBlock } from './Toggle';
-export { default as NotionVideoBlock } from './Video';
-export { default as NotionTodoBlock } from './Todo';
-export { default as NotionListBlock } from './List';
-export { default as NotionQuoteBlock } from './Quote';
-export { default as NotionSeo } from './NotionSeo';
-export { default as NotionPageHeader } from './NotionPageHeader';
-export { default as NotionSyncedBlock } from './Synced';
+export { Table as NotionTableBlock } from './Table';
+export { Toggle as NotionToggleBlock } from './Toggle';
+export { Video as NotionVideoBlock } from './Video';
+export { Todo as NotionTodoBlock } from './Todo';
+export { List as NotionListBlock } from './List';
+export { Quote as NotionQuoteBlock } from './Quote';
+export { NotionSeo } from './NotionSeo';
+export { NotionPageHeader } from './NotionPageHeader';
+export { Synced as NotionSyncedBlock } from './Synced';
 export { NotionDatabasePageView } from './DatabaseView';
-export { Equation as NotionEquation } from './Equation';
-export { File as NotionFile } from './File';
+export { Equation as NotionEquationBlock } from './Equation';
+export { File as NotionFileBlock } from './File';

@@ -65,7 +65,7 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
       <NotionSeo page={pageInfo} title={title} description={description} slug={slug} />
       <NotionPageHeader page={pageInfo} title={title} userInfo={userInfo} />
       <div className='max-w-[var(--article-max-width)] mx-auto mt-10 sm:px-4 lg:px-6'>
-        <div className={classNames(pageInfo.object === 'page' ? 'px-3 [&>*]:m-0.5' : null)}>
+        <div className={classNames(pageInfo.object === 'page' ? 'px-3' : null)}>
           {pageInfo.object === 'page' ? (
             <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
           ) : pageInfo.object === 'database' ? (
@@ -73,82 +73,9 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
               pageInfo={pageInfo}
               baseBlock={baseBlock as unknown as NotionDatabasesQuery}
             />
-          ) : // <NotionChildDatabaseBlock
-          //   //! key로 useState 초기화 + 리렌더링 강제유발
-          //   key={pageInfo.id}
-          //   //! key로 useState 초기화 + 리렌더링 강제유발
-          //   block={
-          //     {
-          //       ...pageInfo,
-          //       child_database: {
-          //         title: title
-          //       }
-          //     } as unknown as NotionBlock
-          //   }
-          // />
-          null}
+          ) : null}
         </div>
-        {/* {pageInfo?.id && <NotionHits pageInfo={pageInfo} />} */}
       </div>
-    </div>
-  );
-};
-
-const NotionHits: React.FC<{ pageInfo: INotionSearchObject }> = ({ pageInfo }) => {
-  return (
-    <div className='flex justify-end pt-5'>
-      {process.env.NODE_ENV === 'production' ? (
-        <img
-          src={`https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(
-            `/${pageInfo.id}`
-          )}&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false`}
-          alt='seeyoufarm'
-        />
-      ) : (
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          xmlnsXlink='http://www.w3.org/1999/xlink'
-          width='75'
-          height='20'
-        >
-          <linearGradient id='smooth' x2='0' y2='100%'>
-            <stop offset='0' stopColor='#bbb' stopOpacity='.1' />
-            <stop offset='1' stopOpacity='.1' />
-          </linearGradient>
-
-          <mask id='round'>
-            <rect width='75' height='20' rx='3' ry='3' fill='#fff' />
-          </mask>
-
-          <g mask='url(#round)'>
-            <rect width='30' height='20' fill='#555555' />
-            <rect x='30' width='45' height='20' fill='#79C83D' />
-            <rect width='75' height='20' fill='url(#smooth)' />
-          </g>
-
-          <g
-            fill='#fff'
-            textAnchor='middle'
-            fontFamily='Verdana,DejaVu Sans,Geneva,sans-serif'
-            fontSize='11'
-          >
-            <text x='16' y='15' fill='#010101' fillOpacity='.3'>
-              hits
-            </text>
-            <text x='16' y='14' fill='#fff'>
-              hits
-            </text>
-            <text x='51.5' y='15' fill='#010101' fillOpacity='.3'>
-              {' '}
-              1 / 1{' '}
-            </text>
-            <text x='51.5' y='14' fill='#fff'>
-              {' '}
-              1 / 1{' '}
-            </text>
-          </g>
-        </svg>
-      )}
     </div>
   );
 };

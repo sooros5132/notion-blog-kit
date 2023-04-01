@@ -12,7 +12,7 @@ interface VideoProps {
   block: NotionBlock;
 }
 
-const Video: React.FC<VideoProps> = ({ block }) => {
+export const Video: React.FC<VideoProps> = ({ block }) => {
   return (
     <>
       <NoSsrWrapper>
@@ -119,5 +119,3 @@ const EmbedVideo: React.FC<{ url: string }> = ({ url }) => {
     }
   }
 };
-
-export default Video;
