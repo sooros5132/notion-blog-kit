@@ -265,7 +265,7 @@ export interface NotionBlockItem
   bookmark: BookmarkObject;
   callout: RichTextObject & { icon: IconObject };
   quote: RichTextObject;
-  equation: RichTextObject;
+  equation: { expression: string };
   divider: RichTextObject;
   table_of_contents: RichTextObject;
   column: RichTextObject;

@@ -21,6 +21,7 @@ import {
   NotionParagraphText,
   NotionCodeBlock,
   NotionSyncedBlock,
+  NotionEquation,
   NotionFile
 } from '.';
 
@@ -89,6 +90,13 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({
             return (
               <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
                 <hr className='border-gray-500' />
+              </NotionHasChildrenRender>
+            );
+          }
+          case 'equation': {
+            return (
+              <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
+                <NotionEquation block={block} />
               </NotionHasChildrenRender>
             );
           }

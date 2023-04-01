@@ -27,4 +27,5 @@ export { default as NotionSeo } from './NotionSeo';
 export { default as NotionPageHeader } from './NotionPageHeader';
 export { default as NotionSyncedBlock } from './Synced';
 export { NotionDatabasePageView } from './DatabaseView';
+export { Equation as NotionEquation } from './Equation';
 export { File as NotionFile } from './File';
