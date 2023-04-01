@@ -29,10 +29,10 @@ export const Equation: React.FC<EquationProps> = ({ block }) => {
   }
 
   return (
-    <div className='group relative'>
+    <div className='group relative py-3 rounded-md hover:bg-base-content/10'>
       <div dangerouslySetInnerHTML={{ __html: katexRendered }} />
       <button
-        className='btn btn-xs absolute top-0 right-0 bg-base-content/20 border-none text-base-content cursor-pointer invisible hover:bg-base-content/30 group-hover:visible'
+        className='btn btn-xs absolute top-1 right-1 bg-base-content/20 border-none text-base-content cursor-pointer invisible hover:bg-base-content/30 group-hover:visible'
         onClick={handleClickCopyButton}
       >
         <BiCopy />
