@@ -4,6 +4,8 @@ import create from 'zustand';
 export interface NotionState {
   slug?: string;
   baseBlock?: INotionPage['block'];
+  userInfo?: INotionPage['userInfo'];
+  pageInfo?: INotionPage['pageInfo'];
   databaseRecord: Record<string, NotionDatabasesQuery>;
   childrenRecord: Record<string, NotionBlocks>;
 }

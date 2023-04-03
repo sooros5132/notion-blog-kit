@@ -2,7 +2,7 @@ import type React from 'react';
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import type { INotionSearchObject } from 'src/types/notion';
+import { INotionSearchObject, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 
 export interface NotionSeoProps {
   page: INotionSearchObject;
@@ -33,7 +33,7 @@ export const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, 
   return (
     <>
       <NextSeo
-        title={title?.slice(0, 60) || '제목 없음'}
+        title={title?.slice(0, URL_PAGE_TITLE_MAX_LENGTH) || 'Untitled'}
         description={description?.slice(0, 155)?.trim() || undefined}
         openGraph={{
           // url:

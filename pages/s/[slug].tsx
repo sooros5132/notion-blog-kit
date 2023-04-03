@@ -52,10 +52,27 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
   }
 
   const notionClient = new NotionClient();
-  const result = await notionClient.getSearchPagesByPageTitle({
-    filterType: 'page',
-    searchValue: slug
-  });
+  const [databaseResult, workspaceResult] = await Promise.all([
+    notionClient.getSearchPagesByDatabase({
+      direction: 'descending',
+      searchValue: slug
+    }),
+    notionClient.getSearchPagesByWorkspace({
+      direction: 'descending',
+      filter: 'page',
+      searchValue: slug
+    })
+  ]);
+
+  const resultRecord: Record<string, INotionSearchObject> = {};
+
+  for (const database of databaseResult) {
+    resultRecord[database.id] = database;
+  }
+  for (const workspace of workspaceResult) {
+    resultRecord[workspace.id] = workspace;
+  }
+  const result: Array<INotionSearchObject> = Object.values(resultRecord);
 
   return {
     props: {

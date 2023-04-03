@@ -4,7 +4,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import config from 'site-config';
 import { INotionSearchObject, INotionUserInfo, FileObject } from 'src/types/notion';
 import { NotionParagraphText, NotionSecureImage } from '.';
-import { ko as koLocale } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { notionTagColorClasses, Paragraph } from './Paragraph';
 import classNames from 'classnames';
 import { Fragment } from 'react';
@@ -35,17 +35,11 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
       <div
         className={classnames(
           'relative max-w-[var(--article-max-width)] mx-auto px-4 text-center sm:px-6 lg:px-10',
-          page?.cover
-            ? page.icon?.type === 'emoji'
-              ? 'mt-[-50px]'
-              : page.icon?.type === 'file'
-              ? 'mt-[-50px]'
-              : ''
-            : 'mt-[50px]',
-          !page?.cover && page.icon?.type === 'file' && 'pt-[20px]'
+          page?.cover ? (page.icon ? 'mt-[-50px]' : '') : 'mt-[50px]',
+          !page?.cover && page.icon && 'pt-[20px]'
         )}
       >
-        {page.icon?.file && page.icon?.type === 'file' && (
+        {page.icon?.type && page.icon?.type !== 'emoji' && (
           <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden [&>div]:h-full'>
             <NotionSecureImage
               blockId={page.id}
@@ -65,9 +59,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
         <div
           className={classnames(
             'mb-3 text-[40px] font-bold break-all',
-            Boolean(page?.cover) && ['emoji', 'file'].includes(page.icon?.type)
-              ? 'mt-[20px]'
-              : 'mt-[20px]'
+            Boolean(page?.cover) && Boolean(page.icon) ? 'mt-[20px]' : 'mt-[20px]'
           )}
         >
           <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
@@ -97,7 +89,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
             <span>
               {typeof page?.created_time === 'string' &&
                 `${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
-                  locale: koLocale
+                  locale: enUS
                 })}`}
             </span>
             <span>{Boolean(tags?.length) && ' | '}</span>

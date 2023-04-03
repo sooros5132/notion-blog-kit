@@ -3,22 +3,27 @@ import { formatDistance } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
 import config from 'site-config';
 import Link from 'next/link';
-import { useState, useMemo, memo, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { SiNotion } from 'react-icons/si';
-import { FileObject, NotionDatabase, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { FileObject, NotionDatabase } from 'src/types/notion';
 import isEqual from 'react-fast-compare';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
-import { ko as koLocale } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
+import { richTextToPlainText } from './utils';
+import { useNotionStore } from 'src/store/notion';
 
 export const ChildDatabaseItem: React.FC<{
   block: NotionDatabase;
   sortKey: 'created_time' | 'last_edited_time' | 'title';
 }> = memo(({ block, sortKey }) => {
+  const pageInfo = useNotionStore.getState().pageInfo;
   const [isMounted, setMounted] = useState(false);
-  const title = useMemo(
-    () => block?.properties?.title?.title?.map((t) => t?.plain_text).join('') || null,
-    [block?.properties?.title?.title]
+  const slug = richTextToPlainText(
+    block?.properties?.slug?.rich_text || block?.properties?.title?.title
   );
+  const parentDatabaseId = pageInfo?.parent.database_id?.replaceAll('-', '');
+  const href =
+    parentDatabaseId === config.notion.baseBlock ? `/${parentDatabaseId}/${slug}` : `/${slug}`;
 
   const date = isMounted
     ? formatDistance(
@@ -28,13 +33,13 @@ export const ChildDatabaseItem: React.FC<{
         ),
         utcToZonedTime(new Date(), config.TZ),
         {
-          locale: koLocale,
+          locale: enUS,
           addSuffix: true
         }
       )
     : (block?.created_time &&
         formatInTimeZone(new Date(block.created_time), config.TZ, 'yyyy-MM-dd', {
-          locale: koLocale
+          locale: enUS
         })) ??
       undefined;
 
@@ -66,15 +71,7 @@ export const ChildDatabaseItem: React.FC<{
     // }
     <div>
       <div className='rounded-xl min-w-[100px] bg-base-content/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
-        <Link
-          href={
-            title
-              ? `/${encodeURIComponent(
-                  title.slice(0, URL_PAGE_TITLE_MAX_LENGTH)
-                )}-${block.id.replaceAll('-', '')}`
-              : `/${block.id.replaceAll('-', '')}`
-          }
-        >
+        <Link href={href}>
           <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-base-content/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
             {block?.cover ? (
               <NotionSecureImage

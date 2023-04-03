@@ -4,8 +4,8 @@ try {
   if (!process.env.NOTION_API_SECRET_KEY) {
     throw 'NOTION_API_SECRET_KEY';
   }
-  if (!process.env.NEXT_PUBLIC_NOTION_BASE_BLOCK) {
-    throw 'NEXT_PUBLIC_NOTION_BASE_BLOCK';
+  if (!process.env.NEXT_PUBLIC_NOTION_DATABASE_ID) {
+    throw 'NEXT_PUBLIC_NOTION_DATABASE_ID';
   }
   if (!process.env.NEXT_PUBLIC_INFOMATION_BLOGNAME) {
     throw 'NEXT_PUBLIC_INFOMATION_BLOGNAME';

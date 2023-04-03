@@ -5,6 +5,7 @@ import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
 import { INotionPage } from 'src/types/notion';
 import { useNotionStore } from 'src/store/notion';
+import { useEffect } from 'react';
 
 interface HomeProps {
   slug: string;
@@ -14,6 +15,8 @@ const Home: NextPage<HomeProps> = ({ slug, page }) => {
   useNotionStore.setState({
     slug,
     baseBlock: page.block,
+    pageInfo: page.pageInfo,
+    userInfo: page.userInfo,
     childrenRecord: page?.block?.childrenRecord || {},
     databaseRecord: page?.block?.databaseRecord || {}
   });
@@ -25,16 +28,16 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
     const notionClient = new NotionClient();
 
-    const page = await notionClient
-      .getPageByPageId(config.notion.baseBlock)
-      .catch(async () => await notionClient.getDatabaseByDatabaseId(config.notion.baseBlock));
+    const database = await notionClient.getBlogMainPage({
+      databaseId: config.notion.baseBlock
+    });
 
     return {
       props: {
         slug: config.notion.baseBlock,
-        page
+        page: database
       },
-      revalidate: 600
+      revalidate: 120
     };
   } catch (e) {
     return {

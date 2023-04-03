@@ -1,7 +1,13 @@
 import axios from 'axios';
 import config from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import { FileObject, IconObject, INotionSearchObject, NotionBlock } from 'src/types/notion';
+import {
+  FileObject,
+  IconObject,
+  INotionSearchObject,
+  NotionBlock,
+  RichText
+} from 'src/types/notion';
 import useSWR, { SWRResponse } from 'swr';
 
 export type NotionImageFetcherParams = {
@@ -109,3 +115,10 @@ export const useRenewExpiredFile = ({
     }
   ) as SWRResponse<FileObject & IconObject>;
 };
+
+export function richTextToPlainText(richText?: Array<RichText>) {
+  if (!Array.isArray(richText)) {
+    return '';
+  }
+  return richText?.map((text) => text.plain_text.trim()).join('') || '';
+}

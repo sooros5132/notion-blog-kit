@@ -65,9 +65,9 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
           case 'callout': {
             return <NotionCalloutBlock key={`block-${block.id}-${i}`} block={block} />;
           }
-          case 'child_database': {
-            return <NotionChildDatabaseBlock key={`block-${block.id}-${i}`} block={block} />;
-          }
+          // case 'child_database': {
+          //   return <NotionChildDatabaseBlock key={`block-${block.id}-${i}`} block={block} />;
+          // }
           case 'code': {
             return (
               <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>

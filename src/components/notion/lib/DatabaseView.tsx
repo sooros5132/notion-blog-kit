@@ -7,14 +7,14 @@ import {
   FileObject,
   INotionSearchObject,
   NotionDatabase,
-  NotionDatabasesQuery,
-  URL_PAGE_TITLE_MAX_LENGTH
+  NotionDatabasesQuery
 } from 'src/types/notion';
 import { NotionSecureImage } from '.';
 import config from 'site-config';
 import Link from 'next/link';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { notionTagColorClasses } from './Paragraph';
+import { richTextToPlainText } from './utils';
 
 type NotionDatabasePageViewProps = {
   baseBlock: NotionDatabasesQuery;
@@ -48,7 +48,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
     }
     setFilterKey(key);
     const newFilterdBlocks = baseBlock.results.filter(
-      (block) => block.properties.category?.select.name === key
+      (block) => block.properties.category?.select?.name === key
     );
     setFilterdBlocks(newFilterdBlocks);
   };
@@ -79,7 +79,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
       return {};
     }
     const categorys = baseBlock.results.reduce<Record<string, number>>((prev, current) => {
-      const name = current.properties.category?.select.name;
+      const name = current.properties.category?.select?.name;
       if (!name) {
         return prev;
       }
@@ -145,25 +145,17 @@ type ArticleSummaryProps = {
 };
 
 const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
-  const { id, created_time, properties, icon, cover } = article;
-  const { category: categoryProperty, tags, title: titleProperty } = properties;
+  const { id, properties, icon, cover } = article;
+  const { category: categoryProperty, tags, publishedAt, rank, thumbnail, updatedAt } = properties;
   const haveTagProperty = tags?.type === 'multi_select';
 
   const category = categoryProperty?.select ? categoryProperty.select.name : null;
-  const title = titleProperty?.title
-    ? titleProperty.title.map((text) => text?.plain_text).join('') || null
-    : null;
+  const title = richTextToPlainText(properties?.title?.title);
+  const slug = richTextToPlainText(properties?.slug?.rich_text);
 
   return (
     <Link
-      href={
-        title
-          ? `/${encodeURIComponent(title.slice(0, URL_PAGE_TITLE_MAX_LENGTH))}-${id.replaceAll(
-              '-',
-              ''
-            )}`
-          : `/${id.replaceAll('-', '')}`
-      }
+      href={`/${encodeURIComponent(slug)}`}
       className='[&_.cover-image]:hover:brightness-110 [&_.cover-image>div]:transition-transform [&_.cover-image>div]:duration-[400ms] [&_.cover-image>div]:hover:scale-[1.1]'
     >
       <div className='w-full flex flex-col bg-base-content/5 shadow-md overflow-hidden rounded-md isolate sm:flex-row'>
@@ -171,7 +163,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
           {cover ? (
             <NotionSecureImage
               blockId={id}
-              blockType={'page'}
+              blockType={article.object}
               useType={'cover'}
               initialFileObject={cover}
               alt={'page-cover'}
@@ -182,7 +174,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
             ) : icon?.file ? (
               <NotionSecureImage
                 blockId={id}
-                blockType={'page'}
+                blockType={article.object}
                 useType={'icon'}
                 initialFileObject={icon as FileObject}
                 alt={'page-icon'}
@@ -224,9 +216,9 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
                 ))}
             </div>
             <div>
-              {created_time && (
+              {publishedAt?.date?.start && (
                 <div className='flex-auto grow-0 shrink-0 text-zinc-500'>
-                  {formatInTimeZone(new Date(created_time), config.TZ, 'yyyy-MM-dd')}
+                  {formatInTimeZone(new Date(publishedAt.date.start), config.TZ, 'yyyy-MM-dd')}
                 </div>
               )}
             </div>

@@ -1,11 +1,11 @@
 import type React from 'react';
 import classnames from 'classnames';
 import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import type { NotionBlock } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
+import { richTextToPlainText } from './utils';
 
 export type HeadingType = 'heading_1' | 'heading_2' | 'heading_3' | 'child_database' | 'normal';
 export interface HeadingContainerProps {
@@ -84,8 +84,8 @@ export const Heading: React.FC<HeadingProps> = ({ block }) => {
   const pathname = usePathname();
 
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
-  const hash = block.id.replaceAll('-', '');
-  const href = useMemo(() => `${pathname?.replace(/#.*/, '')}#${hash}`, [hash, pathname]);
+  const hash = richTextToPlainText(block[type].rich_text) + '-' + block.id.slice(0, 6);
+  const href = encodeURIComponent(hash);
   const toggleableHeading = block.has_children;
 
   const headingEl = (
@@ -93,14 +93,14 @@ export const Heading: React.FC<HeadingProps> = ({ block }) => {
       blockId={block.id}
       richText={block[type].rich_text}
       color={block[type].color}
-      headingLink={href}
+      headingLink={`#${href}`}
     />
   );
 
   if (toggleableHeading) {
     return (
-      <HeadingContainer id={hash} type={type}>
-        <details id={hash}>
+      <HeadingContainer id={href} type={type}>
+        <details>
           <summary className='[&>*]:inline [&>*>*]:inline'>
             <HeadingInner type={type}>{headingEl}</HeadingInner>
           </summary>

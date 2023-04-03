@@ -1,4 +1,6 @@
 import { Client, LogLevel } from '@notionhq/client';
+import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
+import config from 'site-config';
 import {
   INotionPage,
   INotionSearch,
@@ -18,7 +20,7 @@ type BlocksParams = {
 
 type SearchParams = {
   searchValue: string;
-  filterType: 'page' | 'database';
+  filter?: 'page' | 'database';
   direction?: 'ascending' | 'descending';
 };
 
@@ -120,7 +122,9 @@ export class NotionClient {
       switch (block.type) {
         case 'child_database': {
           moreFetch.push(
-            this.getPagesInDatabaseByDatabaseId(block.id)
+            this.getPagesInDatabaseByDatabaseId({
+              id: block.id
+            })
               .then((database) => {
                 databaseRecord[block.id] = database as NotionDatabasesQuery;
               })
@@ -145,7 +149,9 @@ export class NotionClient {
       for (const block of children.results) {
         if (block.type === 'child_database') {
           childDatabaseFetching.push(
-            this.getPagesInDatabaseByDatabaseId(block.id)
+            this.getPagesInDatabaseByDatabaseId({
+              id: block.id
+            })
               .then((database) => {
                 databaseRecord[block.id] = database as NotionDatabasesQuery;
               })
@@ -165,26 +171,52 @@ export class NotionClient {
     return blocks;
   }
 
-  async getPagesInDatabaseByDatabaseId(id: string) {
+  async getPagesInDatabaseByDatabaseId(querys: {
+    id: string;
+    pageSize?: number;
+    startCursor?: string;
+  }) {
     const database = (await this.notion.databases.query({
-      database_id: id
+      database_id: querys.id,
+      start_cursor: querys.startCursor,
+      page_size: querys.pageSize
     })) as NotionDatabasesQuery;
-
-    // checkbox 속성이 없거나 checkbox가 true인 경우.
-    const filterdBlocks = database.results.filter(
-      (block) =>
-        block.properties?.isPublished?.type !== 'checkbox' ||
-        block.properties?.isPublished?.checkbox === true
-    );
-    database.results = filterdBlocks;
 
     return database;
   }
 
-  async getDatabaseInfoByBlockId(databaseId: string) {
+  async getAllPageInDatabase(querys: {
+    databaseId: string;
+    filter?: QueryDatabaseParameters['filter'];
+    sorts?: QueryDatabaseParameters['sorts'];
+  }) {
+    let database = {} as NotionDatabasesQuery;
+    const blocks: NotionDatabasesQuery['results'] = [];
+
+    do {
+      const getDatabase = (await this.notion.databases.query({
+        database_id: querys.databaseId,
+        sorts: querys.sorts,
+        filter: querys.filter,
+        start_cursor: database?.next_cursor || undefined
+      })) as NotionDatabasesQuery;
+
+      if (!getDatabase) {
+        break;
+      }
+      database = getDatabase;
+      if (getDatabase.results?.length) {
+        blocks.push(...getDatabase.results);
+      }
+    } while (database.has_more && database.next_cursor);
+
+    return database;
+  }
+
+  async getDatabaseInfo(querys: { databaseId: string }) {
     const blockInfo = (await this.notion.databases
       .retrieve({
-        database_id: databaseId
+        database_id: querys.databaseId
       })
       .catch(() => null)) as INotionSearchObject;
 
@@ -200,75 +232,88 @@ export class NotionClient {
     return blockInfo;
   }
 
-  async getSearchPagesByPageId({ searchValue, filterType, direction }: SearchParams) {
-    const search = await this.notion.search({
-      query: searchValue,
-      sort: direction
-        ? {
-            direction: direction,
-            timestamp: 'last_edited_time'
-          }
-        : undefined,
-      filter: {
-        value: filterType,
-        property: 'object'
-      }
-    });
-
-    return search as unknown as INotionSearch;
-  }
-
-  async getSearchPagesByPageTitle({ searchValue, filterType, direction }: SearchParams) {
+  async getSearchPagesByDatabase({ searchValue, direction }: SearchParams) {
     const results: INotionSearch['results'] = [];
     let start_cursor: undefined | string;
 
     do {
-      await this.notion
-        .search({
-          sort: direction
-            ? {
-                direction: direction,
-                timestamp: 'last_edited_time'
-              }
-            : undefined,
-          filter: filterType
-            ? {
-                value: filterType,
-                property: 'object'
-              }
-            : undefined,
-          start_cursor
-        })
-        .then(async (res) => {
-          if (Array.isArray(res?.results) && res.results.length > 0) {
-            results.push(...(res.results as INotionSearchObject[]));
+      const search = await this.notion.databases.query({
+        database_id: config.notion.baseBlock,
+        filter: {
+          property: 'title',
+          title: {
+            contains: searchValue
           }
-          start_cursor = res.next_cursor || undefined;
-        });
+        },
+        sorts: direction
+          ? [
+              {
+                direction,
+                timestamp: 'created_time'
+              }
+            ]
+          : undefined,
+        start_cursor
+      });
+
+      if (Array.isArray(search?.results) && search.results.length > 0) {
+        results.push(...(search.results as INotionSearchObject[]));
+      }
+      start_cursor = search.next_cursor || undefined;
     } while (start_cursor);
 
-    const filteredResults = results.filter((search) => {
-      if (search?.properties?.isPublished?.checkbox === false) {
-        return false;
-      }
-      const title = search?.properties.title?.title
-        ?.map((t) => t?.plain_text)
-        ?.join('')
-        .replaceAll(' ', '');
-
-      if (title) {
-        return new RegExp(searchValue.replaceAll(' ', ''), 'mgi').test(title);
-      }
-      return false;
-    });
+    const filteredResults = results.filter(
+      (search) =>
+        search?.properties?.publishedAt?.type !== 'date' ||
+        (search?.properties?.publishedAt?.type === 'date' &&
+          search?.properties?.publishedAt?.date?.start)
+    );
 
     return filteredResults;
   }
 
-  async getPageInfoByPageId(pageId: string) {
+  async getSearchPagesByWorkspace({ searchValue, filter, direction }: SearchParams) {
+    const results: INotionSearch['results'] = [];
+    let start_cursor: undefined | string;
+
+    do {
+      const search = await this.notion.search({
+        query: searchValue,
+        filter: filter
+          ? {
+              property: 'object',
+              value: filter
+            }
+          : undefined,
+        sort: direction
+          ? {
+              direction,
+              timestamp: 'last_edited_time'
+            }
+          : undefined,
+        start_cursor
+      });
+
+      if (Array.isArray(search?.results) && search.results.length > 0) {
+        results.push(...(search.results as INotionSearchObject[]));
+      }
+      start_cursor = search.next_cursor || undefined;
+    } while (start_cursor);
+
+    const filteredResults = results.filter(
+      (search) =>
+        search?.properties?.publishedAt?.type !== 'date' ||
+        (search?.properties?.publishedAt?.type === 'date' &&
+          search?.properties?.publishedAt?.date?.start)
+    );
+
+    return filteredResults;
+  }
+
+  async getPageInfo(querys: { pageId: string }) {
     const pageInfo = await this.notion.pages
       .retrieve({
-        page_id: pageId
+        page_id: querys.pageId
       })
       .catch(() => null);
 
@@ -307,7 +352,7 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const newestPageInfo = await this.getPageInfoByPageId(blockId);
+      const newestPageInfo = await this.getPageInfo({ pageId: blockId });
 
       if (page.pageInfo.last_edited_time === newestPageInfo.last_edited_time) {
         if (process.env.NODE_ENV === 'development') {
@@ -320,7 +365,7 @@ export class NotionClient {
     } catch (e) {
       const [blocksAndChildrens, pageInfo] = await Promise.all([
         this.getAllBlocksAndChildrens(blockId),
-        this.getPageInfoByPageId(blockId)
+        this.getPageInfo({ pageId: blockId })
       ]);
       const userInfo = await this.getUserInfoByUserId(pageInfo.created_by.id);
 
@@ -330,24 +375,44 @@ export class NotionClient {
         userInfo
       };
 
-      if (process.env.VERCEL !== '1') {
-        notionCache.set(blockId, {
-          cachedTime: Date.now(),
-          ...page
-        });
-      }
+      this.setCache(blockId, {
+        cachedTime: Date.now(),
+        ...page
+      });
 
       return page;
     }
   }
-  async getDatabaseByDatabaseId(blockId: string): Promise<INotionPage> {
+  async getAllPublishedPageInDatabase(querys: { databaseId: string }) {
+    const databaseId = querys.databaseId;
+    const database = await this.getAllPageInDatabase({
+      databaseId,
+      filter: {
+        property: 'publishedAt',
+        date: {
+          is_not_empty: true
+        }
+      },
+      sorts: [
+        {
+          property: 'publishedAt',
+          direction: 'descending'
+        }
+      ]
+    });
+
+    return database;
+  }
+
+  async getBlogMainPage(querys: { databaseId: string }): Promise<INotionPage> {
+    const databaseId = querys.databaseId;
     const NO_CACHED = 'no cached';
     try {
-      const exists = notionCache.exists(blockId);
+      const exists = this.existsCache(databaseId);
       if (!exists) {
         throw NO_CACHED;
       }
-      const cachePage = notionCache.get(blockId);
+      const cachePage = this.getCache(databaseId);
       if (!cachePage) {
         throw NO_CACHED;
       }
@@ -364,41 +429,79 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const newestPageInfo = await this.getDatabaseInfoByBlockId(blockId);
+      const newestPageInfo = await this.getDatabaseInfo({ databaseId: databaseId });
 
       if (page.pageInfo.last_edited_time === newestPageInfo.last_edited_time) {
         if (process.env.NODE_ENV === 'development') {
           console.log('\x1b[37m\x1b[42m');
-          console.log(`is cached database \`${blockId}\``, '\x1b[0m');
+          console.log(`is cached database \`${databaseId}\``, '\x1b[0m');
         }
         return page;
       }
       throw NO_CACHED;
     } catch (e) {
-      const [blocksAndChildrens, pageInfo] = await Promise.all([
-        this.getPagesInDatabaseByDatabaseId(blockId),
-        this.getDatabaseInfoByBlockId(blockId)
+      const [database, pageInfo] = await Promise.all([
+        this.getAllPublishedPageInDatabase({ databaseId }),
+        this.getDatabaseInfo({ databaseId })
       ]);
       const userInfo = await this.getUserInfoByUserId(pageInfo.created_by.id);
 
-      const page: INotionPage = {
+      const page = {
         block: {
-          ...blocksAndChildrens,
+          ...database,
           childrenRecord: {},
-          databaseRecord: { [pageInfo.id]: blocksAndChildrens }
+          databaseRecord: { [databaseId]: database }
         } as unknown as NotionBlockAndChilrens,
         pageInfo,
         userInfo
       };
 
-      if (process.env.VERCEL !== '1') {
-        notionCache.set(blockId, {
-          cachedTime: Date.now(),
-          ...page
-        });
-      }
+      this.setCache(databaseId, {
+        cachedTime: Date.now(),
+        ...page
+      });
 
       return page;
+    }
+  }
+
+  async searchSlug(querys: { slug: string; property: string }) {
+    const search = await this.notion.databases
+      .query({
+        database_id: config.notion.baseBlock,
+        filter: {
+          property: querys.property,
+          rich_text: {
+            equals: querys.slug
+          }
+        },
+        sorts: [
+          {
+            property: 'publishedAt',
+            direction: 'descending'
+          }
+        ]
+      })
+      .then((res) => res.results?.[0] || null);
+
+    return search;
+  }
+
+  existsCache(blockId: string) {
+    if (process.env.VERCEL !== '1') {
+      return notionCache.exists(blockId);
+    }
+  }
+
+  getCache(blockId: string) {
+    if (process.env.VERCEL !== '1') {
+      return notionCache.get(blockId);
+    }
+  }
+
+  setCache(blockId: string, content: any) {
+    if (process.env.VERCEL !== '1') {
+      notionCache.set(blockId, content);
     }
   }
 }

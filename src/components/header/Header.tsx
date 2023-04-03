@@ -46,7 +46,10 @@ const Header: React.FC = (): JSX.Element => {
               config.headerNav.length > 0 &&
               config.headerNav.map((item, i) => (
                 <li key={`header-nav-item-${i}`}>
-                  <Link href={`/${item.slug}`} className='btn-sm rounded-lg h-full py-1 px-2'>
+                  <Link
+                    href={`/${encodeURIComponent(item.slug)}`}
+                    className='btn-sm rounded-lg h-full py-1 px-2'
+                  >
                     {item.name}
                   </Link>
                 </li>

@@ -199,7 +199,13 @@ export declare type MentionObject = {
   type: 'user' | 'page' | 'database' | 'date' | 'link_preview';
 };
 
-export interface FileObject {
+export type DateObject = {
+  end: string | null;
+  start: string | null;
+  time_zone: string | null;
+};
+
+export type FileObject = {
   type: 'external' | 'file';
   external?: {
     url: string;
@@ -208,32 +214,32 @@ export interface FileObject {
     url: string;
     expiry_time: string;
   };
-}
+};
 
-interface CaptionObject {
+export type CaptionObject = {
   caption: Array<RichText>;
-}
+};
 
-interface BookmarkObject {
+export type BookmarkObject = {
   caption: Array<RichText>;
   url: string;
-}
+};
 
-interface TableObject {
+export type TableObject = {
   table_width: number;
   has_column_header: boolean;
   has_row_header: boolean;
-}
+};
 
-interface TableRowObject {
+export type TableRowObject = {
   cells: Array<Array<RichText>>;
-}
+};
 
-interface TodoObject {
+export type TodoObject = {
   rich_text: Array<RichText>;
   checked: boolean;
   color: Color;
-}
+};
 
 export interface NotionBlockItem
   extends Record<
@@ -347,47 +353,58 @@ export interface Property {
 }
 
 export interface PropertiesForPageInfo extends Partial<Record<PropertyType | string, any>> {
-  tags?: Property & {
-    multi_select?: Array<MultiSelect>;
-  };
   title?: Property & {
     title?: Array<RichText>;
   };
-  isPublished?: Property & {
-    checkbox?: boolean;
-  };
-  createdAt?: Property & {
-    created_time?: string;
-  };
-  updatedAt?: Property & {
-    last_edited_time?: string;
-  };
   category?: Property & {
-    type: 'select';
-    select: {
+    select?: {
       options: Array<Select>;
     };
   };
-}
-export interface Properties extends Partial<Record<PropertyType | string, any>> {
   tags?: Property & {
     multi_select?: Array<MultiSelect>;
   };
+  publishedAt?: Property & {
+    date?: DateObject;
+  };
+  rank?: Property & {
+    number?: number;
+  };
+  slug?: Property & {
+    rich_text?: Array<RichText>;
+  };
+  thumbnail?: Property & {
+    files?: Array<FileObject>;
+  };
+  updatedAt?: Property & {
+    date?: DateObject;
+  };
+}
+export interface Properties extends Partial<Record<PropertyType | string, any>> {
   title?: Property & {
     title?: Array<RichText>;
   };
-  isPublished?: Property & {
-    checkbox?: boolean;
+  category?: Property & {
+    type?: 'select';
+    select?: Select;
   };
-  createdAt?: Property & {
-    created_time?: string;
+  tags?: Property & {
+    multi_select?: Array<MultiSelect>;
+  };
+  publishedAt?: Property & {
+    date?: DateObject;
+  };
+  rank?: Property & {
+    number?: number;
+  };
+  slug?: Property & {
+    rich_text?: Array<RichText>;
+  };
+  thumbnail?: Property & {
+    files?: Array<FileObject>;
   };
   updatedAt?: Property & {
-    last_edited_time?: string;
-  };
-  category?: Property & {
-    type: 'select';
-    select: Select;
+    date?: DateObject;
   };
 }
 
@@ -411,6 +428,7 @@ export interface NotionDatabase {
   archived?: boolean | null;
   is_inline?: boolean | null;
 }
+
 export interface NotionDatabasesQuery {
   object: 'list'; // Always "list".
   results: Array<NotionDatabase>;
@@ -433,8 +451,9 @@ export interface ParentObject {
 }
 
 export interface IconObject {
-  type: 'emoji' | 'file';
+  type: 'emoji' | 'file' | 'external';
   file?: FileObject['file'];
+  external?: FileObject['external'];
   emoji?: EmojiObject['emoji'];
 }
 

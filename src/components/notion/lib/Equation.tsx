@@ -26,7 +26,7 @@ export const Equation: React.FC<EquationProps> = ({ block }) => {
 
   return (
     <CopyButtonWrapper content={expression}>
-      <div className='py-3 rounded-md group-hover:bg-base-content/5'>
+      <div className='py-3 rounded-md text-lg group-hover:bg-base-content/5'>
         <div dangerouslySetInnerHTML={{ __html: katexRendered }} />
       </div>
     </CopyButtonWrapper>
