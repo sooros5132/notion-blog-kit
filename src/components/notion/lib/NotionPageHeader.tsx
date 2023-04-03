@@ -5,7 +5,7 @@ import config from 'site-config';
 import { INotionSearchObject, INotionUserInfo, FileObject } from 'src/types/notion';
 import { NotionParagraphText, NotionSecureImage } from '.';
 import { ko as koLocale } from 'date-fns/locale';
-import { notionTagColorClasses } from './Paragraph';
+import { notionTagColorClasses, Paragraph } from './Paragraph';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 
@@ -16,7 +16,6 @@ export interface NotionPageHeaderProps {
 }
 
 export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
-  const description = page.description?.map((richText) => richText.plain_text).join() || null;
   const tags = page?.properties?.tags?.multi_select;
 
   return (
@@ -73,9 +72,9 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
         >
           <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
         </div>
-        {description && (
+        {page.description && (
           <div className='mb-2 text-zinc-500'>
-            <NotionParagraphText>{description}</NotionParagraphText>
+            <Paragraph richText={page.description} blockId={page.id} />
           </div>
         )}
         {page?.object !== 'database' && (
