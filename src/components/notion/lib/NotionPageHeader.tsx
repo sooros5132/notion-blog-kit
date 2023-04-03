@@ -50,7 +50,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
           <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden [&>div]:h-full'>
             <NotionSecureImage
               blockId={page.id}
-              blockType={'page'}
+              blockType={page.object}
               useType={'icon'}
               initialFileObject={page?.icon as FileObject}
               alt={'page-icon'}
