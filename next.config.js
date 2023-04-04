@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
+const withPWA = require('next-pwa');
+const isProduction = process.env.NODE_ENV === 'production';
+const debugLogs = Boolean(process.env.DEBUG_LOGS);
 
 try {
   if (!process.env.NOTION_API_SECRET_KEY) {
@@ -51,4 +55,9 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+module.exports = withPWA({
+  dest: 'public',
+  disable: !isProduction,
+  disableDevLogs: debugLogs,
+  runtimeCaching: []
+})(nextConfig);

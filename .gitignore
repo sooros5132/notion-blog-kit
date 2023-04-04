@@ -37,4 +37,7 @@ yarn-error.log*
 
 # notion block cache
 /lib/notion/cache/*
-!/lib/notion/cache/cache.js
+
+# pwa service worker
+public/sw.js*
+public/workbox-*.js*

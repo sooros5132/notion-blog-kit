@@ -50,17 +50,67 @@ export const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, 
         }}
       />
       <Head>
-        {icon && (
-          <link rel='apple-touch-icon' href={icon.includes('?') ? icon + '&width=192' : icon} />
-        )}
-        {icon && (
-          <link rel='shortcut icon' href={icon.includes('?') ? icon + '&width=256' : icon} />
-        )}
-        {page.icon?.emoji && page.icon?.type === 'emoji' && (
-          <link
-            rel='shortcut icon'
-            href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${page.icon.emoji}</text></svg>`}
-          />
+        {icon ? (
+          <>
+            <link rel='apple-touch-icon' href={icon.includes('?') ? icon + '&width=192' : icon} />
+            <link
+              rel='icon'
+              type='image/png'
+              sizes='16x16'
+              href={icon.includes('?') ? icon + '&width=16' : icon}
+            />
+            <link
+              rel='icon'
+              type='image/png'
+              sizes='32x32'
+              href={icon.includes('?') ? icon + '&width=32' : icon}
+            />
+            <link
+              rel='icon'
+              type='image/png'
+              sizes='192x192'
+              href={icon.includes('?') ? icon + '&width=192' : icon}
+            />
+            <link
+              rel='shortcut icon'
+              type='image/png'
+              sizes='256x256'
+              href={icon.includes('?') ? icon + '&width=256' : icon}
+            />
+            <link
+              rel='icon'
+              type='image/png'
+              sizes='512x512'
+              href={icon.includes('?') ? icon + '&width=512' : icon}
+            />
+          </>
+        ) : page.icon?.emoji && page.icon?.type === 'emoji' ? (
+          <>
+            <link
+              rel='apple-touch-icon'
+              sizes='192x192'
+              href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${page.icon.emoji}</text></svg>`}
+            />
+            <link
+              rel='shortcut icon'
+              href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${page.icon.emoji}</text></svg>`}
+            />
+            <link
+              rel='icon'
+              type='image/png'
+              sizes='512x512'
+              href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${page.icon.emoji}</text></svg>`}
+            />
+          </>
+        ) : (
+          <>
+            <meta name='msapplication-TileImage' content='/icon-144x144.png' />
+            <link rel='apple-touch-icon' sizes='192x192' href='/icon-192x192.png' />
+            <link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png' />
+            <link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png' />
+            <link rel='icon' type='image/png' sizes='192x192' href='/icon-192x192.png' />
+            <link rel='icon' type='image/png' sizes='512x512' href='/icon-512x512.png' />
+          </>
         )}
       </Head>
     </>
