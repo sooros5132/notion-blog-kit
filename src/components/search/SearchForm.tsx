@@ -57,9 +57,13 @@ export const SearchForm: React.FC<SearchFormProps> = ({
             defaultValue={searchValue}
             type='text'
             name='search'
-            placeholder='제목 검색'
+            placeholder='Title'
+            aria-label='search-input'
           />
-          <button className='btn btn-sm btn-ghost btn-circle sm:btn-square text-lg'>
+          <button
+            className='btn btn-sm btn-ghost btn-circle sm:btn-square text-lg'
+            aria-label='search-button'
+          >
             <AiOutlineSearch />
           </button>
         </div>

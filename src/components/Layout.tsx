@@ -30,8 +30,8 @@ function Layout({ children }: PropsWithChildren) {
   return (
     <div className='flex flex-col min-h-screen bg-base-100'>
       <Head>
-        <meta name='msapplication-TileColor' content={mode === 'dark' ? '#131211' : '#f3f4f6'} />
-        <meta name='theme-color' content={mode === 'dark' ? '#131211' : '#f3f4f6'} />
+        <meta name='msapplication-TileColor' content={mode === 'dark' ? '#313335' : '#f3f4f6'} />
+        <meta name='theme-color' content={mode === 'dark' ? '#313335' : '#f3f4f6'} />
       </Head>
       <NextNProgress startPosition={0.2} />
       <Header />

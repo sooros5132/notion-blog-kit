@@ -19,6 +19,15 @@ class CustomDocument extends Document {
     if(mode){
       document.documentElement.dataset.theme = mode;
       document.documentElement.classList.add(mode);
+
+      const themeColor = mode === 'dark' ? '#313335' : '#f3f4f6'
+      
+      const themeColorEl = document.querySelector('meta[name=theme-color]')
+      if(themeColorEl) themeColorEl.content = themeColor;
+
+      const msThemeColorEl = document.querySelector('meta[name=msapplication-TileColor]')
+      if(msThemeColorEl) msThemeColorEl.content = themeColor;
+
       return;
     }
   }

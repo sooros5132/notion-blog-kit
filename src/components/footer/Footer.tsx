@@ -10,17 +10,27 @@ const Footer: React.FC = (): JSX.Element => {
         <div className='text-2xl font-bold'>{config.infomation.blogname}</div>
         <div className='flex items-center gap-2 text-2xl'>
           {config.infomation.email && (
-            <a href={'mailto:' + config.infomation.email}>
+            <a href={'mailto:' + config.infomation.email} aria-label='send mail link'>
               <SiMaildotru />
             </a>
           )}
           {config.infomation.github && (
-            <a href={config.infomation.github} rel='noreferrer' target='_blank'>
+            <a
+              href={config.infomation.github}
+              rel='noreferrer'
+              target='_blank'
+              aria-label='visit github'
+            >
               <SiGithub />
             </a>
           )}
           {config.infomation.repository && (
-            <a href={config.infomation.repository} rel='noreferrer' target='_blank'>
+            <a
+              href={config.infomation.repository}
+              rel='noreferrer'
+              target='_blank'
+              aria-label='visit repository'
+            >
               <RiGitRepositoryFill />
             </a>
           )}

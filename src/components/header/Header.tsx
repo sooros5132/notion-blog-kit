@@ -64,7 +64,7 @@ const Header: React.FC = (): JSX.Element => {
             className='swap swap-rotate btn btn-circle btn-ghost btn-sm text-lg items-center'
             onClickCapture={handleClickThemeSwap}
           >
-            <input type='checkbox' />
+            <input type='checkbox' aria-label='theme-mode-toggle' />
             <HiSun key='light' className={classNames(mode === 'dark' ? 'swap-on' : 'swap-off')} />
             <HiMoon key='dark' className={classNames(mode === 'light' ? 'swap-on' : 'swap-off')} />
           </label>
