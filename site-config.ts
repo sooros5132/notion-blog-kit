@@ -28,5 +28,6 @@ export const NEXT_IMAGE_DOMAINS = [
   'www.notion.so',
   'notion.so',
   's3.us-west-2.amazonaws.com',
-  's3-us-west-2.amazonaws.com'
+  's3-us-west-2.amazonaws.com',
+  'images.unsplash.com'
 ];

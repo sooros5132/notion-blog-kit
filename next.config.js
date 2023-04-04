@@ -34,7 +34,8 @@ const nextConfig = {
       'www.notion.so',
       'notion.so',
       's3.us-west-2.amazonaws.com',
-      's3-us-west-2.amazonaws.com'
+      's3-us-west-2.amazonaws.com',
+      'images.unsplash.com'
     ],
     formats: ['image/avif', 'image/webp'],
     dangerouslyAllowSVG: true,
