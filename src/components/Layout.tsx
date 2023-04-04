@@ -3,12 +3,12 @@ import { useThemeStore } from 'src/store/theme';
 import Header from './header/Header';
 import Footer from './footer/Footer';
 import NextNProgress from 'nextjs-progressbar';
-import { useEffect } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import Head from 'next/head';
 
 export const introductionPathnameList = ['/'];
 
-function Layout({ children }: any) {
+function Layout({ children }: PropsWithChildren) {
   const mode = useThemeStore((state) => state.mode);
 
   // React.useEffect(() => {
@@ -35,7 +35,7 @@ function Layout({ children }: any) {
       </Head>
       <NextNProgress startPosition={0.2} />
       <Header />
-      <main className='flex flex-col mb-auto'>{children}</main>
+      <main className='flex flex-col mb-auto text-base-content'>{children}</main>
       <Footer />
     </div>
   );
