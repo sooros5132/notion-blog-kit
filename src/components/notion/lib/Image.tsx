@@ -14,7 +14,7 @@ export const Image: React.FC<ImageProps> = ({ block }) => {
         .slice(0, 100) || ''
     : '';
   return (
-    <figure>
+    <figure className='my-0.5'>
       <NotionSecureImage
         blockId={block.id}
         blockType='image'
