@@ -35,7 +35,7 @@ export class NotionClient {
 
     this.notion = new Client({
       auth: process.env.NOTION_API_SECRET_KEY,
-      logLevel: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : undefined
+      logLevel: process.env.DEBUG_LOGS ? LogLevel.DEBUG : undefined
     });
   }
 
@@ -331,16 +331,18 @@ export class NotionClient {
   async getPageByPageId(blockId: string): Promise<INotionPage> {
     const NO_CACHED = 'no cached';
     try {
-      const exists = notionCache.exists(blockId);
+      const exists = await this.accessCache(blockId);
+
       if (!exists) {
         throw NO_CACHED;
       }
-      const cachePage = notionCache.get(blockId) as INotionPage;
+
+      const cachePage = await this.getCache(blockId);
       if (!cachePage) {
         throw NO_CACHED;
       }
 
-      const { cachedTime, ...page } = (cachePage || {}) as INotionPage & { cachedTime: string };
+      const { cachedTime, ...page } = cachePage;
       if (!page?.pageInfo?.last_edited_time) {
         throw NO_CACHED;
       }
@@ -355,10 +357,6 @@ export class NotionClient {
       const newestPageInfo = await this.getPageInfo({ pageId: blockId });
 
       if (page.pageInfo.last_edited_time === newestPageInfo.last_edited_time) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('\x1b[37m\x1b[42m');
-          console.log(`is cached post \`${blockId}\``, '\x1b[0m');
-        }
         return page;
       }
       throw NO_CACHED;
@@ -375,7 +373,7 @@ export class NotionClient {
         userInfo
       };
 
-      this.setCache(blockId, {
+      await this.setCache(blockId, {
         cachedTime: Date.now(),
         ...page
       });
@@ -408,16 +406,17 @@ export class NotionClient {
     const databaseId = querys.databaseId;
     const NO_CACHED = 'no cached';
     try {
-      const exists = this.existsCache(databaseId);
+      const exists = await this.accessCache(databaseId);
       if (!exists) {
         throw NO_CACHED;
       }
-      const cachePage = this.getCache(databaseId);
+
+      const cachePage = await this.getCache(databaseId);
       if (!cachePage) {
         throw NO_CACHED;
       }
 
-      const { cachedTime, ...page } = (cachePage || {}) as INotionPage & { cachedTime: string };
+      const { cachedTime, ...page } = cachePage;
       if (!page?.pageInfo?.last_edited_time) {
         throw NO_CACHED;
       }
@@ -432,10 +431,6 @@ export class NotionClient {
       const newestPageInfo = await this.getDatabaseInfo({ databaseId: databaseId });
 
       if (page.pageInfo.last_edited_time === newestPageInfo.last_edited_time) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('\x1b[37m\x1b[42m');
-          console.log(`is cached database \`${databaseId}\``, '\x1b[0m');
-        }
         return page;
       }
       throw NO_CACHED;
@@ -456,7 +451,7 @@ export class NotionClient {
         userInfo
       };
 
-      this.setCache(databaseId, {
+      await this.setCache(databaseId, {
         cachedTime: Date.now(),
         ...page
       });
@@ -487,21 +482,19 @@ export class NotionClient {
     return search;
   }
 
-  existsCache(blockId: string) {
-    if (process.env.VERCEL !== '1') {
-      return notionCache.exists(blockId);
-    }
+  async accessCache(blockId: string) {
+    return await notionCache.accessCache(blockId);
   }
 
-  getCache(blockId: string) {
-    if (process.env.VERCEL !== '1') {
-      return notionCache.get(blockId);
-    }
+  async getCache(blockId: string) {
+    return await notionCache.get<
+      INotionPage & {
+        cachedTime: string;
+      }
+    >(blockId);
   }
 
-  setCache(blockId: string, content: any) {
-    if (process.env.VERCEL !== '1') {
-      notionCache.set(blockId, content);
-    }
+  async setCache(blockId: string, content: any) {
+    return await notionCache.set(blockId, content);
   }
 }

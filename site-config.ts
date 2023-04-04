@@ -4,8 +4,13 @@ const config = siteConfig({
   TZ: 'Asia/Seoul',
   path: '/api/v1',
   notion: {
-    baseBlock:
-      process.env.NEXT_PUBLIC_NOTION_DATABASE_ID || process.env.NEXT_PUBLIC_NOTION_BASE_BLOCK || '',
+    baseBlock: (
+      process.env.NEXT_PUBLIC_NOTION_DATABASE_ID ||
+      process.env.NEXT_PUBLIC_NOTION_BASE_BLOCK ||
+      ''
+    )
+      .replaceAll('-', '')
+      .slice(0, 32),
     customDomain: process.env.NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN || null
   },
   infomation: {

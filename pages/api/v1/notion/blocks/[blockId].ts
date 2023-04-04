@@ -15,7 +15,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
   }
   const notion = new Client({
     auth: process.env.NOTION_API_SECRET_KEY,
-    logLevel: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : undefined
+    logLevel: process.env.DEBUG_LOGS ? LogLevel.DEBUG : undefined
   });
 
   const result = (await notion.blocks.retrieve({
