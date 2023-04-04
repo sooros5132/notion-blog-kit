@@ -169,6 +169,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
         <div className='cover-image shrink-0 h-[200px] bg-base-content/5 overflow-hidden brightness-95 transition-[filter] ease-linear duration-300 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full sm:w-[100px] md:w-[150px] lg:w-[200px] sm:h-[100px]'>
           {cover ? (
             <NotionSecureImage
+              useNextImage
               blockId={id}
               blockType={article.object}
               useType={'cover'}
@@ -180,6 +181,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
               <div className='notion-database-item-empty-cover'>{icon?.emoji}</div>
             ) : icon?.file ? (
               <NotionSecureImage
+                useNextImage
                 blockId={id}
                 blockType={article.object}
                 useType={'icon'}

@@ -80,6 +80,7 @@ export const ChildDatabaseItem: React.FC<{
           <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-base-content/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
             {block?.cover ? (
               <NotionSecureImage
+                useNextImage
                 blockId={block.id}
                 blockType={'page'}
                 useType={'cover'}
@@ -91,6 +92,7 @@ export const ChildDatabaseItem: React.FC<{
                 <div className='notion-database-item-empty-cover'>{block?.icon?.emoji}</div>
               ) : block?.icon?.file ? (
                 <NotionSecureImage
+                  useNextImage
                   blockId={block.id}
                   blockType={'page'}
                   useType={'icon'}

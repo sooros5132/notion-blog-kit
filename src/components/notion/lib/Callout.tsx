@@ -41,6 +41,7 @@ export const Callout: React.FC<CalloutProps> = ({ block }) => {
             <div className='text-xl font-emoji'>
               {block.callout.icon.file && block.callout.icon.type === 'file' && (
                 <NotionSecureImage
+                  useNextImage
                   alt='callout-icon'
                   blockId={block.id}
                   blockType={'callout'}

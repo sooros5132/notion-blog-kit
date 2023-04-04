@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import Image from 'next/image';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
@@ -11,6 +12,12 @@ import { isExpired, NotionImageFetcherParams, useRenewExpiredFile } from './util
 interface NotionSecureImageProps extends NotionImageFetcherParams {
   alt?: HTMLImageElement['alt'];
   loading?: HTMLImageElement['loading'];
+  useNextImage?: boolean;
+  quality?: number;
+  sizes?: {
+    width: number;
+    height: number;
+  };
 }
 
 // placeholder = 'blur',
@@ -21,7 +28,10 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   useType,
   initialFileObject,
   alt,
-  loading
+  loading,
+  quality,
+  sizes,
+  useNextImage = false
 }) => {
   const [isOriginalImageLoaded, setOriginalImageLoaded] = useState(
     initialFileObject?.file?.url ? !isExpired(initialFileObject?.file) : true
@@ -73,21 +83,43 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
         </>
       )}
       {(fileObject?.file && !isExpired(fileObject?.file)) || fileObject?.external?.url ? (
-        <img
-          key='originImage'
-          className={classNames(
-            'image',
-            isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
-          )}
-          loading={loading || 'lazy'}
-          src={fileObject?.file?.url || fileObject?.external?.url || ''}
-          alt={alt}
-          onLoad={() => {
-            if (!isOriginalImageLoaded) {
-              setOriginalImageLoaded(true);
-            }
-          }}
-        />
+        useNextImage ? (
+          <Image
+            key='originImage'
+            className={classNames(
+              'image',
+              isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
+            )}
+            loading={loading || 'lazy'}
+            src={fileObject?.file?.url || fileObject?.external?.url || ''}
+            alt={alt!}
+            fill={sizes ? undefined : true}
+            width={sizes?.width}
+            height={sizes?.height}
+            quality={quality}
+            onLoad={() => {
+              if (!isOriginalImageLoaded) {
+                setOriginalImageLoaded(true);
+              }
+            }}
+          />
+        ) : (
+          <img
+            key='originImage'
+            className={classNames(
+              'image',
+              isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
+            )}
+            loading={loading || 'lazy'}
+            src={fileObject?.file?.url || fileObject?.external?.url || ''}
+            alt={alt}
+            onLoad={() => {
+              if (!isOriginalImageLoaded) {
+                setOriginalImageLoaded(true);
+              }
+            }}
+          />
+        )
       ) : null}
     </div>
   );

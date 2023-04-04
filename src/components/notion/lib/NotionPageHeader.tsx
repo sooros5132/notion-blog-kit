@@ -8,6 +8,7 @@ import { enUS } from 'date-fns/locale';
 import { notionTagColorClasses, Paragraph } from './Paragraph';
 import classNames from 'classnames';
 import { Fragment } from 'react';
+import Image from 'next/image';
 
 export interface NotionPageHeaderProps {
   page: INotionSearchObject;
@@ -24,6 +25,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
       {page?.cover?.[page?.cover?.type]?.url && (
         <div className='relative h-[25vh] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
           <NotionSecureImage
+            useNextImage
             blockId={page.id}
             blockType={page.object}
             useType={'cover'}
@@ -43,12 +45,17 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
         {page.icon?.type && page.icon?.type !== 'emoji' && (
           <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden [&>div]:h-full'>
             <NotionSecureImage
+              useNextImage
               blockId={page.id}
               blockType={page.object}
               useType={'icon'}
               initialFileObject={page?.icon as FileObject}
               alt={'page-icon'}
               loading='eager'
+              sizes={{
+                width: 100,
+                height: 100
+              }}
             />
           </div>
         )}
@@ -75,7 +82,12 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
             {userInfo?.avatar_url ? (
               <div className='avatar leading-none align-bottom'>
                 <div className='w-[1.2em] h-[1.2em] rounded-full'>
-                  <img src={userInfo?.avatar_url} alt={`${userInfo?.name || 'author'}-avatar`} />
+                  <Image
+                    src={userInfo?.avatar_url}
+                    alt={`${userInfo?.name || 'author'}-avatar`}
+                    width={24}
+                    height={24}
+                  />
                 </div>
               </div>
             ) : userInfo?.name ? (
