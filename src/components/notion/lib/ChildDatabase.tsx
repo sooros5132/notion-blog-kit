@@ -10,6 +10,7 @@ import { CopyHeadingLink, HeadingContainer, HeadingInner } from './Heading';
 import { ChildDatabaseItem } from './ChildDatabaseItem';
 import { useNotionStore } from 'src/store/notion';
 import Link from 'next/link';
+import { richTextToPlainText } from './utils';
 
 export interface ChildDatabaseProps {
   block: NotionBlock;
@@ -53,11 +54,10 @@ export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
 
   const [blocks, setBlocks] = useState(
     sortBy(
-      database?.results?.[0]?.properties?.isPublished?.type === 'checkbox'
+      database?.results?.[0]?.properties?.title?.type === 'title'
         ? database?.results.map((databaseBlock) => {
             const title =
-              databaseBlock?.properties?.title?.title?.map((title) => title.plain_text).join('') ??
-              '제목 없음';
+              richTextToPlainText(databaseBlock?.properties?.title?.title) || 'Untitled';
             const newBlock = {
               ...databaseBlock,
               title
@@ -122,7 +122,7 @@ export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
           <div className='flex-auto mb-1'>
             <div className='flex items-center justify-between'>
               <p className='break-all'>
-                {block?.child_database?.title || '제목 없음'}
+                {block?.child_database?.title || 'Untitled'}
                 <CopyHeadingLink href={href}>
                   <Link href={'#' + encodeURIComponent(hash)}>&nbsp;🔗</Link>
                 </CopyHeadingLink>

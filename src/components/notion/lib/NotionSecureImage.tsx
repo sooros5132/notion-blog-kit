@@ -85,7 +85,7 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
       {(fileObject?.file && !isExpired(fileObject?.file)) || fileObject?.external?.url ? (
         useNextImage ? (
           <Image
-            key='originImage'
+            key='nextImage'
             className={classNames(
               'image',
               isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'

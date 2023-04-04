@@ -70,7 +70,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
             Boolean(page?.cover) && Boolean(page.icon) ? 'mt-[20px]' : 'mt-[20px]'
           )}
         >
-          <NotionParagraphText>{title || '제목 없음'}</NotionParagraphText>
+          <NotionParagraphText>{title || 'Untitled'}</NotionParagraphText>
         </div>
         {page.description && (
           <div className='mb-2 text-zinc-500'>

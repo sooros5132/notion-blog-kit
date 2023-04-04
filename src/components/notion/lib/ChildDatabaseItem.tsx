@@ -10,7 +10,6 @@ import isEqual from 'react-fast-compare';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
 import { enUS } from 'date-fns/locale';
 import { richTextToPlainText } from './utils';
-import { useNotionStore } from 'src/store/notion';
 
 export const ChildDatabaseItem: React.FC<{
   block: NotionDatabase;
