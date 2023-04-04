@@ -3,11 +3,7 @@ import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { NEXT_IMAGE_DOMAINS } from 'site-config';
-import {
-  awsImageObjectUrlToNotionUrl,
-  AWS_SECURE_NOTION_STATIC,
-  PROXY_SECURE_NOTION_STATIC
-} from 'src/lib/notion';
+import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import { FileObject, IconObject } from 'src/types/notion';
 import { isExpired, NotionImageFetcherParams, useRenewExpiredFile } from './utils';
 
@@ -41,11 +37,6 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
     initialFileObject: cachedFileObject.current,
     autoRefresh: loading === 'eager' ? false : true // eager은 refresh 제외
   });
-
-  const proxyUrl =
-    fileObject?.file?.url && fileObject?.file?.url.includes(AWS_SECURE_NOTION_STATIC)
-      ? fileObject?.file?.url.replace(AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC)
-      : null;
 
   let bulrImage: string | null = null;
   {
@@ -89,7 +80,7 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
             isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
           )}
           loading={loading || 'lazy'}
-          src={proxyUrl || fileObject?.file?.url || fileObject?.external?.url || ''}
+          src={fileObject?.file?.url || fileObject?.external?.url || ''}
           alt={alt}
           onLoad={() => {
             if (!isOriginalImageLoaded) {
