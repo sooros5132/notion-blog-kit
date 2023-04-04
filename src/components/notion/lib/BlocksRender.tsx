@@ -146,7 +146,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
           case 'paragraph': {
             return (
               <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
-                <div className='my-1.5'>
+                <div className='my-1.5 min-h-6'>
                   <NotionParagraphBlock
                     blockId={block.id}
                     richText={block.paragraph.rich_text}
