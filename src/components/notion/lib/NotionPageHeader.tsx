@@ -17,6 +17,7 @@ export interface NotionPageHeaderProps {
 
 export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
   const tags = page?.properties?.tags?.multi_select;
+  const date = page?.properties?.publishedAt?.date?.start;
 
   return (
     <div>
@@ -85,10 +86,10 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
               </div>
             ) : null}
             {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
-            <span>{typeof page?.created_time === 'string' && ' | '}</span>
+            <span>{(date || typeof page?.created_time === 'string') && ' | '}</span>
             <span>
-              {typeof page?.created_time === 'string' &&
-                `${formatInTimeZone(new Date(page.created_time), config.TZ, 'yyyy-MM-dd', {
+              {(date || typeof page?.created_time === 'string') &&
+                `${formatInTimeZone(new Date(date || page.created_time), config.TZ, 'yyyy-MM-dd', {
                   locale: enUS
                 })}`}
             </span>
