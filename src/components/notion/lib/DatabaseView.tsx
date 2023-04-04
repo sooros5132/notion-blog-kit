@@ -153,9 +153,16 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
   const title = richTextToPlainText(properties?.title?.title);
   const slug = richTextToPlainText(properties?.slug?.rich_text);
 
+  const parentDatabaseId = article?.parent?.database_id?.replaceAll('-', '');
+
+  const href =
+    parentDatabaseId === config.notion.baseBlock
+      ? `/${encodeURIComponent(slug)}`
+      : `/${encodeURIComponent(id.replaceAll('-', ''))}/${encodeURIComponent(slug || 'Untitled')}`;
+
   return (
     <Link
-      href={`/${encodeURIComponent(slug)}`}
+      href={href}
       className='[&_.cover-image]:hover:brightness-110 [&_.cover-image>div]:transition-transform [&_.cover-image>div]:duration-[400ms] [&_.cover-image>div]:hover:scale-[1.1]'
     >
       <div className='w-full flex flex-col bg-base-content/5 shadow-md overflow-hidden rounded-md isolate sm:flex-row'>

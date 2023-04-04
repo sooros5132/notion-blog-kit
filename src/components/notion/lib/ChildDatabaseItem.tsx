@@ -16,14 +16,19 @@ export const ChildDatabaseItem: React.FC<{
   block: NotionDatabase;
   sortKey: 'created_time' | 'last_edited_time' | 'title';
 }> = memo(({ block, sortKey }) => {
-  const pageInfo = useNotionStore.getState().pageInfo;
   const [isMounted, setMounted] = useState(false);
   const slug = richTextToPlainText(
     block?.properties?.slug?.rich_text || block?.properties?.title?.title
   );
-  const parentDatabaseId = pageInfo?.parent.database_id?.replaceAll('-', '');
+
+  const parentDatabaseId = block?.parent?.database_id?.replaceAll('-', '');
+
   const href =
-    parentDatabaseId === config.notion.baseBlock ? `/${parentDatabaseId}/${slug}` : `/${slug}`;
+    parentDatabaseId === config.notion.baseBlock
+      ? `/${encodeURIComponent(slug)}`
+      : `/${encodeURIComponent(block.id.replaceAll('-', ''))}/${encodeURIComponent(
+          slug || 'Untitled'
+        )}`;
 
   const date = isMounted
     ? formatDistance(

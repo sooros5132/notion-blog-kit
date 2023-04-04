@@ -149,18 +149,26 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       ]);
       const page = pageInfo || databaseInfo;
 
-      if (!page.object) {
+      if (!page.object || (page.object !== 'page' && page.object !== 'database')) {
         throw 'page is not found';
       }
 
       const searchedPageSlug =
-        page.object === 'page' ? richTextToPlainText(page?.properties?.slug?.rich_text) : '';
+        page.object === 'database'
+          ? richTextToPlainText(
+              page?.title || page?.properties?.slug?.rich_text || page.properties.title?.title
+            )
+          : richTextToPlainText(
+              page?.properties?.slug?.rich_text || page.properties.title?.title || page.title
+            );
 
       if (searchedPageSlug) {
         return {
           redirect: {
             permanent: false,
-            destination: `/${encodeURIComponent(searchedPageSlug)}`
+            destination: `/${encodeURIComponent(page.id.replaceAll('-', ''))}/${encodeURIComponent(
+              searchedPageSlug || 'Untitled'
+            )}`
           }
         };
       }
