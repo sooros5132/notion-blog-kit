@@ -34,7 +34,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "lib/notion/cache.js"
   ],
   "exclude": [
     "node_modules"
