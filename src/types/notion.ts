@@ -329,13 +329,13 @@ export interface IGetSearchNotion extends NotionBlocks {
   page_or_database: Record<string, any>;
 }
 
-type Select = {
+export type Select = {
   id: string;
   name: string;
   color: Color;
 };
 
-type MultiSelect = Select;
+export type MultiSelect = Select;
 
 export interface UserObject {
   object: 'user';
@@ -352,7 +352,7 @@ export interface Property {
   type: PropertyType;
 }
 
-export interface PropertiesForPageInfo extends Partial<Record<PropertyType | string, any>> {
+export interface PropertiesForDatabasePageInfo extends Partial<Record<PropertyType | string, any>> {
   title?: Property & {
     title?: Array<RichText>;
   };
@@ -362,7 +362,9 @@ export interface PropertiesForPageInfo extends Partial<Record<PropertyType | str
     };
   };
   tags?: Property & {
-    multi_select?: Array<MultiSelect>;
+    multi_select?: {
+      options: Array<MultiSelect>;
+    };
   };
   publishedAt?: Property & {
     date?: DateObject;
@@ -468,7 +470,7 @@ export interface NotionPagesRetrieve {
   icon: IconObject;
   parent: ParentObject;
   archived: false;
-  properties: PropertiesForPageInfo;
+  properties: Properties;
   url: string;
 }
 
@@ -476,6 +478,13 @@ export interface INotionSearchObject extends Omit<NotionPagesRetrieve, 'object'>
   object: 'page' | 'database';
   description?: Array<RichText>;
   is_inline?: boolean;
+  title?: Array<RichText>;
+}
+export interface INotionSearchDatabase extends Omit<NotionPagesRetrieve, 'object' | 'properties'> {
+  object: 'database';
+  description?: Array<RichText>;
+  is_inline?: boolean;
+  properties: PropertiesForDatabasePageInfo;
   title?: Array<RichText>;
 }
 

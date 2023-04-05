@@ -35,7 +35,7 @@ const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<INo
     case 'database': {
       const database = await notionClient.getBlogMainPage({ databaseId: blockId });
 
-      return database;
+      return database as INotionPage;
     }
     case 'page': {
       const page = await notionClient.getPageByPageId(blockId);

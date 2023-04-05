@@ -28,9 +28,9 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
     const notionClient = new NotionClient();
 
-    const database = await notionClient.getBlogMainPage({
+    const database = (await notionClient.getBlogMainPage({
       databaseId: config.notion.baseBlock
-    });
+    })) as INotionPage;
 
     return {
       props: {

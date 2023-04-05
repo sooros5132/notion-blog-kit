@@ -119,10 +119,7 @@ export const ChildDatabaseItem: React.FC<{
               )}
             </div>
             <div className='whitespace-nowrap'>
-              <p>
-                {date}
-                {sortKey === 'last_edited_time' && ' 수정됨'}
-              </p>
+              <p>{date}</p>
             </div>
           </div>
         </Link>

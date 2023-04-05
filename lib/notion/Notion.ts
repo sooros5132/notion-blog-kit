@@ -4,11 +4,13 @@ import config from 'site-config';
 import {
   INotionPage,
   INotionSearch,
+  INotionSearchDatabase,
   INotionSearchObject,
   INotionUserInfo,
   NotionBlockAndChilrens,
   NotionBlocks,
-  NotionDatabasesQuery
+  NotionDatabasesQuery,
+  PropertiesForDatabasePageInfo
 } from 'src/types/notion';
 import * as notionCache from './cache';
 
@@ -218,7 +220,7 @@ export class NotionClient {
       .retrieve({
         database_id: querys.databaseId
       })
-      .catch(() => null)) as INotionSearchObject;
+      .catch(() => null)) as INotionSearchDatabase;
 
     return blockInfo;
   }
@@ -381,31 +383,77 @@ export class NotionClient {
       return page;
     }
   }
-  async getAllPublishedPageInDatabase(querys: { databaseId: string }) {
+  async getAllPublishedPageInDatabase(querys: {
+    databaseId: string;
+    filter?: {
+      category?: string;
+      tag?: string;
+    };
+    pageProperties?: PropertiesForDatabasePageInfo;
+  }) {
+    const filter = [] as Array<QueryDatabaseParameters['filter']>;
+    if (querys.filter?.category) {
+      filter.push({
+        property: 'category',
+        select: {
+          equals: querys.filter.category
+        }
+      });
+    }
+    if (querys.filter?.tag) {
+      filter.push({
+        property: 'tags',
+        multi_select: {
+          contains: querys.filter.tag
+        }
+      });
+    }
+
+    const havePublishedAt = querys.pageProperties?.publishedAt?.type === 'date';
+
     const databaseId = querys.databaseId;
     const database = await this.getAllPageInDatabase({
       databaseId,
-      filter: {
-        property: 'publishedAt',
-        date: {
-          is_not_empty: true
-        }
-      },
-      sorts: [
-        {
-          property: 'publishedAt',
-          direction: 'descending'
-        }
-      ]
+      filter: havePublishedAt
+        ? {
+            and: [
+              {
+                property: 'publishedAt',
+                date: {
+                  is_not_empty: true
+                }
+              },
+              ...(filter as any)
+            ]
+          }
+        : undefined,
+      sorts: havePublishedAt
+        ? [
+            {
+              property: 'publishedAt',
+              direction: 'descending'
+            }
+          ]
+        : undefined
     });
 
     return database;
   }
 
-  async getBlogMainPage(querys: { databaseId: string }): Promise<INotionPage> {
+  async getBlogMainPage(querys: {
+    databaseId: string;
+    filter?: {
+      category?: string;
+      tag?: string;
+    };
+  }) {
     const databaseId = querys.databaseId;
     const NO_CACHED = 'no cached';
     try {
+      if (querys.filter) {
+        throw NO_CACHED;
+      }
+
       const exists = await this.accessCache(databaseId);
       if (!exists) {
         throw NO_CACHED;
@@ -435,10 +483,12 @@ export class NotionClient {
       }
       throw NO_CACHED;
     } catch (e) {
-      const [database, pageInfo] = await Promise.all([
-        this.getAllPublishedPageInDatabase({ databaseId }),
-        this.getDatabaseInfo({ databaseId })
-      ]);
+      const pageInfo = await this.getDatabaseInfo({ databaseId });
+      const database = await this.getAllPublishedPageInDatabase({
+        databaseId,
+        filter: querys.filter,
+        pageProperties: pageInfo.properties
+      });
       const userInfo = await this.getUserInfoByUserId(pageInfo.created_by.id);
 
       const page = {
@@ -451,10 +501,12 @@ export class NotionClient {
         userInfo
       };
 
-      await this.setCache(databaseId, {
-        cachedTime: Date.now(),
-        ...page
-      });
+      if (!querys.filter) {
+        await this.setCache(databaseId, {
+          cachedTime: Date.now(),
+          ...page
+        });
+      }
 
       return page;
     }

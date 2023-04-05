@@ -40,7 +40,9 @@ const Header: React.FC = (): JSX.Element => {
             {config.infomation.blogname}
           </Link>
         </div>
-        <div className='flex gap-1 md:gap-2 whitespace-nowrap overflow-x-auto overflow-y-hidden scrollbar-hidden'>
+        {/* 
+          Header Menu
+          <div className='flex gap-1 md:gap-2 whitespace-nowrap overflow-x-auto overflow-y-hidden scrollbar-hidden'>
           <ul className='gap-1 p-0 md:gap-2 menu menu-horizontal'>
             {Array.isArray(config.headerNav) &&
               config.headerNav.length > 0 &&
@@ -55,9 +57,9 @@ const Header: React.FC = (): JSX.Element => {
                 </li>
               ))}
           </ul>
-        </div>
+        </div> */}
         <div className='max-w-[150px] sm:max-w-[200px]'>
-          <SearchForm autoInputHidden={true} />
+          <SearchForm />
         </div>
         {isHydrated && (
           <label

@@ -57,7 +57,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
             defaultValue={searchValue}
             type='text'
             name='search'
-            placeholder='Title'
+            placeholder='Title Search'
             aria-label='search-input'
           />
           <button

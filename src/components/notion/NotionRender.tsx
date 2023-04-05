@@ -8,7 +8,8 @@ import type {
   RichText,
   INotionSearchObject,
   INotionPage,
-  NotionDatabasesQuery
+  NotionDatabasesQuery,
+  INotionSearchDatabase
 } from 'src/types/notion';
 import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
 import { NotionDatabasePageView } from './lib';
@@ -70,7 +71,8 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
             <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
           ) : pageInfo.object === 'database' ? (
             <NotionDatabasePageView
-              pageInfo={pageInfo}
+              key={Date.now()}
+              pageInfo={pageInfo as INotionSearchDatabase}
               baseBlock={baseBlock as unknown as NotionDatabasesQuery}
             />
           ) : null}

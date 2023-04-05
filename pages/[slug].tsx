@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { NotionRender } from 'src/components/notion';
-import { INotionPage, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { INotionPage, INotionSearchDatabase, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
 import { useNotionStore } from 'src/store/notion';
 import config from 'site-config';
@@ -35,7 +35,7 @@ const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<INo
     case 'database': {
       const database = await notionClient.getBlogMainPage({ databaseId: blockId });
 
-      return database;
+      return database as INotionPage;
     }
     case 'page': {
       const page = await notionClient.getPageByPageId(blockId);
