@@ -19,6 +19,7 @@ const config = siteConfig({
     github: process.env.NEXT_PUBLIC_INFOMATION_GITHUB,
     repository: process.env.NEXT_PUBLIC_INFOMATION_REPOSITORY
   },
+  hidePoweredBy: process.env.NEXT_PUBLIC_HIDE_POWERED_BY === 'true',
   googleGTag: process.env.NEXT_PUBLIC_GOOGLE_G_TAG
 });
 

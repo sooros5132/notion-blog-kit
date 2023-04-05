@@ -1,16 +1,26 @@
-# Notion Blog Starter Kit
+# ![favicon-32x32](https://user-images.githubusercontent.com/74892930/230014114-ddbb901a-9cc6-4607-942b-0de153536ac5.png) Notion Blog Web UI Kit
 A statically generated blog using [Next.js](https://github.com/vercel/next.js/), [Notion Api](https://github.com/makenotion/notion-sdk-js).
 
 ## Live Demo
 [https://notion-blog-kit-demo.vercel.app](https://notion-blog-kit-demo.vercel.app)
 
-## ⚡️Getting Started
+## Screenshot
+| Light mode | Dark mode |
+|--|--|
+| <img alt="SCR-20230405-mx1" src="https://user-images.githubusercontent.com/74892930/230012168-97ff1bfc-6858-446a-b2c1-fd0223ec0521.png" /> | <img alt="SCR-20230405-mxb" src="https://user-images.githubusercontent.com/74892930/230012197-73cfeb9f-6136-4235-99d4-19030a3ca21a.png" /> |
+
+## Support Blocks
+[https://notion-blog-kit-demo.vercel.app/supported-notion-blocks](https://notion-blog-kit-demo.vercel.app/supported-notion-blocks)
+<br />
+
+## Getting Started
 [View images and detailed descriptions in live demo](https://notion-blog-kit-demo.vercel.app/notion-blog-kit-deploy-step)
-1. Star this repo⭐️ 😉
+1. Star this repo⭐️
 2. [Create notion integrations secret token](https://www.notion.so/my-integrations), Please check read only access and remember secret token.
 3. Go to the page you want to share and connection to the name of the integration
-4. [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME&demo-title=My%20Notion%20Blog&demo-description=A%20statically%20generated%20blog%20using%20Next.js%2C%20Notion%20Api.&demo-url=https%3A%2F%2Fblog.sooros.com) or Your server (Vercel is free if a [hobby](https://vercel.com/pricing).)
+4. [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME) or Your server (Vercel is free if a [hobby](https://vercel.com/pricing).)
 5. Create `/.env` file and according to the table below (`Deploy with Vercel` has already been set above.)
+<br />
 
 ## 🗒️Environment Variables
 Create `/.env` file and according to the table below or refrence `/.env.sample`
@@ -25,6 +35,8 @@ Create `/.env` file and according to the table below or refrence `/.env.sample`
 |`NEXT_PUBLIC_INFOMATION_REPOSITORY`|ex) `https://github.com/sooros5132/notion-blog-kit`|
 |`NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN`|[docs) notion.site domain setting](https://www.notion.so/ko-kr/blog/personalize-public-pages)<br />recommend setting this variable.<br />ex) `sooros`|
 |`NEXT_PUBLIC_GOOGLE_G_TAG`|google analytics tag<br />ex) `G-ER...`|
+|`NEXT_PUBLIC_HIDE_POWERED_BY`|Delete 'Powered by Notion-Blog-Kit' sentence in footer<br />The notion blog kit is an open source, so you can delete it.<br />ex) `true`|
+<br />
 
 ## Deploy with Vercel
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME&demo-title=My%20Notion%20Blog&demo-description=A%20statically%20generated%20blog%20using%20Next.js%2C%20Notion%20Api.&demo-url=https%3A%2F%2Fblog.sooros.com)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME)
