@@ -34,7 +34,7 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
             <FaCircle className='text-[#FFBC2E]' />
             <FaCircle className='text-[#29C841]' />
           </div>
-          <div className='text-base-content/70 select-none'>{language}</div>
+          <div className='text-base-content/70 select-none capitalize'>{language}</div>
         </div>
         <CopyButtonWrapper content={codes}>
           <div className='bg-base-content/5 [&>pre]:scrollbar-hidden'>
