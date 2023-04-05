@@ -1,6 +1,5 @@
 import type React from 'react';
 import classnames from 'classnames';
-import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { copyTextAtClipBoard } from 'src/lib/utils';
 import type { NotionBlock } from 'src/types/notion';
@@ -81,10 +80,8 @@ interface HeadingProps {
 }
 
 export const Heading: React.FC<HeadingProps> = ({ block }) => {
-  const pathname = usePathname();
-
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
-  const hash = richTextToPlainText(block[type].rich_text) + '-' + block.id.slice(0, 6);
+  const hash = richTextToPlainText(block[type].rich_text);
   const href = encodeURIComponent(hash);
   const toggleableHeading = block.has_children;
 
@@ -101,7 +98,7 @@ export const Heading: React.FC<HeadingProps> = ({ block }) => {
     return (
       <HeadingContainer id={href} type={type}>
         <details>
-          <summary className='[&>*]:inline [&>*>*]:inline'>
+          <summary className='cursor-pointer [&>*]:inline [&>*>*]:inline'>
             <HeadingInner type={type}>{headingEl}</HeadingInner>
           </summary>
           <div className='pl-[0.9em]'>
