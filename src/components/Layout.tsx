@@ -28,7 +28,7 @@ function Layout({ children }: PropsWithChildren) {
   }, [mode]);
 
   return (
-    <div className='flex flex-col min-h-screen bg-base-100'>
+    <div className='flex flex-col bg-base-100 min-h-screen supports-[height:100dvh]:min-h-dvh-100'>
       <Head>
         <meta name='msapplication-TileColor' content={mode === 'dark' ? '#313335' : '#f3f4f6'} />
         <meta name='theme-color' content={mode === 'dark' ? '#313335' : '#f3f4f6'} />

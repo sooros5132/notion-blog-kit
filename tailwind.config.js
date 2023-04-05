@@ -15,6 +15,15 @@ module.exports = {
       '2xl': '1536px'
     },
     extend: {
+      height: {
+        'dvh-100': '100dvh'
+      },
+      maxHeight: {
+        'dvh-100': '100dvh'
+      },
+      minHeight: {
+        'dvh-100': '100dvh'
+      },
       colors: {
         notion: {
           default: 'rgb(var(--notion-color-default) / <alpha-value>)',
