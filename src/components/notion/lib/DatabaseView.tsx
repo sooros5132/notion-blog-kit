@@ -174,8 +174,8 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
     <div className='flex flex-col sm:gap-4 sm:flex-row'>
       {categorys && (
         <div className='sticky top-[var(--header-height)] left-0 z-10 grow-0 shrink-0 sm:top-[calc(var(--header-height)_+_1em)] sm:z-0 sm:max-h-[calc(100vh_-_var(--header-height)_-_2em)]'>
-          <aside className='flex h-full grow-0 shrink-0 p-2 gap-x-2 bg-base-100 text-sm sm:p-0 sm:mb-0 sm:flex-col sm:max-w-[200px] sm:gap-y-4 md:max-w-[220px] '>
-            <div className='flex grow flex-col gap-y-3 sm:grow-0 sm:order-2 overflow-auto'>
+          <aside className='flex h-full grow-0 shrink-0 p-3 gap-x-2 bg-base-100 text-sm sm:p-0 sm:mb-0 sm:flex-col sm:max-w-[200px] sm:gap-y-4 md:max-w-[220px] '>
+            <div className='flex justify-center grow flex-col gap-y-3 sm:grow-0 sm:order-2 overflow-auto'>
               <ul className='flex-0 flex shrink-0 gap-x-2 overflow-x-auto scrollbar-hidden whitespace-nowrap sm:flex-col sm:px-2 sm:overflow-hidden sm:gap-y-1'>
                 {categoryKeys.map((category) => (
                   <Link
