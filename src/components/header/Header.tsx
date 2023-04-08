@@ -45,7 +45,7 @@ const Header: React.FC = (): JSX.Element => {
 
     window.addEventListener('scroll', throttleScrollEvent);
     return () => window.removeEventListener('scroll', throttleScrollEvent);
-  }, [visibleHeader]);
+  }, []);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -55,7 +55,7 @@ const Header: React.FC = (): JSX.Element => {
     <nav
       className={classNames(
         'sticky left-0 h-[var(--header-height)] bg-base-200/50 backdrop-blur-xl transition-[top] duration-300 z-10',
-        visibleHeader ? 'top-0' : '-top-[calc(var(--header-height)_-_2px)]'
+        visibleHeader ? 'top-0' : '-top-[calc(var(--header-height)_-_0.125rem)]'
       )}
     >
       <div className='flex justify-between items-center max-w-[var(--article-max-width)] mx-auto p-2 gap-x-1'>
@@ -91,7 +91,7 @@ const Header: React.FC = (): JSX.Element => {
             className='swap swap-rotate btn btn-circle btn-ghost btn-sm text-lg items-center'
             onClickCapture={handleClickThemeSwap}
           >
-            <input type='checkbox' aria-label='theme-mode-toggle' />
+            <input type='checkbox' aria-label='theme-mode-change-button' />
             <HiSun key='light' className={classNames(mode === 'dark' ? 'swap-on' : 'swap-off')} />
             <HiMoon key='dark' className={classNames(mode === 'light' ? 'swap-on' : 'swap-off')} />
           </label>
@@ -121,7 +121,7 @@ const ScrollProgressBar = () => {
       }
     };
     scrollEvent();
-    const throttleScrollEvent = throttle(scrollEvent, 1000 / 60); // 1초당 최대 60프레임으로 설정
+    const throttleScrollEvent = throttle(scrollEvent, 150);
 
     window.addEventListener('scroll', throttleScrollEvent);
     return () => window.removeEventListener('scroll', throttleScrollEvent);
@@ -129,11 +129,18 @@ const ScrollProgressBar = () => {
 
   return (
     <div
-      className='h-0.5 bg-white opacity-50'
-      style={{
-        background: `linear-gradient(90deg, hsl(var(--bc)) 0%, hsl(var(--bc)) ${progress}%, rgba(255, 255, 255, 0.15) ${progress}%)`
-      }}
-    />
+      className='h-0.5 bg-base-content/30'
+      // style={{
+      //   background: `linear-gradient(90deg, hsl(var(--bc)) 0%, hsl(var(--bc)) ${progress}%, rgba(255, 255, 255, 0.15) ${progress}%)`
+      // }}
+    >
+      <div
+        className='h-0.5 transition-[width] duration-100 ease-linear bg-base-content/70'
+        style={{
+          width: `${progress}%`
+        }}
+      />
+    </div>
   );
 };
 
