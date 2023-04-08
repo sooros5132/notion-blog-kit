@@ -1,6 +1,6 @@
-import { siteConfig } from 'src/lib/siteConfig';
+import { createSiteConfig } from 'src/lib/siteConfig';
 
-const config = siteConfig({
+export const siteConfig = createSiteConfig({
   TZ: 'Asia/Seoul',
   path: '/api/v1',
   notion: {
@@ -19,11 +19,11 @@ const config = siteConfig({
     github: process.env.NEXT_PUBLIC_INFOMATION_GITHUB,
     repository: process.env.NEXT_PUBLIC_INFOMATION_REPOSITORY
   },
+  enableImageOptimization:
+    process.env.NEXT_PUBLIC_ENABLE_IMAGE_OPTIMIZATION === 'true' ? true : false || false,
   hidePoweredBy: process.env.NEXT_PUBLIC_HIDE_POWERED_BY === 'true',
   googleGTag: process.env.NEXT_PUBLIC_GOOGLE_G_TAG
 });
-
-export default config;
 
 export const NEXT_IMAGE_DOMAINS = [
   'www.notion.so',

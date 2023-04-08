@@ -3,7 +3,7 @@ import Image from 'next/image';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { NEXT_IMAGE_DOMAINS } from 'site-config';
+import { NEXT_IMAGE_DOMAINS, siteConfig } from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import { FileObject, IconObject } from 'src/types/notion';
 import { isExpired, NotionImageFetcherParams, useRenewExpiredFile } from './utils';
@@ -83,7 +83,7 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
         </>
       )}
       {(fileObject?.file && !isExpired(fileObject?.file)) || fileObject?.external?.url ? (
-        useNextImage ? (
+        siteConfig.enableImageOptimization && useNextImage ? (
           <Image
             key='nextImage'
             className={classNames(
