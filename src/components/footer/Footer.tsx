@@ -23,7 +23,7 @@ const Footer: React.FC = (): JSX.Element => {
         </div>
       )}
       <div className='bg-base-200'>
-        <div className='flex justify-between align-center max-w-[var(--article-max-width)] mx-auto px-2 py-4'>
+        <div className='flex justify-between align-center max-w-[var(--article-max-width)] mx-auto py-2 px-4'>
           <div className='text-2xl font-bold'>{siteConfig.infomation.blogname}</div>
           <div className='flex items-center gap-2 text-2xl'>
             {siteConfig.infomation.email && (
