@@ -1,4 +1,4 @@
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 
 export const AWS_PUBLIC_NOTION_STATIC =
   'https://s3-us-west-2.amazonaws.com/public.notion-static.com';
@@ -8,11 +8,11 @@ export const AWS_SECURE_NOTION_STATIC =
 export const PROXY_SECURE_NOTION_STATIC = '/aws-secure-notion-static/';
 
 export function notionBlockUrlToRelativePath(url: string): string {
-  if (!config?.notion) {
+  if (!siteConfig?.notion) {
     return url;
   }
 
-  const { customDomain, notionSoRegExp, notionSiteRegExp } = config.notion;
+  const { customDomain, notionSoRegExp, notionSiteRegExp } = siteConfig.notion;
 
   if (!url || !customDomain || !notionSoRegExp || !notionSiteRegExp) {
     return url;
