@@ -4,14 +4,12 @@
 import classNames from 'classnames';
 import type React from 'react';
 import type {
-  NotionBlock,
   RichText,
-  INotionSearchObject,
   INotionPage,
   NotionDatabasesQuery,
   INotionSearchDatabase
 } from 'src/types/notion';
-import { NotionBlocksRender, NotionChildDatabaseBlock, NotionPageHeader, NotionSeo } from '.';
+import { NotionBlocksRender, NotionPageHeader, NotionSeo } from '.';
 import { NotionDatabasePageView } from './lib';
 
 export interface NotionRenderProps {

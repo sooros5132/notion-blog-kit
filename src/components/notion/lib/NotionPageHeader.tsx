@@ -31,7 +31,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
   return (
     <div>
       {page?.cover?.[page?.cover?.type]?.url && (
-        <div className='relative h-[25vh] min-h-[300px] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
+        <div className='relative h-[25vh] min-h-[250px] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
           <NotionSecureImage
             useNextImage
             blockId={page.id}
