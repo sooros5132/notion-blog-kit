@@ -4,7 +4,7 @@ import { notionBlockUrlToRelativePath } from 'src/lib/notion';
 import useSWR from 'swr';
 import { fetcher } from 'src/lib/swr';
 import type { LinkPreview as ILinkPreview } from 'src/types/types';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { NotionParagraphText } from '.';
 import { AiOutlineLink, AiOutlineLoading } from 'react-icons/ai';
 
@@ -14,7 +14,7 @@ export interface LinkPreviewProps {
 
 export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   const { data, error, isValidating } = useSWR<ILinkPreview>(
-    `${config.path}/linkPreview/${encodeURIComponent(url)}`,
+    `${siteConfig.path}/linkPreview/${encodeURIComponent(url)}`,
     fetcher,
     {
       fallbackData: {

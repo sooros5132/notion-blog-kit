@@ -1,16 +1,14 @@
 import type React from 'react';
 import classnames from 'classnames';
 import { formatInTimeZone } from 'date-fns-tz';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { INotionSearchObject, INotionUserInfo, FileObject, Select } from 'src/types/notion';
 import { NotionParagraphText, NotionSecureImage } from '.';
 import { enUS } from 'date-fns/locale';
 import { notionTagColorClasses, Paragraph } from './Paragraph';
 import classNames from 'classnames';
-import { Fragment } from 'react';
 import Image from 'next/image';
 import { BsDot } from 'react-icons/bs';
-import Link from 'next/link';
 import { OptionalNextLink } from 'src/lib/OptionalNextLink';
 
 export interface NotionPageHeaderProps {
@@ -25,7 +23,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
   const category = page.properties.category?.select?.name;
   const parentIsBaseDatabase = Boolean(
     page.parent.database_id &&
-      config.notion.baseBlock === page.parent.database_id.replaceAll('-', '')
+      siteConfig.notion.baseBlock === page.parent.database_id.replaceAll('-', '')
   );
 
   return (
@@ -116,9 +114,14 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
             {(date || typeof page?.created_time === 'string') && <BsDot className='inline' />}
             <span>
               {(date || typeof page?.created_time === 'string') &&
-                `${formatInTimeZone(new Date(date || page.created_time), config.TZ, 'yyyy-MM-dd', {
-                  locale: enUS
-                })}`}
+                `${formatInTimeZone(
+                  new Date(date || page.created_time),
+                  siteConfig.TZ,
+                  'yyyy-MM-dd',
+                  {
+                    locale: enUS
+                  }
+                )}`}
             </span>
             {Array.isArray(tags) && <BsDot className='inline' />}
             {Array.isArray(tags) && (

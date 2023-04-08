@@ -1,11 +1,10 @@
 import type React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
 import { INotionPage } from 'src/types/notion';
 import { useNotionStore } from 'src/store/notion';
-import { useEffect } from 'react';
 
 interface HomeProps {
   slug: string;
@@ -29,12 +28,12 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     const notionClient = new NotionClient();
 
     const database = (await notionClient.getBlogMainPage({
-      databaseId: config.notion.baseBlock
+      databaseId: siteConfig.notion.baseBlock
     })) as INotionPage;
 
     return {
       props: {
-        slug: config.notion.baseBlock,
+        slug: siteConfig.notion.baseBlock,
         page: database
       },
       revalidate: 120

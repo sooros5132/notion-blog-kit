@@ -1,5 +1,5 @@
 import axios from 'axios';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import {
   FileObject,
@@ -38,7 +38,7 @@ export const useRenewExpiredFile = ({
   // const EXTERNAL_IS_AVAILABLE = 'external is available.';
 
   return useSWR(
-    `${config.path}/notion/${blockType}/${blockId}?useType=${useType}`,
+    `${siteConfig.path}/notion/${blockType}/${blockId}?useType=${useType}`,
     async () => {
       try {
         if (initialFileObject?.external?.url) {
@@ -59,7 +59,7 @@ export const useRenewExpiredFile = ({
               throw 'not support use type';
             }
             const page = await axios
-              .get<INotionSearchObject>(`${config.path}/notion/${blockType}s/${blockId}`)
+              .get<INotionSearchObject>(`${siteConfig.path}/notion/${blockType}s/${blockId}`)
               .then((res) => res?.data);
 
             if (!page[useType]) {
@@ -75,7 +75,7 @@ export const useRenewExpiredFile = ({
               throw 'not support use type';
             }
             const block = await axios
-              .get<NotionBlock>(`${config.path}/notion/blocks/${blockId}`)
+              .get<NotionBlock>(`${siteConfig.path}/notion/blocks/${blockId}`)
               .then((res) => res?.data);
 
             if (blockType === 'callout') {

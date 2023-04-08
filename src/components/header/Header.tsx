@@ -2,7 +2,7 @@ import type React from 'react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { SearchForm } from 'src/components/search/SearchForm';
 import { useThemeStore } from 'src/store/theme';
 import { HiSun, HiMoon } from 'react-icons/hi';
@@ -62,16 +62,16 @@ const Header: React.FC = (): JSX.Element => {
         <div className='flex-1'>
           <Link className='text-xl rounded-md btn btn-ghost btn-sm h-full normal-case' href='/'>
             {/* <AiFillThunderbolt />&nbsp; */}
-            {config.infomation.blogname}
+            {siteConfig.infomation.blogname}
           </Link>
         </div>
         {/* 
           Header Menu
           <div className='flex gap-1 md:gap-2 whitespace-nowrap overflow-x-auto overflow-y-hidden scrollbar-hidden'>
           <ul className='gap-1 p-0 md:gap-2 menu menu-horizontal'>
-            {Array.isArray(config.headerNav) &&
-              config.headerNav.length > 0 &&
-              config.headerNav.map((item, i) => (
+            {Array.isArray(siteConfig.headerNav) &&
+              siteConfig.headerNav.length > 0 &&
+              siteConfig.headerNav.map((item, i) => (
                 <li key={`header-nav-item-${i}`}>
                   <Link
                     href={`/${encodeURIComponent(item.slug)}`}

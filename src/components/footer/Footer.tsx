@@ -1,12 +1,12 @@
 import type React from 'react';
 import { SiGithub, SiMaildotru } from 'react-icons/si';
 import { RiGitRepositoryFill } from 'react-icons/ri';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 
 const Footer: React.FC = (): JSX.Element => {
   return (
     <footer className='text-base-content'>
-      {!config.hidePoweredBy && (
+      {!siteConfig.hidePoweredBy && (
         <div className='mt-4 mb-2 text-zinc-400 dark:text-zinc-700 text-center text-xs'>
           <p>
             Powered by{' '}
@@ -24,16 +24,16 @@ const Footer: React.FC = (): JSX.Element => {
       )}
       <div className='bg-base-200'>
         <div className='flex justify-between align-center max-w-[var(--article-max-width)] mx-auto px-2 py-4'>
-          <div className='text-2xl font-bold'>{config.infomation.blogname}</div>
+          <div className='text-2xl font-bold'>{siteConfig.infomation.blogname}</div>
           <div className='flex items-center gap-2 text-2xl'>
-            {config.infomation.email && (
-              <a href={'mailto:' + config.infomation.email} aria-label='send mail link'>
+            {siteConfig.infomation.email && (
+              <a href={'mailto:' + siteConfig.infomation.email} aria-label='send mail link'>
                 <SiMaildotru />
               </a>
             )}
-            {config.infomation.github && (
+            {siteConfig.infomation.github && (
               <a
-                href={config.infomation.github}
+                href={siteConfig.infomation.github}
                 rel='noreferrer'
                 target='_blank'
                 aria-label='visit github'
@@ -41,9 +41,9 @@ const Footer: React.FC = (): JSX.Element => {
                 <SiGithub />
               </a>
             )}
-            {config.infomation.repository && (
+            {siteConfig.infomation.repository && (
               <a
-                href={config.infomation.repository}
+                href={siteConfig.infomation.repository}
                 rel='noreferrer'
                 target='_blank'
                 aria-label='visit repository'

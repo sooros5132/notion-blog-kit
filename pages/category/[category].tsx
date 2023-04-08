@@ -1,6 +1,6 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
 import { INotionPage } from 'src/types/notion';
@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths<{ category: string }> = async () => 
   const paths: Awaited<ReturnType<GetStaticPaths<{ category: string }>>>['paths'] = [];
 
   const database = await notionClient.getDatabaseInfo({
-    databaseId: config.notion.baseBlock
+    databaseId: siteConfig.notion.baseBlock
   });
 
   const categories = database?.properties?.category?.select?.options || [];
@@ -56,7 +56,7 @@ export const getStaticProps: GetStaticProps<CategoryProps> = async ({ params }) 
     const notionClient = new NotionClient();
 
     const database = await notionClient.getBlogMainPage({
-      databaseId: config.notion.baseBlock
+      databaseId: siteConfig.notion.baseBlock
       // filter: {
       //   category
       // }
@@ -64,7 +64,7 @@ export const getStaticProps: GetStaticProps<CategoryProps> = async ({ params }) 
 
     return {
       props: {
-        slug: config.notion.baseBlock,
+        slug: siteConfig.notion.baseBlock,
         page: database as INotionPage
       },
       revalidate: 120

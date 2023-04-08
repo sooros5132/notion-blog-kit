@@ -1,7 +1,7 @@
 import type React from 'react';
 import { formatDistance } from 'date-fns';
 import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import Link from 'next/link';
 import { useState, memo, useEffect } from 'react';
 import { SiNotion } from 'react-icons/si';
@@ -23,7 +23,7 @@ export const ChildDatabaseItem: React.FC<{
   const parentDatabaseId = block?.parent?.database_id?.replaceAll('-', '');
 
   const href =
-    parentDatabaseId === config.notion.baseBlock
+    parentDatabaseId === siteConfig.notion.baseBlock
       ? `/${encodeURIComponent(slug)}`
       : `/${encodeURIComponent(block.id.replaceAll('-', ''))}/${encodeURIComponent(
           slug || 'Untitled'
@@ -33,16 +33,16 @@ export const ChildDatabaseItem: React.FC<{
     ? formatDistance(
         utcToZonedTime(
           new Date(block[sortKey === 'last_edited_time' ? 'last_edited_time' : 'created_time']),
-          config.TZ
+          siteConfig.TZ
         ),
-        utcToZonedTime(new Date(), config.TZ),
+        utcToZonedTime(new Date(), siteConfig.TZ),
         {
           locale: enUS,
           addSuffix: true
         }
       )
     : (block?.created_time &&
-        formatInTimeZone(new Date(block.created_time), config.TZ, 'yyyy-MM-dd', {
+        formatInTimeZone(new Date(block.created_time), siteConfig.TZ, 'yyyy-MM-dd', {
           locale: enUS
         })) ??
       undefined;

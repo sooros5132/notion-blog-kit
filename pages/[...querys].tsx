@@ -4,9 +4,8 @@ import { NotionRender } from 'src/components/notion';
 import { INotionPage, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
 import { useNotionStore } from 'src/store/notion';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { richTextToPlainText } from 'src/components/notion/lib/utils';
-import { useRouter } from 'next/router';
 
 interface SlugProps {
   slug: string;
@@ -61,7 +60,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     if (typeof slug !== 'string') {
       throw 'type error "slug"';
     }
-    if (uuid === config.notion.baseBlock) {
+    if (uuid === siteConfig.notion.baseBlock) {
       return {
         redirect: {
           permanent: false,
@@ -91,7 +90,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       const searchedPageSlug =
         page?.object === 'page' ? richTextToPlainText(page?.properties?.slug?.rich_text) : '';
 
-      if (page?.parent?.database_id?.replaceAll('-', '') === config.notion.baseBlock) {
+      if (page?.parent?.database_id?.replaceAll('-', '') === siteConfig.notion.baseBlock) {
         return {
           redirect: {
             permanent: false,

@@ -1,6 +1,6 @@
 import { SiteConfig } from 'src/types/types';
 
-export function siteConfig(config: SiteConfig) {
+export function createSiteConfig(config: SiteConfig) {
   const NEXT_PUBLIC_HEADER_MENU = process.env.NEXT_PUBLIC_HEADER_MENU;
   const headerNav: SiteConfig['headerNav'] = [];
 

@@ -4,27 +4,27 @@ import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import Layout from 'src/components/Layout';
 import Script from 'next/script';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import 'src/styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <NextSeo
-        title={config.infomation.blogname}
-        defaultTitle={config.infomation.blogname}
+        title={siteConfig.infomation.blogname}
+        defaultTitle={siteConfig.infomation.blogname}
         openGraph={{
-          site_name: config.infomation.blogname,
-          title: config.infomation.blogname,
+          site_name: siteConfig.infomation.blogname,
+          title: siteConfig.infomation.blogname,
           locale: 'ko_KR',
           type: 'website',
-          description: config.infomation.blogname
-            ? `${config.infomation.blogname}의 블로그입니다.`
+          description: siteConfig.infomation.blogname
+            ? `${siteConfig.infomation.blogname}의 블로그입니다.`
             : 'notion blog 플랫폼입니다.'
         }}
         description={
-          config.infomation.blogname
-            ? `${config.infomation.blogname}의 블로그입니다.`
+          siteConfig.infomation.blogname
+            ? `${siteConfig.infomation.blogname}의 블로그입니다.`
             : 'notion blog 플랫폼입니다.'
         }
       />
@@ -35,16 +35,16 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
         <link rel='manifest' href='/manifest.json' />
       </Head>
-      {config.googleGTag && (
-        <Script src={`https://www.googletagmanager.com/gtag/js?id=${config.googleGTag}`} />
+      {siteConfig.googleGTag && (
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleGTag}`} />
       )}
-      {config.googleGTag && (
+      {siteConfig.googleGTag && (
         <Script id='google-analytics' strategy='afterInteractive'>
           {`window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   
-  gtag('config', '${config.googleGTag}');`}
+  gtag('config', '${siteConfig.googleGTag}');`}
         </Script>
       )}
       <Layout>

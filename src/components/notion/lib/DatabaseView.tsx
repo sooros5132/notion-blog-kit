@@ -1,6 +1,6 @@
+import type React from 'react';
 import classNames from 'classnames';
 import formatInTimeZone from 'date-fns-tz/formatInTimeZone';
-import type React from 'react';
 import { Fragment, useMemo, useState } from 'react';
 import { SiNotion } from 'react-icons/si';
 import {
@@ -10,7 +10,7 @@ import {
   NotionDatabasesQuery
 } from 'src/types/notion';
 import { NotionSecureImage } from '.';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import Link from 'next/link';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { notionTagColorClasses } from './Paragraph';
@@ -28,7 +28,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
   pageInfo
 }) => {
   const router = useRouter();
-  const isBaseDatabase = config.notion.baseBlock === pageInfo.id.replaceAll('-', '');
+  const isBaseDatabase = siteConfig.notion.baseBlock === pageInfo.id.replaceAll('-', '');
 
   const blocks: Array<NotionDatabase> = useMemo(() => {
     const filterdBlock = baseBlock.results.filter((block) => {
@@ -278,7 +278,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
   const parentDatabaseId = article?.parent?.database_id?.replaceAll('-', '');
 
   const href =
-    parentDatabaseId === config.notion.baseBlock
+    parentDatabaseId === siteConfig.notion.baseBlock
       ? `/${encodeURIComponent(slug)}`
       : `/${encodeURIComponent(id.replaceAll('-', ''))}/${encodeURIComponent(slug || 'Untitled')}`;
 
@@ -348,7 +348,7 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
             <div>
               {publishedAt?.date?.start && (
                 <div className='flex-auto grow-0 shrink-0 text-zinc-500'>
-                  {formatInTimeZone(new Date(publishedAt.date.start), config.TZ, 'yyyy-MM-dd')}
+                  {formatInTimeZone(new Date(publishedAt.date.start), siteConfig.TZ, 'yyyy-MM-dd')}
                 </div>
               )}
             </div>

@@ -1,6 +1,6 @@
 import { Client, LogLevel } from '@notionhq/client';
 import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import {
   INotionPage,
   INotionSearch,
@@ -240,7 +240,7 @@ export class NotionClient {
 
     do {
       const search = await this.notion.databases.query({
-        database_id: config.notion.baseBlock,
+        database_id: siteConfig.notion.baseBlock,
         filter: {
           property: 'title',
           title: {
@@ -515,7 +515,7 @@ export class NotionClient {
   async searchSlug(querys: { slug: string; property: string }) {
     const search = await this.notion.databases
       .query({
-        database_id: config.notion.baseBlock,
+        database_id: siteConfig.notion.baseBlock,
         filter: {
           property: querys.property,
           rich_text: {

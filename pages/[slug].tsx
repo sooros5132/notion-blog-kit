@@ -4,7 +4,7 @@ import { NotionRender } from 'src/components/notion';
 import { INotionPage, INotionSearchDatabase, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
 import { useNotionStore } from 'src/store/notion';
-import config from 'site-config';
+import { siteConfig } from 'site-config';
 import { richTextToPlainText } from 'src/components/notion/lib/utils';
 import { useRouter } from 'next/router';
 
@@ -50,7 +50,7 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   const paths: Awaited<ReturnType<GetStaticPaths<{ slug: string }>>>['paths'] = [];
 
   const database = await notionClient.getAllPublishedPageInDatabase({
-    databaseId: config.notion.baseBlock
+    databaseId: siteConfig.notion.baseBlock
   });
   database.results.forEach((page) => {
     const slug = page.properties.slug?.rich_text
@@ -75,7 +75,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
     if (typeof slug !== 'string') {
       throw 'type error "slug"';
     }
-    if (slug === config.notion.baseBlock) {
+    if (slug === siteConfig.notion.baseBlock) {
       return {
         redirect: {
           permanent: false,
@@ -114,7 +114,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       })) as INotionPage['pageInfo'];
 
       if (pageInfo) {
-        if (pageInfo.parent.database_id?.replaceAll('-', '') === config.notion.baseBlock) {
+        if (pageInfo.parent.database_id?.replaceAll('-', '') === siteConfig.notion.baseBlock) {
           const newSlug = richTextToPlainText(pageInfo.properties.slug?.rich_text);
           if (newSlug) {
             return {
