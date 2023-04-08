@@ -3,6 +3,7 @@
 const withPWA = require('next-pwa');
 const isProduction = process.env.NODE_ENV === 'production';
 const debugLogs = Boolean(process.env.DEBUG_LOGS);
+const enableProgressiveWebApp = process.env.ENABLE_PROGRESSIVE_WEB_APP === 'true';
 
 try {
   if (!process.env.NOTION_API_SECRET_KEY) {
@@ -56,9 +57,11 @@ const nextConfig = {
   }
 };
 
-module.exports = withPWA({
-  dest: 'public',
-  disable: !isProduction,
-  disableDevLogs: debugLogs,
-  runtimeCaching: []
-})(nextConfig);
+module.exports = enableProgressiveWebApp
+  ? withPWA({
+      dest: 'public',
+      disable: !isProduction,
+      disableDevLogs: debugLogs,
+      runtimeCaching: []
+    })(nextConfig)
+  : nextConfig;
