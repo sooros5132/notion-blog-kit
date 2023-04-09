@@ -20,7 +20,6 @@ export {
   NotionTodoBlock,
   NotionToggleBlock,
   NotionVideoBlock,
-  notionColorClasses,
   NotionDatabasePageView,
   NotionEquationBlock,
   NotionFileBlock,

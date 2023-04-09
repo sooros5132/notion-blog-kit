@@ -6,6 +6,7 @@ export const PROXY_PUBLIC_NOTION_STATIC = '/aws-public-notion-static/';
 export const AWS_SECURE_NOTION_STATIC =
   'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/';
 export const PROXY_SECURE_NOTION_STATIC = '/aws-secure-notion-static/';
+export const REVALIDATE = 120;
 
 export function notionBlockUrlToRelativePath(url: string): string {
   if (!siteConfig?.notion) {
@@ -63,3 +64,66 @@ export function awsImageObjectUrlToNotionUrl({
     return s3ObjectUrl;
   }
 }
+
+export const notionTagColorClasses = {
+  gray: 'text-notion-tag-gray',
+  default: 'text-notion-tag-default',
+  brown: 'text-notion-tag-brown',
+  orange: 'text-notion-tag-orange',
+  yellow: 'text-notion-tag-yellow',
+  green: 'text-notion-tag-green',
+  blue: 'text-notion-tag-blue',
+  purple: 'text-notion-tag-purple',
+  pink: 'text-notion-tag-pink',
+  red: 'text-notion-tag-red',
+  gray_background: 'bg-notion-tag-gray',
+  default_background: 'bg-notion-tag-default',
+  brown_background: 'bg-notion-tag-brown',
+  orange_background: 'bg-notion-tag-orange',
+  yellow_background: 'bg-notion-tag-yellow',
+  green_background: 'bg-notion-tag-green',
+  blue_background: 'bg-notion-tag-blue',
+  purple_background: 'bg-notion-tag-purple',
+  pink_background: 'bg-notion-tag-pink',
+  red_background: 'bg-notion-tag-red'
+} as const;
+
+export const notionColorClasses = {
+  default: 'text-notion-default',
+  gray: 'text-notion-gray',
+  brown: 'text-notion-brown',
+  orange: 'text-notion-orange',
+  yellow: 'text-notion-yellow',
+  green: 'text-notion-green',
+  blue: 'text-notion-blue',
+  purple: 'text-notion-purple',
+  pink: 'text-notion-pink',
+  red: 'text-notion-red',
+  gray_background: 'bg-notion-gray',
+  brown_background: 'bg-notion-brown',
+  orange_background: 'bg-notion-orange',
+  yellow_background: 'bg-notion-yellow',
+  green_background: 'bg-notion-green',
+  blue_background: 'bg-notion-blue',
+  purple_background: 'bg-notion-purple',
+  pink_background: 'bg-notion-pink',
+  red_background: 'bg-notion-red',
+  code: 'text-notion-code',
+  code_background: 'bg-notion-code'
+} as const;
+
+export const paragraphTextClasses = {
+  code: {
+    once: `py-[0.0625rem] px-1 font-mono rounded-l rounded-r`,
+    first: `py-[0.0625rem] pl-1 font-mono rounded-l`,
+    last: `py-[0.0625rem] pr-1 font-mono rounded-r`,
+    middle: `py-[0.0625rem] font-mono`
+  }
+} as const;
+
+export const NEXT_IMAGE_DOMAINS = [
+  'www.notion.so',
+  'notion.so',
+  's3.us-west-2.amazonaws.com',
+  's3-us-west-2.amazonaws.com'
+];

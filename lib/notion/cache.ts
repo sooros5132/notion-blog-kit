@@ -2,10 +2,12 @@ import path from 'path';
 import { promises as fs } from 'fs';
 
 /**
- * Using the /tmp folder in Vercel.
+ * Caching folder path is `[project root]/lib/notion/cache`
+ *
+ * Using the `/tmp` folder in Vercel.
  * project folder will be read only.
  *
- * Vercel에서는 /tmp 폴더 사용.
+ * Vercel에서는 `/tmp` 폴더 사용.
  * project 폴더가 read only로 된다.
  */
 export const CACHE_PATH =
@@ -61,6 +63,34 @@ export async function accessCache(blockId: string) {
 
   try {
     await fs.access(cachePath, (fs.constants || fs).R_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function deleteCache(blockId: string) {
+  const cachePath = cachePathMaker(blockId);
+
+  try {
+    await fs.unlink(cachePath);
+    if (process.env.DEBUG_LOGS) {
+      console.log('\x1b[37m\x1b[42m');
+      console.log(`delete cache \`${blockId}\` into \`${cachePath}\``, '\x1b[0m');
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function deleteCacheDirectory() {
+  if (path.resolve(CACHE_PATH) === '/') {
+    return false;
+  }
+
+  try {
+    await fs.rm(CACHE_PATH, { recursive: true, force: true, maxRetries: 1 });
     return true;
   } catch (e) {
     return false;

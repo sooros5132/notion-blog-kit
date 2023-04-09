@@ -10,8 +10,7 @@ export { LinkPreview as NotionLinkPreviewBlock } from './LinkPreview';
 export { NotionSecureImage } from './NotionSecureImage';
 export {
   Paragraph as NotionParagraphBlock,
-  ParagraphText as NotionParagraphText,
-  notionColorClasses
+  ParagraphText as NotionParagraphText
 } from './Paragraph';
 export { Table as NotionTableBlock } from './Table';
 export { Toggle as NotionToggleBlock } from './Toggle';

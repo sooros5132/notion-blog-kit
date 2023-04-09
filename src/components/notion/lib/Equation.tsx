@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { NotionBlock } from 'src/types/notion';
 import katex from 'katex';
-import { CopyButtonWrapper } from 'src/lib/CopyButtonWrapper';
+import { CopyButtonWrapper } from 'src/components/modules/CopyButtonWrapper';
 
 interface EquationProps {
   block: NotionBlock;

@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import classNames from 'classnames';
 import type React from 'react';
+import classNames from 'classnames';
+import Link from 'next/link';
+import { HiHome, HiMenu } from 'react-icons/hi';
+import { siteConfig } from 'site-config';
 import type {
   RichText,
   INotionPage,
@@ -69,12 +72,40 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
             <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
           ) : pageInfo.object === 'database' ? (
             <NotionDatabasePageView
-              key={Date.now()}
               pageInfo={pageInfo as INotionSearchDatabase}
               baseBlock={baseBlock as unknown as NotionDatabasesQuery}
             />
           ) : null}
         </div>
+        <NotionFooter pageInfo={pageInfo} />
+      </div>
+    </div>
+  );
+};
+
+const NotionFooter: React.FC<{ pageInfo: INotionPage['pageInfo'] }> = ({ pageInfo }) => {
+  const parentDatabaseId = pageInfo.parent.database_id?.replaceAll('-', '') || '';
+
+  if (!parentDatabaseId) {
+    return <></>;
+  }
+
+  return (
+    <div>
+      <div className='divider'></div>
+      <div className='flex justify-between m-2'>
+        <Link
+          className='btn btn-sm btn-ghost text-zinc-500'
+          href={parentDatabaseId === siteConfig.notion.baseBlock ? '/' : `/${parentDatabaseId}`}
+        >
+          <HiHome /> Home
+        </Link>
+        <Link
+          className='btn btn-sm btn-ghost text-zinc-500'
+          href={parentDatabaseId === siteConfig.notion.baseBlock ? '/' : `/${parentDatabaseId}`}
+        >
+          <HiMenu /> Post List
+        </Link>
       </div>
     </div>
   );

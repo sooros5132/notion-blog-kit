@@ -1,7 +1,11 @@
 import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
-import { notionBlockUrlToRelativePath } from 'src/lib/notion';
+import {
+  notionBlockUrlToRelativePath,
+  notionColorClasses,
+  paragraphTextClasses
+} from 'src/lib/notion';
 import type { Color, RichText } from 'src/types/notion';
 import { NotionCopyHeadingLink } from '.';
 import Link from 'next/link';
@@ -16,62 +20,6 @@ export interface ParagraphTextProps {
   color?: Color;
   children?: ReactNode;
 }
-
-export const notionTagColorClasses = {
-  gray: 'text-notion-tag-gray',
-  default: 'text-notion-tag-default',
-  brown: 'text-notion-tag-brown',
-  orange: 'text-notion-tag-orange',
-  yellow: 'text-notion-tag-yellow',
-  green: 'text-notion-tag-green',
-  blue: 'text-notion-tag-blue',
-  purple: 'text-notion-tag-purple',
-  pink: 'text-notion-tag-pink',
-  red: 'text-notion-tag-red',
-  gray_background: 'bg-notion-tag-gray',
-  default_background: 'bg-notion-tag-default',
-  brown_background: 'bg-notion-tag-brown',
-  orange_background: 'bg-notion-tag-orange',
-  yellow_background: 'bg-notion-tag-yellow',
-  green_background: 'bg-notion-tag-green',
-  blue_background: 'bg-notion-tag-blue',
-  purple_background: 'bg-notion-tag-purple',
-  pink_background: 'bg-notion-tag-pink',
-  red_background: 'bg-notion-tag-red'
-} as const;
-
-export const notionColorClasses = {
-  default: 'text-notion-default',
-  gray: 'text-notion-gray',
-  brown: 'text-notion-brown',
-  orange: 'text-notion-orange',
-  yellow: 'text-notion-yellow',
-  green: 'text-notion-green',
-  blue: 'text-notion-blue',
-  purple: 'text-notion-purple',
-  pink: 'text-notion-pink',
-  red: 'text-notion-red',
-  gray_background: 'bg-notion-gray',
-  brown_background: 'bg-notion-brown',
-  orange_background: 'bg-notion-orange',
-  yellow_background: 'bg-notion-yellow',
-  green_background: 'bg-notion-green',
-  blue_background: 'bg-notion-blue',
-  purple_background: 'bg-notion-purple',
-  pink_background: 'bg-notion-pink',
-  red_background: 'bg-notion-red',
-  code: 'text-notion-code',
-  code_background: 'bg-notion-code'
-} as const;
-
-const paragraphTextClasses = {
-  code: {
-    once: `py-[0.0625rem] px-1 font-mono rounded-l rounded-r`,
-    first: `py-[0.0625rem] pl-1 font-mono rounded-l`,
-    last: `py-[0.0625rem] pr-1 font-mono rounded-r`,
-    middle: `py-[0.0625rem] font-mono`
-  }
-} as const;
 
 export const ParagraphText: React.FC<ParagraphTextProps> = ({
   bold,

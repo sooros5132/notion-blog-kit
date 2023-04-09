@@ -24,11 +24,3 @@ export const siteConfig = createSiteConfig({
   hidePoweredBy: process.env.NEXT_PUBLIC_HIDE_POWERED_BY === 'true',
   googleGTag: process.env.NEXT_PUBLIC_GOOGLE_G_TAG
 });
-
-export const NEXT_IMAGE_DOMAINS = [
-  'www.notion.so',
-  'notion.so',
-  's3.us-west-2.amazonaws.com',
-  's3-us-west-2.amazonaws.com',
-  'images.unsplash.com'
-];

@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AiOutlineSearch } from 'react-icons/ai';
 import classNames from 'classnames';
+import { useSiteSettingStore } from 'src/store/siteSetting';
 
 interface SearchFormProps {
   searchValue?: string;
@@ -24,7 +25,10 @@ export const SearchForm: React.FC<SearchFormProps> = ({
     evt.preventDefault();
     const form = evt.target as HTMLFormElement;
     const value = form?.search?.value?.trim();
-    router.push('/s/' + value);
+    if (value) {
+      useSiteSettingStore.getState().closeSideBarMenu();
+      router.push('/s/' + value);
+    }
   };
 
   useEffect(() => {
@@ -46,7 +50,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
         autoInputHidden ? 'sm:bg-base-content/5' : 'bg-base-content/5'
       )}
     >
-      <div className={'form-control md:overflow-visible'}>
+      <div className='form-control md:overflow-visible'>
         <div className={autoInputHidden ? 'sm:input-group' : 'input-group'}>
           <input
             ref={inputRef}

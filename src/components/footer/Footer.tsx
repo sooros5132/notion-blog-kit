@@ -16,6 +16,7 @@ const Footer: React.FC = (): JSX.Element => {
               rel='noreferrer'
               target='_blank'
               aria-label='notion blog kit repository'
+              tabIndex={-1}
             >
               Notion-Blog-Kit
             </a>
@@ -23,8 +24,8 @@ const Footer: React.FC = (): JSX.Element => {
         </div>
       )}
       <div className='bg-base-200'>
-        <div className='flex justify-between align-center max-w-[var(--article-max-width)] mx-auto py-2 px-4'>
-          <div className='text-2xl font-bold'>{siteConfig.infomation.blogname}</div>
+        <div className='flex justify-between align-center mx-auto py-2 px-4'>
+          <div className='text-xl font-bold'>{siteConfig.infomation.blogname}</div>
           <div className='flex items-center gap-2 text-2xl'>
             {siteConfig.infomation.email && (
               <a href={'mailto:' + siteConfig.infomation.email} aria-label='send mail link'>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import { INotionSearchObject, NotionDatabase } from 'src/types/notion';
+import { INotionSearchObject, NotionBlogProperties, NotionDatabase } from 'src/types/notion';
 import { ChildDatabaseItem } from 'src/components/notion/lib/ChildDatabaseItem';
 import { SearchForm } from 'src/components/search/SearchForm';
 import { NotionClient } from 'lib/notion/Notion';
@@ -8,6 +8,7 @@ import { NotionClient } from 'lib/notion/Notion';
 interface SearchResult {
   searchValue?: string;
   searchResult?: Array<INotionSearchObject>;
+  blogProperties?: NotionBlogProperties;
 }
 
 export default function Search({ searchValue, searchResult }: SearchResult) {
@@ -52,7 +53,7 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
   }
 
   const notionClient = new NotionClient();
-  const [databaseResult, workspaceResult] = await Promise.all([
+  const [databaseResult, workspaceResult, blogProperties] = await Promise.all([
     notionClient.getSearchPagesByDatabase({
       direction: 'descending',
       searchValue: slug
@@ -61,7 +62,8 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
       direction: 'descending',
       filter: 'page',
       searchValue: slug
-    })
+    }),
+    notionClient.getBlogProperties()
   ]);
 
   const resultRecord: Record<string, INotionSearchObject> = {};
@@ -76,6 +78,7 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
 
   return {
     props: {
+      blogProperties,
       searchValue: slug,
       searchResult: result
     }

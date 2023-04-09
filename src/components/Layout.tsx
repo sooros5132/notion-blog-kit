@@ -8,8 +8,8 @@ import Head from 'next/head';
 import { throttle } from 'lodash';
 import { FaArrowUp } from 'react-icons/fa';
 import classNames from 'classnames';
-
-export const introductionPathnameList = ['/'];
+import { useSiteSettingStore } from 'src/store/siteSetting';
+import { SideBarMenu } from './modules/SideBarMenu';
 
 function Layout({ children }: PropsWithChildren) {
   const mode = useThemeStore((state) => state.mode);
@@ -23,6 +23,16 @@ function Layout({ children }: PropsWithChildren) {
   // }, [router.events, router]);
 
   useEffect(() => {
+    useSiteSettingStore.subscribe(({ enableSideBarMenu }) => {
+      if (enableSideBarMenu) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     document.documentElement.dataset.theme = mode;
     document.documentElement.classList.add(mode);
     return () => {
@@ -31,21 +41,22 @@ function Layout({ children }: PropsWithChildren) {
   }, [mode]);
 
   return (
-    <div className='flex flex-col bg-base-100 min-h-screen supports-[height:100dvh]:min-h-dvh-100'>
+    <div className='flex flex-col min-h-screen supports-[height:100dvh]:min-h-dvh-100 bg-base-100 text-base-content'>
       <Head>
         <meta name='msapplication-TileColor' content={mode === 'dark' ? '#313335' : '#f3f4f6'} />
         <meta name='theme-color' content={mode === 'dark' ? '#313335' : '#f3f4f6'} />
       </Head>
       <NextNProgress startPosition={0.2} />
       <Header />
-      <main className='flex flex-col mb-auto text-base-content'>{children}</main>
+      <main className='grow'>{children}</main>
       <Footer />
-      <ScrollTipButton />
+      <SideBarMenu />
+      <ScrollTopButton />
     </div>
   );
 }
 
-const ScrollTipButton = () => {
+const ScrollTopButton = () => {
   const [visibleScrollTopButton, setVisibleScrollTopButton] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const SvgBorderRef = useRef<SVGSVGElement>(null);
@@ -68,7 +79,7 @@ const ScrollTipButton = () => {
       }
       const nextYOffset = window.pageYOffset;
       if (
-        window.pageYOffset < 20 ||
+        window.pageYOffset < 100 ||
         Math.round(window.innerHeight + window.pageYOffset) >
           Math.round(document.body.scrollHeight - 50)
       ) {
@@ -95,6 +106,7 @@ const ScrollTipButton = () => {
       });
       const buttonEl = buttonRef.current;
       if (buttonEl) {
+        // .focus() is safari support
         buttonEl.focus();
         setTimeout(() => {
           buttonEl.blur();
@@ -106,14 +118,14 @@ const ScrollTipButton = () => {
   return (
     <div
       className={classNames(
-        'fixed bottom-3 right-3 z-10 transition-opacity duration-300',
+        'fixed bottom-3 right-3 z-10 transition-[opacity_scale] duration-300 rounded-full bg-base-100 hover:scale-110',
         visibleScrollTopButton ? 'opacity-100' : 'pointer-events-none opacity-0'
       )}
     >
       <button
         ref={buttonRef}
         tabIndex={-1}
-        className='relative btn btn-circle btn-ghost min-w-0 min-h-0 w-[30px] h-[30px] btn-sm bg-base-100 border-none p-0 shadow-md overflow-hidden !outline-none hover:bg-base-200 group'
+        className='relative btn btn-circle btn-ghost min-w-0 min-h-0 w-[30px] h-[30px] btn-sm bg-base-100 border-none p-0 shadow-md overflow-hidden hover:bg-base-200/10 !outline-none group'
         onClick={handleClickScrollTopButton}
       >
         <FaArrowUp className='transition-transform duration-1000 group-focus:-translate-y-[200%] group-active:-translate-y-[200%]' />

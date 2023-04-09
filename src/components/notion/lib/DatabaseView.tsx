@@ -13,10 +13,11 @@ import { NotionSecureImage } from '.';
 import { siteConfig } from 'site-config';
 import Link from 'next/link';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { notionTagColorClasses } from './Paragraph';
 import { richTextToPlainText } from './utils';
 import { sortBy } from 'lodash';
 import { useRouter } from 'next/router';
+import { notionTagColorClasses } from 'src/lib/notion';
+import { OptionalNextLink } from 'src/components/modules/OptionalNextLink';
 
 type NotionDatabasePageViewProps = {
   baseBlock: NotionDatabasesQuery;
@@ -82,14 +83,13 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
 
   const handleClickCategoryItem =
     (key: string | null) => (event: React.MouseEvent<HTMLAnchorElement>) => {
-      if (isBaseDatabase) {
-        return;
-      } else {
+      if (!isBaseDatabase) {
         event.preventDefault();
       }
       if (pageInfo.properties.category?.type !== 'select') {
         return;
       }
+      setTagFilterKey(null);
       if (!key || key === categoryFilterKey) {
         setCategoryFilterKey(null);
         setFilterdBlocks(baseBlock.results);
@@ -103,14 +103,13 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
     };
   const handleClickTagItem =
     (key: string | null) => (event: React.MouseEvent<HTMLAnchorElement>) => {
-      if (isBaseDatabase) {
-        return;
-      } else {
+      if (!isBaseDatabase) {
         event.preventDefault();
       }
       if (pageInfo.properties.tags?.type !== 'multi_select') {
         return;
       }
+      setCategoryFilterKey(null);
       if (!key || key === tagFilterKey) {
         setTagFilterKey(null);
         setFilterdBlocks(baseBlock.results);
@@ -146,11 +145,11 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
     setFilterdBlocks(newFilterdBlocks);
   };
 
-  const categorys = useMemo(() => {
+  const categories = useMemo(() => {
     if (pageInfo.properties.category?.type !== 'select') {
       return {};
     }
-    const categorys = baseBlock.results.reduce<Record<string, number>>((prev, current) => {
+    const categories = baseBlock.results.reduce<Record<string, number>>((prev, current) => {
       const name = current.properties.category?.select?.name;
       if (!name) {
         return prev;
@@ -160,10 +159,10 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
         [name]: prev[name] ? prev[name] + 1 : 1
       };
     }, {});
-    return categorys;
+    return categories;
   }, [baseBlock.results, pageInfo.properties.category?.type]);
 
-  const categoryKeys = Object.keys(categorys).sort();
+  const categoryKeys = Object.keys(categories).sort();
 
   const tags = useMemo(
     () => sortBy(pageInfo?.properties?.tags?.multi_select?.options || [], 'name'),
@@ -172,13 +171,14 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
 
   return (
     <div className='flex flex-col sm:gap-4 sm:flex-row'>
-      {categorys && (
+      {categories && (
         <div className='grow-0 shrink-0 sm:sticky sm:left-0 sm:top-[calc(var(--header-height)_+_1em)] sm:z-0 sm:max-h-[calc(100vh_-_var(--header-height)_-_2em)]'>
           <aside className='flex h-full grow-0 shrink-0 p-3 gap-x-2 bg-base-100 text-sm sm:p-0 sm:mb-0 sm:flex-col sm:max-w-[200px] sm:gap-y-4 md:max-w-[220px] '>
             <div className='flex justify-center grow flex-col gap-y-3 sm:grow-0 sm:order-2 overflow-auto'>
               <ul className='flex-0 flex shrink-0 gap-x-2 overflow-x-auto scrollbar-hidden whitespace-nowrap sm:flex-col sm:px-2 sm:overflow-hidden sm:gap-y-1'>
                 {categoryKeys.map((category) => (
-                  <Link
+                  <OptionalNextLink
+                    wrappingAnchor={isBaseDatabase}
                     key={category}
                     href={category === categoryFilterKey ? '/' : `/category/${category}`}
                     scroll={false}
@@ -197,37 +197,34 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
                       <span className='flex-auto grow-0 shrink overflow-hidden text-ellipsis'>
                         {category}
                       </span>
-                      <span className='flex-auto grow-0 shrink-0'>({categorys[category]})</span>
+                      <span className='flex-auto grow-0 shrink-0'>({categories[category]})</span>
                     </li>
-                  </Link>
+                  </OptionalNextLink>
                 ))}
               </ul>
               <div className='hidden sm:flex grow-0 shrink-0 gap-1.5 flex-wrap break-all px-2 order-3'>
                 {tags.map((tag) => (
-                  <Link
+                  <OptionalNextLink
                     key={tag.id}
+                    wrappingAnchor={isBaseDatabase}
+                    className={classNames(
+                      'cursor-pointer px-1.5 rounded-md hover:opacity-80',
+                      notionTagColorClasses[tag.color],
+                      `${
+                        notionTagColorClasses[
+                          `${tag.color}_background` as keyof typeof notionTagColorClasses
+                        ]
+                      }`,
+                      tagFilterKey === tag.name ? 'opacity-100 font-bold' : 'opacity-70'
+                    )}
                     href={tag.name === tagFilterKey ? '/' : `/tag/${tag.name}`}
                     scroll={false}
                     shallow={isBaseDatabase}
                     prefetch={false}
                     onClick={handleClickTagItem(tag.name)}
                   >
-                    <span
-                      key={tag.id}
-                      className={classNames(
-                        'cursor-pointer px-1.5 rounded-md opacity-70',
-                        notionTagColorClasses[tag.color],
-                        `${
-                          notionTagColorClasses[
-                            `${tag.color}_background` as keyof typeof notionTagColorClasses
-                          ]
-                        }`,
-                        tagFilterKey === tag.name ? 'opacity-100 font-bold' : null
-                      )}
-                    >
-                      <span>{tag.name}</span>
-                    </span>
-                  </Link>
+                    <span>{tag.name}</span>
+                  </OptionalNextLink>
                 ))}
               </div>
             </div>
@@ -254,7 +251,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
           {filterdBlocks.length ? (
             filterdBlocks.map((block) => <ArticleSummary key={block.id} article={block} />)
           ) : (
-            <div>There are no posts.</div>
+            <div className='text-xl text-base-content/70 text-center'>Not Found Posts.</div>
           )}
         </div>
       )}
@@ -284,9 +281,9 @@ const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {
 
   return (
     <Link
-      prefetch={false}
       href={href}
-      className='sm:transition-transform sm:hover:-translate-y-0.5 [&_.cover-image]:hover:brightness-110 [&_.cover-image>div]:transition-transform [&_.cover-image>div]:duration-[400ms] [&_.cover-image>div]:hover:scale-[1.1]'
+      prefetch={false}
+      className='[&_.cover-image]:hover:brightness-110 [&_.cover-image>div]:transition-transform [&_.cover-image>div]:duration-[400ms] [&_.cover-image>div]:hover:scale-110 sm:[&_.cover-image>div]:hover:scale-105'
     >
       <div className='w-full flex flex-col bg-base-content/5 shadow-md overflow-hidden rounded-md isolate sm:flex-row'>
         <div className='cover-image shrink-0 h-[200px] bg-base-content/5 overflow-hidden brightness-95 transition-[filter] ease-linear duration-300 [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full sm:w-[120px] md:w-[150px] lg:w-[200px] sm:h-[100px]'>

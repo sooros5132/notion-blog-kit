@@ -4,27 +4,24 @@ import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
 import { siteConfig } from 'site-config';
 import { SearchForm } from 'src/components/search/SearchForm';
-import { useThemeStore } from 'src/store/theme';
-import { HiSun, HiMoon } from 'react-icons/hi';
 import classNames from 'classnames';
+import { ThemeChangeButton } from '../modules/ThemeChangeButton';
+import { useSiteSettingStore } from 'src/store/siteSetting';
+import { FaArrowRight } from 'react-icons/fa';
+import { HiMenu } from 'react-icons/hi';
+import { useNotionStore } from 'src/store/notion';
+import shallow from 'zustand/shallow';
 
 const Header: React.FC = (): JSX.Element => {
-  const { mode, changeTheme } = useThemeStore();
-  const [isHydrated, setIsHydrated] = useState(false);
   const [visibleHeader, setVisibleHeader] = useState(true);
+  const { hydrated, enableSideBarMenu, closeSideBarMenu, openSideBarMenu } = useSiteSettingStore();
+  const blogProperties = useNotionStore(({ blogProperties }) => blogProperties, shallow);
 
-  const handleClickThemeSwap = (event: React.MouseEvent<HTMLLabelElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    switch (mode) {
-      case 'light': {
-        changeTheme('dark');
-        break;
-      }
-      case 'dark': {
-        changeTheme('light');
-        break;
-      }
+  const handleClickSideBarMenuButton = () => {
+    if (enableSideBarMenu) {
+      closeSideBarMenu();
+    } else {
+      openSideBarMenu();
     }
   };
 
@@ -47,20 +44,19 @@ const Header: React.FC = (): JSX.Element => {
     return () => window.removeEventListener('scroll', throttleScrollEvent);
   }, []);
 
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
   return (
     <nav
       className={classNames(
         'sticky left-0 h-[var(--header-height)] bg-base-200/50 backdrop-blur-xl transition-[top] duration-300 z-10',
-        visibleHeader ? 'top-0' : '-top-[calc(var(--header-height)_-_0.125rem)]'
+        visibleHeader && !enableSideBarMenu ? 'top-0' : '-top-[var(--header-height)]'
       )}
     >
-      <div className='flex justify-between items-center max-w-[var(--article-max-width)] mx-auto p-2 gap-x-1'>
-        <div className='flex-1'>
-          <Link className='text-xl rounded-md btn btn-ghost btn-sm h-full normal-case' href='/'>
+      <div className='h-full flex justify-between items-center mx-auto p-2 gap-x-1'>
+        <div className='flex-1 whitespace-nowrap'>
+          <Link
+            className='text-xl rounded-md btn btn-ghost btn-sm h-full normal-case px-2'
+            href='/'
+          >
             {/* <AiFillThunderbolt />&nbsp; */}
             {siteConfig.infomation.blogname}
           </Link>
@@ -86,20 +82,23 @@ const Header: React.FC = (): JSX.Element => {
         <div className='max-w-[150px] sm:max-w-[200px]'>
           <SearchForm />
         </div>
-        {isHydrated ? (
-          <label
-            className='swap swap-rotate btn btn-circle btn-ghost btn-sm text-lg items-center'
-            onClickCapture={handleClickThemeSwap}
-          >
-            <input type='checkbox' aria-label='theme-mode-change-button' />
-            <HiSun key='light' className={classNames(mode === 'dark' ? 'swap-on' : 'swap-off')} />
-            <HiMoon key='dark' className={classNames(mode === 'light' ? 'swap-on' : 'swap-off')} />
-          </label>
-        ) : (
-          <div className='w-[32px]'></div>
-        )}
+        <div className='flex items-center'>
+          <ThemeChangeButton />
+          {hydrated ? (
+            blogProperties && (
+              <button
+                className='btn btn-circle btn-sm btn-ghost text-xl'
+                onClick={handleClickSideBarMenuButton}
+              >
+                {enableSideBarMenu ? <FaArrowRight /> : <HiMenu />}
+              </button>
+            )
+          ) : (
+            <div className='w-8' />
+          )}
+        </div>
       </div>
-      <ScrollProgressBar />
+      {/* <ScrollProgressBar /> */}
     </nav>
   );
 };

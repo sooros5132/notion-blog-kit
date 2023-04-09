@@ -6,7 +6,7 @@ import { NotionParagraphBlock } from '.';
 import { useThemeStore } from 'src/store/theme';
 import { useEffect, useState } from 'react';
 import { FaCircle } from 'react-icons/fa';
-import { CopyButtonWrapper } from 'src/lib/CopyButtonWrapper';
+import { CopyButtonWrapper } from 'src/components/modules/CopyButtonWrapper';
 
 interface CodeProps {
   block: NotionBlock;

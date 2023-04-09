@@ -1,4 +1,9 @@
-import { INotionPage, NotionBlocks, NotionDatabasesQuery } from 'src/types/notion';
+import {
+  INotionPage,
+  NotionBlocks,
+  NotionBlogProperties,
+  NotionDatabasesQuery
+} from 'src/types/notion';
 import create from 'zustand';
 
 export interface NotionState {
@@ -6,8 +11,9 @@ export interface NotionState {
   baseBlock?: INotionPage['block'];
   userInfo?: INotionPage['userInfo'];
   pageInfo?: INotionPage['pageInfo'];
-  databaseRecord: Record<string, NotionDatabasesQuery>;
-  childrenRecord: Record<string, NotionBlocks>;
+  databaseRecord?: Record<string, NotionDatabasesQuery>;
+  childrenRecord?: Record<string, NotionBlocks>;
+  blogProperties?: NotionBlogProperties;
 }
 
 export interface NotionStore extends NotionState {
@@ -15,6 +21,7 @@ export interface NotionStore extends NotionState {
   setBaseBlock: (block: NotionState['baseBlock']) => void;
   setDatabaseRecord: (databaseRecord: NotionState['databaseRecord']) => void;
   setChildrenRecord: (childrenRecord: NotionState['childrenRecord']) => void;
+  init: (params: NotionState) => void;
 }
 
 const defaultState: NotionState = {
@@ -37,5 +44,10 @@ export const useNotionStore = create<NotionStore>((set, get) => ({
   },
   setChildrenRecord(childrenRecord) {
     set({ childrenRecord });
+  },
+  init(params) {
+    set({
+      ...params
+    });
   }
 }));

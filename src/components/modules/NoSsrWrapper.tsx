@@ -1,8 +1,9 @@
+import type React from 'react';
+import { Fragment } from 'react';
 import dynamic from 'next/dynamic';
-import React from 'react';
 
 const NoSsrWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <React.Fragment>{children}</React.Fragment>
+  <Fragment>{children}</Fragment>
 );
 
 export default dynamic(() => Promise.resolve(NoSsrWrapper), {

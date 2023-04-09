@@ -2,12 +2,8 @@ import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
 import type { Color, FileObject, NotionBlock } from 'src/types/notion';
-import {
-  NotionHasChildrenRender,
-  NotionParagraphBlock,
-  NotionSecureImage,
-  notionColorClasses
-} from '.';
+import { NotionHasChildrenRender, NotionParagraphBlock, NotionSecureImage } from '.';
+import { notionColorClasses } from 'src/lib/notion';
 
 interface CalloutBlockContainerProps {
   color: Color;

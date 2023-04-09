@@ -3,8 +3,8 @@ import Image from 'next/image';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { NEXT_IMAGE_DOMAINS, siteConfig } from 'site-config';
-import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
+import { siteConfig } from 'site-config';
+import { awsImageObjectUrlToNotionUrl, NEXT_IMAGE_DOMAINS } from 'src/lib/notion';
 import { FileObject, IconObject } from 'src/types/notion';
 import { isExpired, NotionImageFetcherParams, useRenewExpiredFile } from './utils';
 

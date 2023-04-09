@@ -511,3 +511,23 @@ export interface INotionUserInfo {
   type?: 'person';
   person?: Record<string, any>;
 }
+
+export type NotionBlogProperties = {
+  categories: Array<{
+    id: string;
+    name: string;
+    color: Color;
+    count: number;
+  }>;
+  tags: Array<{
+    id: string;
+    color: Color;
+    name: string;
+  }>;
+};
+
+export type CachedNotionBlogProperties = NotionBlogProperties & {
+  databaseId: string;
+  cachedTime: number;
+  lastEditedTime: string;
+};

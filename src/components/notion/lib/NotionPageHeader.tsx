@@ -5,11 +5,12 @@ import { siteConfig } from 'site-config';
 import { INotionSearchObject, INotionUserInfo, FileObject, Select } from 'src/types/notion';
 import { NotionParagraphText, NotionSecureImage } from '.';
 import { enUS } from 'date-fns/locale';
-import { notionTagColorClasses, Paragraph } from './Paragraph';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { BsDot } from 'react-icons/bs';
-import { OptionalNextLink } from 'src/lib/OptionalNextLink';
+import { notionTagColorClasses } from 'src/lib/notion';
+import { Paragraph } from './Paragraph';
+import { OptionalNextLink } from 'src/components/modules/OptionalNextLink';
 
 export interface NotionPageHeaderProps {
   page: INotionSearchObject;
@@ -123,7 +124,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
                   }
                 )}`}
             </span>
-            {Array.isArray(tags) && <BsDot className='inline' />}
+            {Array.isArray(tags) && Boolean(tags.length) && <BsDot className='inline' />}
             {Array.isArray(tags) && (
               <span className='text-sm'>
                 {tags.map((tag, idx) => (

@@ -9,7 +9,7 @@ export interface ColumnListProps {
 }
 
 export const ColumnList: React.FC<ColumnListProps> = ({ block, baseBlock }) => {
-  const childrenRecord = useNotionStore.getState().childrenRecord;
+  const childrenRecord = useNotionStore.getState().childrenRecord!;
   // ((state) => state.childrenRecord, shallow);
 
   const columns = childrenRecord[block.id]?.results;

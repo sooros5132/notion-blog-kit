@@ -1,6 +1,7 @@
 import type React from 'react';
+import { notionColorClasses } from 'src/lib/notion';
 import type { NotionBlock } from 'src/types/notion';
-import { NotionHasChildrenRender, NotionParagraphBlock, notionColorClasses } from '.';
+import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 
 interface ToggleProps {
   block: NotionBlock;

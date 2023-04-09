@@ -1,30 +1,56 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { NotionRender } from 'src/components/notion';
-import { INotionPage, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { INotionPage, NotionBlogProperties } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
 import { useNotionStore } from 'src/store/notion';
 import { siteConfig } from 'site-config';
 import { richTextToPlainText } from 'src/components/notion/lib/utils';
+import { useSiteSettingStore } from 'src/store/siteSetting';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 interface SlugProps {
   slug: string;
   page: INotionPage;
+  blogProperties: NotionBlogProperties;
 }
 
-export default function Slug({ slug, page }: SlugProps) {
-  // return <div>hello world</div>;
+export default function Slug({ slug, page, blogProperties }: SlugProps) {
+  const router = useRouter();
+  const hydrated = useSiteSettingStore().hydrated;
+  if (!hydrated) {
+    useNotionStore.getState().init({
+      slug,
+      blogProperties,
+      baseBlock: page.block,
+      pageInfo: page.pageInfo,
+      userInfo: page.userInfo,
+      childrenRecord: page?.block?.childrenRecord || {},
+      databaseRecord: page?.block?.databaseRecord || {}
+    });
+  }
 
-  useNotionStore.setState({
-    slug,
-    baseBlock: page.block,
-    pageInfo: page.pageInfo,
-    userInfo: page.userInfo,
-    childrenRecord: page?.block?.childrenRecord || {},
-    databaseRecord: page?.block?.databaseRecord || {}
-  });
+  useEffect(() => {
+    const handleRouteChangeComplete = () => {
+      useNotionStore.getState().init({
+        slug,
+        blogProperties,
+        baseBlock: page.block,
+        pageInfo: page.pageInfo,
+        userInfo: page.userInfo,
+        childrenRecord: page?.block?.childrenRecord || {},
+        databaseRecord: page?.block?.databaseRecord || {}
+      });
+    };
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
 
-  return <NotionRender slug={slug} page={page} />;
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [blogProperties, page.block, page.pageInfo, page.userInfo, router.events, slug]);
+
+  return <NotionRender key={router?.asPath || 'key'} slug={slug} page={page} />;
 }
 
 const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<INotionPage> => {
@@ -32,7 +58,7 @@ const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<INo
 
   switch (type) {
     case 'database': {
-      const database = await notionClient.getBlogMainPage({ databaseId: blockId });
+      const database = await notionClient.getDatabaseByDatabaseId({ databaseId: blockId });
 
       return database as INotionPage;
     }
@@ -105,9 +131,12 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         throw 'page is not found';
       }
 
+      const blogProperties = await notionClient.getBlogProperties();
+
       return {
         props: {
           page: block,
+          blogProperties,
           slug: uuid
         }
       };

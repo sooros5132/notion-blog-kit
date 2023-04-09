@@ -17,7 +17,7 @@ export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
   noLeftPadding,
   className
 }) => {
-  const childrenRecord = useNotionStore.getState().childrenRecord;
+  const childrenRecord = useNotionStore.getState().childrenRecord!;
 
   return (
     <>

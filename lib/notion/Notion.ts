@@ -1,7 +1,11 @@
 import { Client, LogLevel } from '@notionhq/client';
 import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
+import { sortBy } from 'lodash';
 import { siteConfig } from 'site-config';
+import { REVALIDATE } from 'src/lib/notion';
 import {
+  CachedNotionBlogProperties,
+  Color,
   INotionPage,
   INotionSearch,
   INotionSearchDatabase,
@@ -9,6 +13,7 @@ import {
   INotionUserInfo,
   NotionBlockAndChilrens,
   NotionBlocks,
+  NotionBlogProperties,
   NotionDatabasesQuery,
   PropertiesForDatabasePageInfo
 } from 'src/types/notion';
@@ -339,7 +344,11 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const cachePage = await this.getCache(blockId);
+      const cachePage = await this.getCache<
+        INotionPage & {
+          cachedTime: string;
+        }
+      >(blockId);
       if (!cachePage) {
         throw NO_CACHED;
       }
@@ -349,11 +358,16 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const now = Date.now();
+      const timeDiff = Date.now() - new Date(cachedTime).getTime();
 
-      // 캐시된 시간이 1시간 지났으면 다시
-      if (!cachedTime || now - new Date(cachedTime).getTime() > 60 * 60 * 1000) {
+      // 캐시된 시간이 55분이 지났으면 다시
+      if (!cachedTime || timeDiff > 55 * 60 * 1000) {
         throw NO_CACHED;
+      }
+
+      // REVALIDATE 안이면 리턴
+      if (timeDiff <= REVALIDATE * 1000) {
+        return page;
       }
 
       const newestPageInfo = await this.getPageInfo({ pageId: blockId });
@@ -383,6 +397,7 @@ export class NotionClient {
       return page;
     }
   }
+
   async getAllPublishedPageInDatabase(querys: {
     databaseId: string;
     filter?: {
@@ -440,13 +455,13 @@ export class NotionClient {
     return database;
   }
 
-  async getBlogMainPage(querys: {
+  async getDatabaseByDatabaseId(querys: {
     databaseId: string;
     filter?: {
       category?: string;
       tag?: string;
     };
-  }) {
+  }): Promise<INotionPage> {
     const databaseId = querys.databaseId;
     const NO_CACHED = 'no cached';
     try {
@@ -459,7 +474,11 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const cachePage = await this.getCache(databaseId);
+      const cachePage = await this.getCache<
+        INotionPage & {
+          cachedTime: string;
+        }
+      >(databaseId);
       if (!cachePage) {
         throw NO_CACHED;
       }
@@ -469,11 +488,16 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const now = Date.now();
+      const timeDiff = Date.now() - new Date(cachedTime).getTime();
 
       // 캐시된 시간이 55분이 지났으면 다시
-      if (!cachedTime || now - new Date(cachedTime).getTime() > 55 * 60 * 1000) {
+      if (!cachedTime || timeDiff > 55 * 60 * 1000) {
         throw NO_CACHED;
+      }
+
+      // REVALIDATE 안이면 리턴
+      if (timeDiff <= REVALIDATE * 1000) {
+        return page;
       }
 
       const newestPageInfo = await this.getDatabaseInfo({ databaseId: databaseId });
@@ -508,8 +532,17 @@ export class NotionClient {
         });
       }
 
-      return page;
+      return page as INotionPage;
     }
+  }
+  async getMainDatabase(): Promise<INotionPage> {
+    const databaseId = siteConfig.notion.baseBlock;
+
+    const database = await this.getDatabaseByDatabaseId({
+      databaseId
+    });
+
+    return database;
   }
 
   async searchSlug(querys: { slug: string; property: string }) {
@@ -534,16 +567,105 @@ export class NotionClient {
     return search;
   }
 
+  async getBlogProperties(): Promise<NotionBlogProperties> {
+    const databaseId = siteConfig.notion.baseBlock;
+    const cacheKey = 'blog-properties';
+    const NO_CACHED = 'no cached';
+    try {
+      const exists = await this.accessCache(cacheKey);
+      if (!exists) {
+        throw NO_CACHED;
+      }
+
+      const cacheData = await this.getCache<CachedNotionBlogProperties>(cacheKey);
+      if (!cacheData) {
+        throw NO_CACHED;
+      }
+
+      const { cachedTime, lastEditedTime, categories, tags } = cacheData;
+      if (!lastEditedTime || cacheData.databaseId !== databaseId) {
+        throw NO_CACHED;
+      }
+
+      const timeDiff = Date.now() - new Date(cachedTime).getTime();
+
+      // 캐시된 시간이 55분이 지났으면 다시
+      if (!cachedTime || timeDiff > 55 * 60 * 1000) {
+        throw NO_CACHED;
+      }
+
+      // REVALIDATE 안이면 리턴
+      if (timeDiff <= REVALIDATE * 1000) {
+        return { categories, tags };
+      }
+
+      const newestDatabaseInfo = await this.getDatabaseInfo({ databaseId: databaseId });
+
+      if (lastEditedTime === newestDatabaseInfo.last_edited_time) {
+        return { categories, tags };
+      }
+      throw NO_CACHED;
+    } catch (e) {
+      const database = await this.getDatabaseByDatabaseId({ databaseId });
+      const blocks = database.block as unknown as NotionDatabasesQuery;
+      const databaseInfo = database.pageInfo as INotionSearchDatabase;
+
+      const tags: NotionBlogProperties['tags'] = sortBy(
+        databaseInfo?.properties?.tags?.multi_select?.options || [],
+        'name'
+      );
+
+      const categories: NotionBlogProperties['categories'] = [];
+      if (databaseInfo?.properties.category?.type === 'select') {
+        const categoriesRecord = blocks.results.reduce<Record<string, typeof categories[number]>>(
+          (prev, current) => {
+            const category = current?.properties?.category?.select;
+            if (!category) {
+              return prev;
+            }
+
+            const newCategory: typeof categories[number] = {
+              ...category,
+              count: prev[category.name]?.count ? prev[category.name]?.count + 1 : 1
+            };
+
+            return {
+              ...prev,
+              [category.name]: newCategory
+            };
+          },
+          {}
+        );
+
+        Object.keys(categoriesRecord).forEach((category) =>
+          categories.push(categoriesRecord[category])
+        );
+      }
+
+      const blogProperties = {
+        categories,
+        tags
+      };
+
+      const cacheBlogProperties: CachedNotionBlogProperties = {
+        ...blogProperties,
+        databaseId,
+        lastEditedTime: database.pageInfo.last_edited_time,
+        cachedTime: Date.now()
+      };
+
+      await this.setCache(cacheKey, cacheBlogProperties);
+
+      return blogProperties;
+    }
+  }
+
   async accessCache(blockId: string) {
     return await notionCache.accessCache(blockId);
   }
 
-  async getCache(blockId: string) {
-    return await notionCache.get<
-      INotionPage & {
-        cachedTime: string;
-      }
-    >(blockId);
+  async getCache<T>(blockId: string) {
+    return await notionCache.get<T>(blockId);
   }
 
   async setCache(blockId: string, content: any) {

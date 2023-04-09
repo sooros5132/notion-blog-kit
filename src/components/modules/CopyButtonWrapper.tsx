@@ -1,7 +1,7 @@
 import type React from 'react';
 import { FC, PropsWithChildren } from 'react';
 import { BiCopy } from 'react-icons/bi';
-import { copyTextAtClipBoard } from './utils';
+import { copyTextAtClipBoard } from '../../lib/utils';
 
 export const CopyButtonWrapper: FC<PropsWithChildren<{ content?: string }>> = ({
   content,

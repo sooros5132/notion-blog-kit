@@ -5,6 +5,8 @@ import Head from 'next/head';
 import Layout from 'src/components/Layout';
 import Script from 'next/script';
 import { siteConfig } from 'site-config';
+import { useEffect } from 'react';
+import { useSiteSettingStore } from 'src/store/siteSetting';
 import 'src/styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -50,8 +52,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      <SideWorks />
     </>
   );
 }
+
+const SideWorks = () => {
+  useEffect(() => {
+    useSiteSettingStore.getState().setHydrated();
+  }, []);
+
+  return null;
+};
 
 export default MyApp;
