@@ -1,15 +1,15 @@
 import type React from 'react';
+import type {
+  FileObject,
+  NotionDatabase,
+  NotionDatabaseBlocks,
+  NotionDatabasesRetrieve,
+  NotionPagesRetrieve
+} from 'src/types/notion';
 import classNames from 'classnames';
 import formatInTimeZone from 'date-fns-tz/formatInTimeZone';
 import { Fragment, useMemo, useState } from 'react';
 import { SiNotion } from 'react-icons/si';
-import {
-  FileObject,
-  INotionSearchDatabase,
-  NotionDatabase,
-  NotionDatabasesQuery
-} from 'src/types/notion';
-import { NotionSecureImage } from '.';
 import { siteConfig } from 'site-config';
 import Link from 'next/link';
 import { AiOutlineSearch } from 'react-icons/ai';
@@ -17,22 +17,24 @@ import { richTextToPlainText } from './utils';
 import { sortBy } from 'lodash';
 import { useRouter } from 'next/router';
 import { notionTagColorClasses } from 'src/lib/notion';
+import { NotionSecureImage } from '.';
 import { OptionalNextLink } from 'src/components/modules/OptionalNextLink';
 
 type NotionDatabasePageViewProps = {
-  baseBlock: NotionDatabasesQuery;
-  pageInfo: INotionSearchDatabase;
+  databaseInfo: NotionDatabasesRetrieve;
+  notionBlock: NotionDatabaseBlocks;
 };
 
 export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
-  baseBlock,
-  pageInfo
+  databaseInfo,
+  notionBlock
 }) => {
   const router = useRouter();
-  const isBaseDatabase = siteConfig.notion.baseBlock === pageInfo.id.replaceAll('-', '');
+  const isBaseDatabase = siteConfig.notion.baseBlock === databaseInfo.id.replaceAll('-', '');
+  const pages = notionBlock.results;
 
-  const blocks: Array<NotionDatabase> = useMemo(() => {
-    const filterdBlock = baseBlock.results.filter((block) => {
+  const blocks = useMemo(() => {
+    const filterdBlock = pages.filter((block) => {
       const { category, tag } = router.query;
 
       if (!category && !tag) {
@@ -61,7 +63,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
     });
 
     return filterdBlock;
-  }, [baseBlock.results, router.query]);
+  }, [pages, router.query]);
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [categoryFilterKey, setCategoryFilterKey] = useState<string | null>(
@@ -78,25 +80,25 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
         : router.query.tag
       : null
   );
-  const [filterdBlocks, setFilterdBlocks] = useState<Array<NotionDatabase>>([...blocks]);
-  const haveTitleProperty = Boolean(pageInfo.properties.title?.title);
+  const [filterdBlocks, setFilterdBlocks] = useState([...blocks]);
+  const haveTitleProperty = Boolean(databaseInfo.properties.title?.title);
 
   const handleClickCategoryItem =
     (key: string | null) => (event: React.MouseEvent<HTMLAnchorElement>) => {
       if (!isBaseDatabase) {
         event.preventDefault();
       }
-      if (pageInfo.properties.category?.type !== 'select') {
+      if (databaseInfo.properties.category?.type !== 'select') {
         return;
       }
       setTagFilterKey(null);
       if (!key || key === categoryFilterKey) {
         setCategoryFilterKey(null);
-        setFilterdBlocks(baseBlock.results);
+        setFilterdBlocks([...pages]);
         return;
       }
       setCategoryFilterKey(key);
-      const newFilterdBlocks = baseBlock.results.filter(
+      const newFilterdBlocks = pages.filter(
         (block) => block.properties.category?.select?.name === key
       );
       setFilterdBlocks(newFilterdBlocks);
@@ -106,17 +108,17 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
       if (!isBaseDatabase) {
         event.preventDefault();
       }
-      if (pageInfo.properties.tags?.type !== 'multi_select') {
+      if (databaseInfo.properties.tags?.type !== 'multi_select') {
         return;
       }
       setCategoryFilterKey(null);
       if (!key || key === tagFilterKey) {
         setTagFilterKey(null);
-        setFilterdBlocks(baseBlock.results);
+        setFilterdBlocks([...pages]);
         return;
       }
       setTagFilterKey(key);
-      const newFilterdBlocks = baseBlock.results.filter((block) =>
+      const newFilterdBlocks = pages.filter((block) =>
         block.properties.tags?.multi_select?.map((s) => s.name).includes(key)
       );
       setFilterdBlocks(newFilterdBlocks);
@@ -129,13 +131,13 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
     const value = event.target.value;
     setSearchValue(value);
     if (!value) {
-      setFilterdBlocks(baseBlock.results);
+      setFilterdBlocks([...pages]);
       return;
     }
     if (categoryFilterKey) setCategoryFilterKey(null);
     if (tagFilterKey) setTagFilterKey(null);
 
-    const newFilterdBlocks = baseBlock.results.filter((block) => {
+    const newFilterdBlocks = pages.filter((block) => {
       const title = block.properties.title?.title
         ? block.properties.title.title.map((text) => text?.plain_text).join('') || null
         : null;
@@ -146,10 +148,10 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
   };
 
   const categories = useMemo(() => {
-    if (pageInfo.properties.category?.type !== 'select') {
+    if (databaseInfo.properties.category?.type !== 'select') {
       return {};
     }
-    const categories = baseBlock.results.reduce<Record<string, number>>((prev, current) => {
+    const categories = pages.reduce<Record<string, number>>((prev, current) => {
       const name = current.properties.category?.select?.name;
       if (!name) {
         return prev;
@@ -160,13 +162,13 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
       };
     }, {});
     return categories;
-  }, [baseBlock.results, pageInfo.properties.category?.type]);
+  }, [databaseInfo, pages]);
 
   const categoryKeys = Object.keys(categories).sort();
 
   const tags = useMemo(
-    () => sortBy(pageInfo?.properties?.tags?.multi_select?.options || [], 'name'),
-    [pageInfo?.properties?.tags?.multi_select?.options]
+    () => sortBy(databaseInfo?.properties?.tags?.multi_select?.options || [], 'name'),
+    [databaseInfo]
   );
 
   return (
@@ -260,7 +262,7 @@ export const NotionDatabasePageView: React.FC<NotionDatabasePageViewProps> = ({
 };
 
 type ArticleSummaryProps = {
-  article: NotionDatabase;
+  article: NotionPagesRetrieve;
 };
 
 const ArticleSummary: React.FC<ArticleSummaryProps> = ({ article }) => {

@@ -1,7 +1,7 @@
 import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
-import type { Color, FileObject, NotionBlock } from 'src/types/notion';
+import type { Color, FileObject, NotionBlocksRetrieve } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock, NotionSecureImage } from '.';
 import { notionColorClasses } from 'src/lib/notion';
 
@@ -25,7 +25,7 @@ const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) 
 };
 
 interface CalloutProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Callout: React.FC<CalloutProps> = ({ block }) => {

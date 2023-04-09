@@ -1,6 +1,6 @@
 import type React from 'react';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { IoClose } from 'react-icons/io5';
-import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 import queryString from 'querystring';
 import { useRenewExpiredFile } from './utils';
@@ -9,7 +9,7 @@ import { useEffect, useRef } from 'react';
 import NoSsrWrapper from 'src/components/modules/NoSsrWrapper';
 
 interface VideoProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Video: React.FC<VideoProps> = ({ block }) => {

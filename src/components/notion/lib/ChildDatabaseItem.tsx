@@ -5,19 +5,24 @@ import { siteConfig } from 'site-config';
 import Link from 'next/link';
 import { useState, memo, useEffect } from 'react';
 import { SiNotion } from 'react-icons/si';
-import { FileObject, NotionDatabase } from 'src/types/notion';
+import { FileObject, NotionDatabasesRetrieve, NotionPagesRetrieve } from 'src/types/notion';
 import isEqual from 'react-fast-compare';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
 import { enUS } from 'date-fns/locale';
 import { richTextToPlainText } from './utils';
 
 export const ChildDatabaseItem: React.FC<{
-  block: NotionDatabase;
+  block: NotionPagesRetrieve | NotionDatabasesRetrieve;
   sortKey: 'created_time' | 'last_edited_time' | 'title';
 }> = memo(({ block, sortKey }) => {
   const [isMounted, setMounted] = useState(false);
   const slug = richTextToPlainText(
     block?.properties?.slug?.rich_text || block?.properties?.title?.title
+  );
+  const title = richTextToPlainText(
+    block.object === 'page'
+      ? block?.properties?.title?.title || block?.properties?.slug?.rich_text
+      : block.title
   );
 
   const parentDatabaseId = block?.parent?.database_id?.replaceAll('-', '');
@@ -26,7 +31,7 @@ export const ChildDatabaseItem: React.FC<{
     parentDatabaseId === siteConfig.notion.baseBlock
       ? `/${encodeURIComponent(slug)}`
       : `/${encodeURIComponent(block.id.replaceAll('-', ''))}/${encodeURIComponent(
-          slug || 'Untitled'
+          slug || title || 'Untitled'
         )}`;
 
   const date = isMounted
@@ -110,14 +115,7 @@ export const ChildDatabaseItem: React.FC<{
             )}
           </div>
           <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
-            <div className='overflow-hidden max-h-[3.3em] [&>div]:line-clamp-2'>
-              {block?.properties?.title?.title && (
-                <NotionParagraphBlock
-                  blockId={block.id}
-                  richText={block?.properties?.title?.title}
-                />
-              )}
-            </div>
+            <div className='overflow-hidden max-h-[3.3em] [&>div]:line-clamp-2'>{title}</div>
             <div className='whitespace-nowrap'>
               <p>{date}</p>
             </div>

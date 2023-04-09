@@ -1,9 +1,9 @@
 import type React from 'react';
-import type { NotionBlock } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
 
 interface ImageProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Image: React.FC<ImageProps> = ({ block }) => {

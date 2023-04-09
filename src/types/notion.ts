@@ -1,5 +1,6 @@
-export declare type ID = string;
 export const URL_PAGE_TITLE_MAX_LENGTH = 100;
+
+export declare type ID = string;
 
 export declare type Code =
   | 'abap'
@@ -74,6 +75,7 @@ export declare type Code =
   | 'xml'
   | 'yaml'
   | 'java/c/c++/c#';
+
 export declare type Color =
   | 'default'
   | 'gray'
@@ -94,6 +96,7 @@ export declare type Color =
   | 'purple_background'
   | 'pink_background'
   | 'red_background';
+
 export declare type PropertyType =
   | 'title'
   | 'text'
@@ -113,6 +116,7 @@ export declare type PropertyType =
   | 'created_by'
   | 'last_edited_time'
   | 'last_edited_by';
+
 export declare type NumberFormat =
   | 'number_with_commas'
   | 'percent'
@@ -123,14 +127,8 @@ export declare type NumberFormat =
   | 'rupee'
   | 'won'
   | 'yuan';
+
 export declare type Role = 'editor' | 'reader' | 'none' | 'read_and_write';
-export declare type NotionUser = {
-  object: string;
-  id: ID;
-  type?: 'person' | 'bot';
-  name?: string | null;
-  avatar_url?: string | null;
-};
 
 export declare type BlockType =
   | 'paragraph'
@@ -165,9 +163,17 @@ export declare type BlockType =
   | 'table_row'
   | 'unsupported';
 
+export declare type NotionBlockTypes =
+  | 'block'
+  | 'page'
+  | 'user'
+  | 'database'
+  | 'property_item'
+  | 'page_or_database';
+
 export declare type RichTextType = 'text' | 'mention' | 'equation';
 
-export declare type RichTextAnnotation = {
+export declare type RichTextAnnotations = {
   bold: boolean;
   italic: boolean;
   strikethrough: boolean;
@@ -176,12 +182,7 @@ export declare type RichTextAnnotation = {
   color: Color;
 };
 
-export declare type RichTextObject = {
-  rich_text: Array<RichText>;
-  color: Color;
-};
-
-export declare type RichTextTitle = {
+export declare type ChildDatabaseObject = {
   title: string;
 };
 
@@ -192,9 +193,15 @@ export declare type RichText = {
     content: string;
     link: string | null;
   };
-  annotations: RichTextAnnotation;
+  annotations: RichTextAnnotations;
   type: RichTextType;
 };
+
+export declare type RichTextObject = {
+  rich_text: Array<RichText>;
+  color: Color;
+};
+
 export declare type MentionObject = {
   type: 'user' | 'page' | 'database' | 'date' | 'link_preview';
 };
@@ -241,17 +248,14 @@ export type TodoObject = {
   color: Color;
 };
 
-export interface NotionBlockItem
-  extends Record<
-    BlockType,
-    | RichTextObject
-    | RichTextTitle
-    | FileObject
-    | BookmarkObject
-    | TableObject
-    | TableRowObject
-    | Record<string, string>
-  > {
+export type CodeBlock = RichTextObject & CaptionObject & { language: Code };
+export type CalloutBlock = RichTextObject & { icon: IconObject };
+export type EquationBlock = { expression: string };
+export type LinkPreviewBlock = { url: string };
+export type ImageBlock = FileObject & CaptionObject;
+export type VideoBlock = FileObject & CaptionObject;
+
+export interface NotionBlockRetrieveItem extends Record<BlockType, any> {
   paragraph: RichTextObject;
   heading_1: RichTextObject;
   heading_2: RichTextObject;
@@ -261,22 +265,22 @@ export interface NotionBlockItem
   to_do: TodoObject;
   toggle: RichTextObject;
   child_page: RichTextObject;
-  child_database: RichTextTitle;
-  code: RichTextObject & CaptionObject & { language: Code };
+  child_database: ChildDatabaseObject;
+  code: CodeBlock;
   embed: RichTextObject;
-  image: FileObject & CaptionObject;
-  video: FileObject & CaptionObject;
+  image: ImageBlock;
+  video: VideoBlock;
   file: FileObject;
   pdf: RichTextObject;
   bookmark: BookmarkObject;
-  callout: RichTextObject & { icon: IconObject };
+  callout: CalloutBlock;
   quote: RichTextObject;
-  equation: { expression: string };
+  equation: EquationBlock;
   divider: RichTextObject;
   table_of_contents: RichTextObject;
   column: RichTextObject;
   column_list: RichTextObject;
-  link_preview: { url: string };
+  link_preview: LinkPreviewBlock;
   synced_block: RichTextObject;
   template: RichTextObject;
   link_to_page: RichTextObject;
@@ -285,74 +289,49 @@ export interface NotionBlockItem
   unsupported: RichTextObject;
 }
 
-export interface NotionBlock extends NotionBlockItem {
-  object: string;
-  id: ID;
-  created_time: string;
-  last_edited_time: string;
-  created_by: NotionUser;
-  last_edited_by: NotionUser;
-  has_children: boolean;
-  archived: boolean;
-  type: BlockType;
-}
-
-export declare type NotionBlockTypes =
-  | 'block'
-  | 'page'
-  | 'user'
-  | 'database'
-  | 'property_item'
-  | 'page_or_database';
-
-export interface NotionBlocks {
-  object: 'list'; // Always "list".
-  results: Array<NotionBlock>;
-  next_cursor?: string | null; // Only available when "has_more" is true.
-  has_more: boolean;
-  type: NotionBlockTypes;
-  block: Record<string, any>;
-}
-export interface NotionBlockAndChilrens extends NotionBlocks {
-  databaseRecord: Record<string, NotionDatabasesQuery>;
-  childrenRecord: Record<string, NotionBlocks>;
-}
-
-export type INotionPage = {
-  block: NotionBlockAndChilrens;
-  pageInfo: INotionSearchObject;
-  userInfo?: INotionUserInfo | null;
-};
-
-export interface IGetSearchNotion extends NotionBlocks {
-  type: 'page_or_database';
-  page_or_database: Record<string, any>;
-}
-
 export type Select = {
   id: string;
   name: string;
   color: Color;
 };
 
-export type MultiSelect = Select;
+export type MultiSelect = Array<Select>;
 
-export interface UserObject {
+export type UserObject = {
   object: 'user';
   id: string;
-}
+};
 
-export interface TimeObject {
+export type TimeObject = {
   object: string;
   id: string;
-}
+};
 
-export interface Property {
+export type EmojiObject = {
+  type: 'emoji';
+  emoji: string;
+};
+
+export type ParentObject = {
+  type: 'workspace' | 'database_id' | 'page_id' | 'block_id';
+  workspace?: boolean; // workspace의 경우 Always true.
+  database_id?: string;
+  page_id?: string;
+};
+
+export type IconObject = {
+  type: 'emoji' | 'file' | 'external';
+  file?: FileObject['file'];
+  external?: FileObject['external'];
+  emoji?: EmojiObject['emoji'];
+};
+
+export type Property = {
   id: string;
   type: PropertyType;
-}
+};
 
-export interface PropertiesForDatabasePageInfo extends Partial<Record<PropertyType | string, any>> {
+export interface DatabasesRetrieveProperties extends Partial<Record<PropertyType | string, any>> {
   title?: Property & {
     title?: Array<RichText>;
   };
@@ -363,7 +342,7 @@ export interface PropertiesForDatabasePageInfo extends Partial<Record<PropertyTy
   };
   tags?: Property & {
     multi_select?: {
-      options: Array<MultiSelect>;
+      options: MultiSelect;
     };
   };
   publishedAt?: Property & {
@@ -375,14 +354,15 @@ export interface PropertiesForDatabasePageInfo extends Partial<Record<PropertyTy
   slug?: Property & {
     rich_text?: Array<RichText>;
   };
-  thumbnail?: Property & {
-    files?: Array<FileObject>;
-  };
-  updatedAt?: Property & {
+  // thumbnail?: Property & {
+  //   files?: Array<FileObject>;
+  // };
+  editedAt?: Property & {
     date?: DateObject;
   };
 }
-export interface Properties extends Partial<Record<PropertyType | string, any>> {
+
+export interface PagesRetrieveProperties extends Partial<Record<PropertyType | string, any>> {
   title?: Property & {
     title?: Array<RichText>;
   };
@@ -391,7 +371,7 @@ export interface Properties extends Partial<Record<PropertyType | string, any>> 
     select?: Select;
   };
   tags?: Property & {
-    multi_select?: Array<MultiSelect>;
+    multi_select?: MultiSelect;
   };
   publishedAt?: Property & {
     date?: DateObject;
@@ -402,95 +382,121 @@ export interface Properties extends Partial<Record<PropertyType | string, any>> 
   slug?: Property & {
     rich_text?: Array<RichText>;
   };
-  thumbnail?: Property & {
-    files?: Array<FileObject>;
-  };
-  updatedAt?: Property & {
+  // thumbnail?: Property & {
+  //   files?: Array<FileObject>;
+  // };
+  editedAt?: Property & {
     date?: DateObject;
   };
 }
 
-export interface NotionDatabase {
-  object: 'database' | 'page';
-  id: string; // uuid
-  created_time: string;
+export type NotionBlocksRetrieve = NotionBlockRetrieveItem & {
+  archived: false;
   created_by: UserObject;
-  last_edited_time: string;
+  created_time: string;
+  has_children: boolean;
+  id: ID;
   last_edited_by: UserObject;
-  // title?: RichText;
-  // description?: RichText;
-  icon?: IconObject | null;
-  cover?: FileObject | null;
-  properties: Properties;
-  parent?: {
-    type: 'database_id' | string;
-    database_id: string;
-  };
-  url?: string | null;
-  archived?: boolean | null;
-  is_inline?: boolean | null;
-}
+  last_edited_time: string;
+  object: 'block';
+  parent: ParentObject;
+  type: BlockType;
+};
 
-export interface NotionDatabasesQuery {
+export type NotionPagesRetrieve = {
+  archived: false;
+  cover: FileObject;
+  created_by: UserObject;
+  created_time: string;
+  icon: IconObject;
+  id: ID;
+  last_edited_by: UserObject;
+  last_edited_time: string;
+  object: 'page';
+  parent: ParentObject;
+  properties: PagesRetrieveProperties;
+  url: string;
+};
+
+export type NotionDatabasesRetrieve = {
+  archived: false;
+  cover: FileObject;
+  created_by: UserObject;
+  created_time: string;
+  description: Array<RichText>;
+  icon: IconObject;
+  id: ID;
+  is_inline?: boolean;
+  last_edited_by: UserObject;
+  last_edited_time: string;
+  object: 'database';
+  parent: ParentObject;
+  properties: DatabasesRetrieveProperties;
+  title: Array<RichText>;
+  url: string;
+};
+
+export type NotionDatabasesQuery = {
   object: 'list'; // Always "list".
-  results: Array<NotionDatabase>;
+  results: Array<NotionPagesRetrieve>;
   next_cursor?: string | null; // Only available when "has_more" is true.
   has_more: boolean;
   type: NotionBlockTypes;
   page: Record<string, any>;
-}
+};
 
-export interface EmojiObject {
-  type: 'emoji';
-  emoji: string;
-}
-
-export interface ParentObject {
-  type: 'workspace' | 'database_id' | 'page_id' | 'block_id';
-  workspace?: boolean; // workspace의 경우 Always true.
-  database_id?: string;
-  page_id?: string;
-}
-
-export interface IconObject {
-  type: 'emoji' | 'file' | 'external';
-  file?: FileObject['file'];
-  external?: FileObject['external'];
-  emoji?: EmojiObject['emoji'];
-}
-
-export interface NotionPagesRetrieve {
-  object: 'page'; // Always "page"
+export type NotionUser = {
+  object: string;
   id: ID;
-  created_time: string;
-  last_edited_time: string;
-  created_by: UserObject;
-  last_edited_by: UserObject;
-  cover: FileObject;
-  icon: IconObject;
-  parent: ParentObject;
-  archived: false;
-  properties: Properties;
-  url: string;
-}
+  type?: 'person' | 'bot';
+  name?: string | null;
+  avatar_url?: string | null;
+  person?: Record<string, any>;
+};
 
-export interface INotionSearchObject extends Omit<NotionPagesRetrieve, 'object'> {
-  object: 'page' | 'database';
-  description?: Array<RichText>;
-  is_inline?: boolean;
-  title?: Array<RichText>;
-}
-export interface INotionSearchDatabase extends Omit<NotionPagesRetrieve, 'object' | 'properties'> {
-  object: 'database';
-  description?: Array<RichText>;
-  is_inline?: boolean;
-  properties: PropertiesForDatabasePageInfo;
-  title?: Array<RichText>;
-}
+export type NotionBlocksChildren = {
+  object: 'list'; // Always "list".
+  results: Array<NotionBlocksRetrieve>;
+  next_cursor?: string | null; // Only available when "has_more" is true.
+  has_more: boolean;
+  type: NotionBlockTypes;
+  block: Record<string, any>;
+};
 
-export interface INotionSearch {
+export type DatabasesRecord = Record<string, NotionDatabasesQuery>;
+export type ChildrensRecord = Record<string, NotionBlocksChildren>;
+
+export type NotionPageBlocks = NotionBlocksChildren & {
+  databasesRecord: DatabasesRecord;
+  childrensRecord: ChildrensRecord;
+};
+
+export type NotionDatabaseBlocks = NotionDatabasesQuery & {
+  databasesRecord: DatabasesRecord;
+  childrensRecord: ChildrensRecord;
+};
+
+export type NotionPage = {
+  pageInfo: NotionPagesRetrieve;
+  block: NotionPageBlocks;
+  userInfo?: NotionUser | null;
+};
+
+export type NotionDatabase = {
+  pageInfo: NotionDatabasesRetrieve;
+  block: NotionDatabaseBlocks;
+  userInfo?: NotionUser | null;
+};
+
+export type GetNotionBlock = {
+  pageInfo: NotionPagesRetrieve | NotionDatabasesRetrieve;
+  block: NotionPageBlocks | NotionDatabaseBlocks;
+  userInfo?: NotionUser | null;
+};
+
+export type NotionSearch = {
   object: 'list';
-  results: Array<INotionSearchObject>;
+  results: Array<NotionPagesRetrieve | NotionDatabasesRetrieve>;
   next_cursor: string | null;
   has_more: boolean;
   type: 'child_database' | 'child_page' | 'page_or_database';
@@ -501,18 +507,9 @@ export interface INotionSearch {
   child_page?: {
     title: string;
   };
-}
+};
 
-export interface INotionUserInfo {
-  object: 'user';
-  id: string;
-  name?: string;
-  avatar_url?: string | null;
-  type?: 'person';
-  person?: Record<string, any>;
-}
-
-export type NotionBlogProperties = {
+export type BlogProperties = {
   categories: Array<{
     id: string;
     name: string;
@@ -526,8 +523,16 @@ export type NotionBlogProperties = {
   }>;
 };
 
-export type CachedNotionBlogProperties = NotionBlogProperties & {
-  databaseId: string;
+export type CachedObject = {
   cachedTime: number;
-  lastEditedTime: string;
 };
+
+export type CachedNotionPage = CachedObject & NotionPage;
+
+export type CachedNotionDatabase = CachedObject & NotionDatabase;
+
+export type CachedBlogProperties = BlogProperties &
+  CachedObject & {
+    databaseId: string;
+    lastEditedTime: string;
+  };

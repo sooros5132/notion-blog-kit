@@ -10,7 +10,7 @@ import { notionTagColorClasses } from 'src/lib/notion';
 import { ThemeChangeButton } from 'src/components/modules/ThemeChangeButton';
 import { SearchForm } from 'src/components/search/SearchForm';
 import shallow from 'zustand/shallow';
-import { NotionBlogProperties } from 'src/types/notion';
+import type { BlogProperties } from 'src/types/notion';
 
 export const SideBarMenu: React.FC = memo(() => {
   const blogProperties = useNotionStore((state) => state.blogProperties, shallow);
@@ -23,7 +23,7 @@ export const SideBarMenu: React.FC = memo(() => {
 }, isEqual);
 
 type SideBarMenuInnerProps = {
-  blogProperties: NotionBlogProperties;
+  blogProperties: BlogProperties;
 };
 
 const SideBarMenuInner: React.FC<SideBarMenuInnerProps> = ({

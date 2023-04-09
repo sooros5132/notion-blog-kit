@@ -1,9 +1,9 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import type { BlogProperties, GetNotionBlock } from 'src/types/notion';
 import { siteConfig } from 'site-config';
 import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
-import { INotionPage, NotionBlogProperties } from 'src/types/notion';
 import { useNotionStore } from 'src/store/notion';
 import { REVALIDATE } from 'src/lib/notion';
 import { useSiteSettingStore } from 'src/store/siteSetting';
@@ -12,21 +12,21 @@ import { useEffect } from 'react';
 
 interface CategoryProps {
   slug: string;
-  page: INotionPage;
-  blogProperties: NotionBlogProperties;
+  notionBlock: GetNotionBlock;
+  blogProperties: BlogProperties;
 }
-const Category: NextPage<CategoryProps> = ({ slug, page, blogProperties }) => {
+const Category: NextPage<CategoryProps> = ({ slug, notionBlock, blogProperties }) => {
   const router = useRouter();
   const hydrated = useSiteSettingStore().hydrated;
   if (!hydrated) {
     useNotionStore.getState().init({
       slug,
       blogProperties,
-      baseBlock: page.block,
-      pageInfo: page.pageInfo,
-      userInfo: page.userInfo,
-      childrenRecord: page?.block?.childrenRecord || {},
-      databaseRecord: page?.block?.databaseRecord || {}
+      baseBlock: notionBlock.block,
+      pageInfo: notionBlock?.pageInfo,
+      userInfo: notionBlock.userInfo,
+      childrensRecord: notionBlock?.block?.childrensRecord || {},
+      databasesRecord: notionBlock?.block?.databasesRecord || {}
     });
   }
   useEffect(() => {
@@ -34,11 +34,11 @@ const Category: NextPage<CategoryProps> = ({ slug, page, blogProperties }) => {
       useNotionStore.getState().init({
         slug,
         blogProperties,
-        baseBlock: page.block,
-        pageInfo: page.pageInfo,
-        userInfo: page.userInfo,
-        childrenRecord: page?.block?.childrenRecord || {},
-        databaseRecord: page?.block?.databaseRecord || {}
+        baseBlock: notionBlock.block,
+        pageInfo: notionBlock?.pageInfo,
+        userInfo: notionBlock.userInfo,
+        childrensRecord: notionBlock?.block?.childrensRecord || {},
+        databasesRecord: notionBlock?.block?.databasesRecord || {}
       });
     };
     router.events.on('routeChangeComplete', handleRouteChangeComplete);
@@ -46,9 +46,9 @@ const Category: NextPage<CategoryProps> = ({ slug, page, blogProperties }) => {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
     };
-  }, [blogProperties, page.block, page.pageInfo, page.userInfo, router.events, slug]);
+  }, [blogProperties, notionBlock, router.events, slug]);
 
-  return <NotionRender key={router?.asPath || 'key'} slug={slug} page={page} />;
+  return <NotionRender key={router?.asPath || 'key'} slug={slug} notionBlock={notionBlock} />;
 };
 
 export const getStaticPaths: GetStaticPaths<{ category: string }> = async () => {
@@ -95,7 +95,7 @@ export const getStaticProps: GetStaticProps<CategoryProps> = async ({ params }) 
     return {
       props: {
         slug: siteConfig.notion.baseBlock,
-        page: database as INotionPage,
+        notionBlock: database,
         blogProperties
       },
       revalidate: REVALIDATE

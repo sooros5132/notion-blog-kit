@@ -3,12 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { Error } from 'lib/Error';
 import { Client, LogLevel } from '@notionhq/client';
-import { INotionSearchObject } from 'src/types/notion';
+import { NotionPagesRetrieve } from 'src/types/notion';
 
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError: Error.handleError,
   onNoMatch: Error.handleNoMatch
-}).get(async (req: NextApiRequest, res: NextApiResponse<INotionSearchObject>) => {
+}).get(async (req: NextApiRequest, res: NextApiResponse<NotionPagesRetrieve>) => {
   const { pageId } = req.query;
   if (typeof pageId !== 'string') {
     throw 'type error "pageId"';
@@ -20,7 +20,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 
   const result = (await notion.pages.retrieve({
     page_id: pageId
-  })) as INotionSearchObject;
+  })) as NotionPagesRetrieve;
 
   res.status(200).json(result);
 });

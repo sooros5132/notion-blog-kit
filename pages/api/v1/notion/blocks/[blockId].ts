@@ -3,12 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import { Error } from 'lib/Error';
 import { Client, LogLevel } from '@notionhq/client';
-import { NotionBlock } from 'src/types/notion';
+import { NotionBlocksRetrieve } from 'src/types/notion';
 
 const handler = nc<NextApiRequest, NextApiResponse>({
   onError: Error.handleError,
   onNoMatch: Error.handleNoMatch
-}).get(async (req: NextApiRequest, res: NextApiResponse<NotionBlock>) => {
+}).get(async (req: NextApiRequest, res: NextApiResponse<NotionBlocksRetrieve>) => {
   const { blockId } = req.query;
   if (typeof blockId !== 'string') {
     throw 'type error "blockId"';
@@ -20,7 +20,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 
   const result = (await notion.blocks.retrieve({
     block_id: blockId
-  })) as NotionBlock;
+  })) as NotionBlocksRetrieve;
 
   res.status(200).json(result);
 });

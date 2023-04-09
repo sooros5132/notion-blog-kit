@@ -1,9 +1,9 @@
 import type React from 'react';
-import type { NotionBlock } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 
 interface TodoProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Todo: React.FC<TodoProps> = ({ block }) => {

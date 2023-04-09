@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Fragment } from 'react';
-import { NotionBlock, NotionBlocks } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import {
   NotionHasChildrenRender,
   NotionCalloutBlock,
@@ -26,11 +26,10 @@ import {
 } from '.';
 
 export type NotionBlocksProps = {
-  blocks: NotionBlock[];
-  baseBlock: NotionBlocks;
+  blocks: Array<NotionBlocksRetrieve>;
 };
 
-export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock }) => {
+export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
   // useRef를 쓰면 children 렌더링 할 때 다음 block이 리스트 타입이여도
   // children에 다른 타입의 블록이 있다면 렌더링 중 초기화 시켜서 일반 변수로 사용.
   let repeatedSameTagName = 0;
@@ -76,13 +75,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
             );
           }
           case 'column_list': {
-            return (
-              <NotionColumnListBlock
-                key={`block-${block.id}-${i}`}
-                block={block}
-                baseBlock={baseBlock}
-              />
-            );
+            return <NotionColumnListBlock key={`block-${block.id}-${i}`} block={block} />;
           }
           case 'column': {
             return <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block} />;
@@ -138,7 +131,6 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
               <NotionListBlock
                 key={`block-${block.id}-${i}`}
                 block={block}
-                baseBlock={baseBlock}
                 startValue={repeatedSameTagName + 1}
               />
             );
@@ -159,7 +151,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks, baseBlock })
           case 'quote': {
             return (
               <NotionQuoteBlock key={`block-${block.id}-${i}`} block={block}>
-                <NotionHasChildrenRender block={block}></NotionHasChildrenRender>
+                <NotionHasChildrenRender block={block} />
               </NotionQuoteBlock>
             );
           }

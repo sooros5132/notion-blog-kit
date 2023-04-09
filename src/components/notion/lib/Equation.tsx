@@ -1,10 +1,10 @@
 import type React from 'react';
-import type { NotionBlock } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import katex from 'katex';
 import { CopyButtonWrapper } from 'src/components/modules/CopyButtonWrapper';
 
 interface EquationProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Equation: React.FC<EquationProps> = ({ block }) => {

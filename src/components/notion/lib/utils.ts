@@ -3,9 +3,11 @@ import { siteConfig } from 'site-config';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
 import {
   FileObject,
+  GetNotionBlock,
   IconObject,
-  INotionSearchObject,
-  NotionBlock,
+  NotionBlocksRetrieve,
+  NotionDatabasesRetrieve,
+  NotionPagesRetrieve,
   RichText
 } from 'src/types/notion';
 import useSWR, { SWRResponse } from 'swr';
@@ -59,7 +61,9 @@ export const useRenewExpiredFile = ({
               throw 'not support use type';
             }
             const page = await axios
-              .get<INotionSearchObject>(`${siteConfig.path}/notion/${blockType}s/${blockId}`)
+              .get<NotionDatabasesRetrieve | NotionPagesRetrieve>(
+                `${siteConfig.path}/notion/${blockType}s/${blockId}`
+              )
               .then((res) => res?.data);
 
             if (!page[useType]) {
@@ -75,7 +79,7 @@ export const useRenewExpiredFile = ({
               throw 'not support use type';
             }
             const block = await axios
-              .get<NotionBlock>(`${siteConfig.path}/notion/blocks/${blockId}`)
+              .get<NotionBlocksRetrieve>(`${siteConfig.path}/notion/blocks/${blockId}`)
               .then((res) => res?.data);
 
             if (blockType === 'callout') {

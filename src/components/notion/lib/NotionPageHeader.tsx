@@ -2,7 +2,7 @@ import type React from 'react';
 import classnames from 'classnames';
 import { formatInTimeZone } from 'date-fns-tz';
 import { siteConfig } from 'site-config';
-import { INotionSearchObject, INotionUserInfo, FileObject, Select } from 'src/types/notion';
+import { FileObject, GetNotionBlock, NotionUser } from 'src/types/notion';
 import { NotionParagraphText, NotionSecureImage } from '.';
 import { enUS } from 'date-fns/locale';
 import classNames from 'classnames';
@@ -13,30 +13,35 @@ import { Paragraph } from './Paragraph';
 import { OptionalNextLink } from 'src/components/modules/OptionalNextLink';
 
 export interface NotionPageHeaderProps {
-  page: INotionSearchObject;
+  pageInfo: GetNotionBlock['pageInfo'];
   title: string | null;
-  userInfo?: INotionUserInfo | null;
+  userInfo?: NotionUser | null;
 }
 
-export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title, userInfo }) => {
-  const tags = page?.properties?.tags?.multi_select;
-  const date = page?.properties?.publishedAt?.date?.start;
-  const category = page.properties.category?.select?.name;
+export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
+  pageInfo,
+  title,
+  userInfo
+}) => {
+  const tags = pageInfo?.properties?.tags?.multi_select;
+  const date = pageInfo?.properties?.publishedAt?.date?.start;
+  const category =
+    (pageInfo.object === 'page' && pageInfo?.properties.category?.select?.name) || null;
   const parentIsBaseDatabase = Boolean(
-    page.parent.database_id &&
-      siteConfig.notion.baseBlock === page.parent.database_id.replaceAll('-', '')
+    pageInfo.parent.database_id &&
+      siteConfig.notion.baseBlock === pageInfo.parent.database_id.replaceAll('-', '')
   );
 
   return (
     <div>
-      {page?.cover?.[page?.cover?.type]?.url && (
+      {pageInfo?.cover?.[pageInfo?.cover?.type]?.url && (
         <div className='relative h-[25vh] min-h-[250px] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
           <NotionSecureImage
             useNextImage
-            blockId={page.id}
-            blockType={page.object}
+            blockId={pageInfo.id}
+            blockType={pageInfo.object}
             useType={'cover'}
-            initialFileObject={page?.cover}
+            initialFileObject={pageInfo?.cover}
             alt={'page-cover'}
             loading='eager'
           />
@@ -45,18 +50,18 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
       <div
         className={classnames(
           'relative max-w-[var(--article-max-width)] mx-auto px-4 text-center sm:px-6 lg:px-10',
-          page?.cover ? (page.icon ? 'mt-[-50px]' : '') : 'mt-[50px]',
-          !page?.cover && page.icon && 'pt-[20px]'
+          pageInfo?.cover ? (pageInfo.icon ? 'mt-[-50px]' : '') : 'mt-[50px]',
+          !pageInfo?.cover && pageInfo.icon && 'pt-[20px]'
         )}
       >
-        {page.icon?.type && page.icon?.type !== 'emoji' && (
+        {pageInfo.icon?.type && pageInfo.icon?.type !== 'emoji' && (
           <div className='w-[100px] h-[100px] mx-auto rounded-md overflow-hidden [&>div]:h-full'>
             <NotionSecureImage
               useNextImage
-              blockId={page.id}
-              blockType={page.object}
+              blockId={pageInfo.id}
+              blockType={pageInfo.object}
               useType={'icon'}
-              initialFileObject={page?.icon as FileObject}
+              initialFileObject={pageInfo?.icon as FileObject}
               alt={'page-icon'}
               loading='eager'
               sizes={{
@@ -66,12 +71,14 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
             />
           </div>
         )}
-        {page.icon?.emoji && page.icon?.type === 'emoji' && (
+        {pageInfo.icon?.emoji && pageInfo.icon?.type === 'emoji' && (
           <div className='text-center'>
-            <span className='px-3 text-[100px] leading-none font-emoji'>{page.icon.emoji}</span>
+            <span className='px-3 text-[100px] leading-none font-emoji'>{pageInfo.icon.emoji}</span>
           </div>
         )}
-        <div className={Boolean(page?.cover) && Boolean(page.icon) ? 'mt-[20px]' : 'mt-[20px]'}>
+        <div
+          className={Boolean(pageInfo?.cover) && Boolean(pageInfo.icon) ? 'mt-[20px]' : 'mt-[20px]'}
+        >
           {category && (
             <OptionalNextLink
               wrappingAnchor={parentIsBaseDatabase}
@@ -89,12 +96,12 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
             <NotionParagraphText>{title || 'Untitled'}</NotionParagraphText>
           </div>
         </div>
-        {page.description && (
+        {pageInfo.object === 'database' && (
           <div className='mb-2 text-zinc-500'>
-            <Paragraph richText={page.description} blockId={page.id} />
+            <Paragraph richText={pageInfo.description} blockId={pageInfo.id} />
           </div>
         )}
-        {page?.object !== 'database' && (
+        {pageInfo?.object !== 'database' && (
           <div className='text-zinc-500'>
             {userInfo?.avatar_url ? (
               <Image
@@ -112,11 +119,11 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({ page, title,
               </div>
             ) : null}
             {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
-            {(date || typeof page?.created_time === 'string') && <BsDot className='inline' />}
+            {(date || typeof pageInfo?.created_time === 'string') && <BsDot className='inline' />}
             <span>
-              {(date || typeof page?.created_time === 'string') &&
+              {(date || typeof pageInfo?.created_time === 'string') &&
                 `${formatInTimeZone(
-                  new Date(date || page.created_time),
+                  new Date(date || pageInfo.created_time),
                   siteConfig.TZ,
                   'yyyy-MM-dd',
                   {

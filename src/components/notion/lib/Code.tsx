@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { NotionBlock } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism, vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { NotionParagraphBlock } from '.';
@@ -9,7 +9,7 @@ import { FaCircle } from 'react-icons/fa';
 import { CopyButtonWrapper } from 'src/components/modules/CopyButtonWrapper';
 
 interface CodeProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Code: React.FC<CodeProps> = ({ block }) => {

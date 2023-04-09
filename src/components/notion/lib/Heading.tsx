@@ -2,7 +2,7 @@ import type React from 'react';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
 import { copyTextAtClipBoard } from 'src/lib/utils';
-import type { NotionBlock } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 import { richTextToPlainText } from './utils';
 
@@ -76,7 +76,7 @@ export const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode
 };
 
 interface HeadingProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Heading: React.FC<HeadingProps> = ({ block }) => {

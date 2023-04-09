@@ -1,15 +1,15 @@
 import type React from 'react';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import classnames from 'classnames';
-import type { NotionBlock } from 'src/types/notion';
 import { NotionParagraphBlock } from '.';
 import { useNotionStore } from 'src/store/notion';
 
 interface TableProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Table: React.FC<TableProps> = ({ block }) => {
-  const childrenRecord = useNotionStore.getState().childrenRecord;
+  const childrenRecord = useNotionStore.getState().childrensRecord;
   // ((state) => state.childrenRecord, shallow);
   const tbodyBlock = childrenRecord?.[block.id];
 
@@ -24,13 +24,13 @@ export const Table: React.FC<TableProps> = ({ block }) => {
           'border-collapse',
           '[&>tbody>tr>td]:border',
           '[&>tbody>tr>td]:border-solid',
-          '[&>tbody>tr>td]:border-notion-gray',
+          '[&>tbody>tr>td]:border-notion-gray/30',
           '[&>tbody>tr>td]:py-1',
           '[&>tbody>tr>td]:px-2',
           Boolean(block.table.has_row_header) === true &&
-            '[&>tbody>tr>td:first-of-type]:bg-notion-gray/30',
+            '[&>tbody>tr>td:first-of-type]:bg-notion-gray/50',
           Boolean(block.table.has_column_header) === true &&
-            '[&>tbody>tr:first-of-type]:bg-notion-gray/30'
+            '[&>tbody>tr:first-of-type]:bg-notion-gray/50'
         )}
       >
         {/* <thead>

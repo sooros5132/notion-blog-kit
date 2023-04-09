@@ -1,11 +1,11 @@
 import type React from 'react';
 import { useEffect, useRef } from 'react';
 import { AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC } from 'src/lib/notion';
-import type { FileObject, NotionBlock } from 'src/types/notion';
+import type { FileObject, NotionBlocksRetrieve } from 'src/types/notion';
 import { useRenewExpiredFile } from './utils';
 
 interface FileProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const File: React.FC<FileProps> = ({ block }) => {

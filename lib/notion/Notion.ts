@@ -4,18 +4,23 @@ import { sortBy } from 'lodash';
 import { siteConfig } from 'site-config';
 import { REVALIDATE } from 'src/lib/notion';
 import {
-  CachedNotionBlogProperties,
-  Color,
-  INotionPage,
-  INotionSearch,
-  INotionSearchDatabase,
-  INotionSearchObject,
-  INotionUserInfo,
-  NotionBlockAndChilrens,
-  NotionBlocks,
-  NotionBlogProperties,
+  BlogProperties,
+  CachedBlogProperties,
+  CachedNotionDatabase,
+  CachedNotionPage,
+  ChildrensRecord,
+  DatabasesRecord,
+  DatabasesRetrieveProperties,
+  GetNotionBlock,
+  NotionBlocksChildren,
+  NotionDatabase,
   NotionDatabasesQuery,
-  PropertiesForDatabasePageInfo
+  NotionDatabasesRetrieve,
+  NotionPage,
+  NotionPageBlocks,
+  NotionPagesRetrieve,
+  NotionSearch,
+  NotionUser
 } from 'src/types/notion';
 import * as notionCache from './cache';
 
@@ -46,19 +51,23 @@ export class NotionClient {
     });
   }
 
-  private async getBlocksByBlockId({ blockId, pageSize, startCursor }: BlocksParams) {
+  private async getBlocksByBlockId({
+    blockId,
+    pageSize,
+    startCursor
+  }: BlocksParams): Promise<NotionBlocksChildren> {
     const blocks = (await this.notion.blocks.children.list({
       block_id: blockId,
       page_size: pageSize,
       start_cursor: startCursor
-    })) as unknown as NotionBlocks;
+    })) as unknown as NotionBlocksChildren;
 
     return blocks;
   }
 
   // 모든 Children 반환
-  private async getAllChildrenRecordByBlockId(params: BlocksParams) {
-    let childrenRecord: Record<string, NotionBlocks> = {};
+  private async getAllChildrensRecordByBlockId(params: BlocksParams) {
+    let childrenRecord: ChildrensRecord = {};
 
     let hasMore = false;
     let startCursor: string | null = null;
@@ -75,13 +84,13 @@ export class NotionClient {
       childrenRecord[params.blockId] = {
         ...childrens,
         results: [...(childrenRecord[params.blockId]?.results ?? []), ...childrens.results]
-      } as NotionBlocks;
+      } as unknown as ChildrensRecord[string];
     } while (hasMore && startCursor);
 
     for await (const block of childrenRecord[params.blockId].results) {
-      const { has_children } = block as NotionBlocks['results'][number];
+      const { has_children } = block;
       if (has_children) {
-        await this.getAllChildrenRecordByBlockId({
+        await this.getAllChildrensRecordByBlockId({
           blockId: block.id
         }).then((children) => {
           childrenRecord = { ...childrenRecord, ...children };
@@ -92,14 +101,12 @@ export class NotionClient {
     return childrenRecord;
   }
 
-  async getAllBlocksAndChildrens(blockId: string) {
-    const databaseRecord: Record<string, NotionDatabasesQuery> = {};
-    let childrenRecord: Record<string, NotionBlocks> = {};
+  async getAllBlocksAndChildrens(blockId: string): Promise<NotionPageBlocks> {
+    const databasesRecord: DatabasesRecord = {};
+    let childrensRecord: ChildrensRecord = {};
     const moreFetch: Array<any> = [];
 
-    const blocks = (await this.getBlocksByBlockId({
-      blockId
-    })) as NotionBlockAndChilrens;
+    const blocks = await this.getBlocksByBlockId({ blockId });
 
     // 모든 블럭들 가져오기
     let hasMore = blocks.has_more;
@@ -121,8 +128,8 @@ export class NotionClient {
       if (block.has_children) {
         // 재귀함수
         moreFetch.push(
-          this.getAllChildrenRecordByBlockId({ blockId: block.id }).then((result) => {
-            childrenRecord = { ...childrenRecord, ...result };
+          this.getAllChildrensRecordByBlockId({ blockId: block.id }).then((result) => {
+            childrensRecord = { ...childrensRecord, ...result };
           })
         );
       }
@@ -133,7 +140,7 @@ export class NotionClient {
               id: block.id
             })
               .then((database) => {
-                databaseRecord[block.id] = database as NotionDatabasesQuery;
+                databasesRecord[block.id] = database;
               })
               .catch(() => {
                 // TODO 링크 데이터베이스 지원하면 수정하기.
@@ -148,7 +155,7 @@ export class NotionClient {
     await Promise.all(moreFetch);
 
     const childDatabaseFetching: Array<any> = [];
-    const childrens = Object.values(childrenRecord);
+    const childrens = Object.values(childrensRecord);
     for (const children of childrens) {
       if (!Array.isArray(children.results)) {
         continue;
@@ -160,7 +167,7 @@ export class NotionClient {
               id: block.id
             })
               .then((database) => {
-                databaseRecord[block.id] = database as NotionDatabasesQuery;
+                databasesRecord[block.id] = database;
               })
               .catch(() => {
                 // TODO 링크 데이터베이스 지원하면 수정하기.
@@ -172,22 +179,25 @@ export class NotionClient {
     }
     await Promise.all(childDatabaseFetching);
 
-    blocks.childrenRecord = childrenRecord;
-    blocks.databaseRecord = databaseRecord;
+    const page = {
+      ...blocks,
+      childrensRecord,
+      databasesRecord
+    };
 
-    return blocks;
+    return page;
   }
 
   async getPagesInDatabaseByDatabaseId(querys: {
     id: string;
     pageSize?: number;
     startCursor?: string;
-  }) {
+  }): Promise<NotionDatabasesQuery> {
     const database = (await this.notion.databases.query({
       database_id: querys.id,
       start_cursor: querys.startCursor,
       page_size: querys.pageSize
-    })) as NotionDatabasesQuery;
+    })) as unknown as NotionDatabasesQuery;
 
     return database;
   }
@@ -196,7 +206,7 @@ export class NotionClient {
     databaseId: string;
     filter?: QueryDatabaseParameters['filter'];
     sorts?: QueryDatabaseParameters['sorts'];
-  }) {
+  }): Promise<NotionDatabasesQuery> {
     let database = {} as NotionDatabasesQuery;
     const blocks: NotionDatabasesQuery['results'] = [];
 
@@ -206,7 +216,7 @@ export class NotionClient {
         sorts: querys.sorts,
         filter: querys.filter,
         start_cursor: database?.next_cursor || undefined
-      })) as NotionDatabasesQuery;
+      })) as unknown as NotionDatabasesQuery;
 
       if (!getDatabase) {
         break;
@@ -220,12 +230,12 @@ export class NotionClient {
     return database;
   }
 
-  async getDatabaseInfo(querys: { databaseId: string }) {
+  async getDatabaseInfo(querys: { databaseId: string }): Promise<NotionDatabasesRetrieve> {
     const blockInfo = (await this.notion.databases
       .retrieve({
         database_id: querys.databaseId
       })
-      .catch(() => null)) as INotionSearchDatabase;
+      .catch(() => null)) as NotionDatabasesRetrieve;
 
     return blockInfo;
   }
@@ -240,11 +250,11 @@ export class NotionClient {
   }
 
   async getSearchPagesByDatabase({ searchValue, direction }: SearchParams) {
-    const results: INotionSearch['results'] = [];
+    const results: NotionSearch['results'] = [];
     let start_cursor: undefined | string;
 
     do {
-      const search = await this.notion.databases.query({
+      const search = (await this.notion.databases.query({
         database_id: siteConfig.notion.baseBlock,
         filter: {
           property: 'title',
@@ -261,10 +271,10 @@ export class NotionClient {
             ]
           : undefined,
         start_cursor
-      });
+      })) as unknown as NotionDatabasesQuery;
 
       if (Array.isArray(search?.results) && search.results.length > 0) {
-        results.push(...(search.results as INotionSearchObject[]));
+        results.push(...search.results);
       }
       start_cursor = search.next_cursor || undefined;
     } while (start_cursor);
@@ -280,11 +290,11 @@ export class NotionClient {
   }
 
   async getSearchPagesByWorkspace({ searchValue, filter, direction }: SearchParams) {
-    const results: INotionSearch['results'] = [];
+    const results: NotionSearch['results'] = [];
     let start_cursor: undefined | string;
 
     do {
-      const search = await this.notion.search({
+      const search = (await this.notion.search({
         query: searchValue,
         filter: filter
           ? {
@@ -299,10 +309,10 @@ export class NotionClient {
             }
           : undefined,
         start_cursor
-      });
+      })) as NotionSearch;
 
       if (Array.isArray(search?.results) && search.results.length > 0) {
-        results.push(...(search.results as INotionSearchObject[]));
+        results.push(...search.results);
       }
       start_cursor = search.next_cursor || undefined;
     } while (start_cursor);
@@ -318,24 +328,24 @@ export class NotionClient {
   }
 
   async getPageInfo(querys: { pageId: string }) {
-    const pageInfo = await this.notion.pages
+    const pageInfo = (await this.notion.pages
       .retrieve({
         page_id: querys.pageId
       })
-      .catch(() => null);
+      .catch(() => null)) as NotionPagesRetrieve;
 
-    return pageInfo as INotionSearchObject;
+    return pageInfo;
   }
 
   async getUserInfoByUserId(userId: string) {
     const profile = (await this.notion.users
       .retrieve({ user_id: userId })
-      .catch(() => null)) as INotionUserInfo | null;
+      .catch(() => null)) as NotionUser | null;
 
     return profile;
   }
 
-  async getPageByPageId(blockId: string): Promise<INotionPage> {
+  async getPageByPageId(blockId: string): Promise<NotionPage> {
     const NO_CACHED = 'no cached';
     try {
       const exists = await this.accessCache(blockId);
@@ -344,17 +354,14 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const cachePage = await this.getCache<
-        INotionPage & {
-          cachedTime: string;
-        }
-      >(blockId);
+      const cachePage = await this.getCache<CachedNotionPage>(blockId);
+
       if (!cachePage) {
         throw NO_CACHED;
       }
 
-      const { cachedTime, ...page } = cachePage;
-      if (!page?.pageInfo?.last_edited_time) {
+      const { cachedTime, ...pageBlocks } = cachePage;
+      if (!pageBlocks?.pageInfo?.last_edited_time) {
         throw NO_CACHED;
       }
 
@@ -367,13 +374,13 @@ export class NotionClient {
 
       // REVALIDATE 안이면 리턴
       if (timeDiff <= REVALIDATE * 1000) {
-        return page;
+        return pageBlocks;
       }
 
       const newestPageInfo = await this.getPageInfo({ pageId: blockId });
 
-      if (page.pageInfo.last_edited_time === newestPageInfo.last_edited_time) {
-        return page;
+      if (pageBlocks.pageInfo.last_edited_time === newestPageInfo.last_edited_time) {
+        return pageBlocks;
       }
       throw NO_CACHED;
     } catch (e) {
@@ -383,7 +390,7 @@ export class NotionClient {
       ]);
       const userInfo = await this.getUserInfoByUserId(pageInfo.created_by.id);
 
-      const page: INotionPage = {
+      const page: NotionPage = {
         block: blocksAndChildrens,
         pageInfo,
         userInfo
@@ -404,7 +411,7 @@ export class NotionClient {
       category?: string;
       tag?: string;
     };
-    pageProperties?: PropertiesForDatabasePageInfo;
+    databaseProperties?: DatabasesRetrieveProperties;
   }) {
     const filter = [] as Array<QueryDatabaseParameters['filter']>;
     if (querys.filter?.category) {
@@ -424,7 +431,7 @@ export class NotionClient {
       });
     }
 
-    const havePublishedAt = querys.pageProperties?.publishedAt?.type === 'date';
+    const havePublishedAt = querys.databaseProperties?.publishedAt?.type === 'date';
 
     const databaseId = querys.databaseId;
     const database = await this.getAllPageInDatabase({
@@ -461,7 +468,7 @@ export class NotionClient {
       category?: string;
       tag?: string;
     };
-  }): Promise<INotionPage> {
+  }): Promise<GetNotionBlock> {
     const databaseId = querys.databaseId;
     const NO_CACHED = 'no cached';
     try {
@@ -474,11 +481,7 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const cachePage = await this.getCache<
-        INotionPage & {
-          cachedTime: string;
-        }
-      >(databaseId);
+      const cachePage = await this.getCache<CachedNotionDatabase>(databaseId);
       if (!cachePage) {
         throw NO_CACHED;
       }
@@ -507,21 +510,21 @@ export class NotionClient {
       }
       throw NO_CACHED;
     } catch (e) {
-      const pageInfo = await this.getDatabaseInfo({ databaseId });
+      const databaseInfo = await this.getDatabaseInfo({ databaseId });
       const database = await this.getAllPublishedPageInDatabase({
         databaseId,
         filter: querys.filter,
-        pageProperties: pageInfo.properties
+        databaseProperties: databaseInfo.properties
       });
-      const userInfo = await this.getUserInfoByUserId(pageInfo.created_by.id);
+      const userInfo = await this.getUserInfoByUserId(databaseInfo.created_by.id);
 
       const page = {
         block: {
           ...database,
-          childrenRecord: {},
-          databaseRecord: { [databaseId]: database }
-        } as unknown as NotionBlockAndChilrens,
-        pageInfo,
+          childrensRecord: {},
+          databasesRecord: { [databaseId]: database }
+        },
+        pageInfo: databaseInfo,
         userInfo
       };
 
@@ -532,10 +535,10 @@ export class NotionClient {
         });
       }
 
-      return page as INotionPage;
+      return page;
     }
   }
-  async getMainDatabase(): Promise<INotionPage> {
+  async getMainDatabase(): Promise<GetNotionBlock> {
     const databaseId = siteConfig.notion.baseBlock;
 
     const database = await this.getDatabaseByDatabaseId({
@@ -546,7 +549,7 @@ export class NotionClient {
   }
 
   async searchSlug(querys: { slug: string; property: string }) {
-    const search = await this.notion.databases
+    const search = (await this.notion.databases
       .query({
         database_id: siteConfig.notion.baseBlock,
         filter: {
@@ -562,12 +565,12 @@ export class NotionClient {
           }
         ]
       })
-      .then((res) => res.results?.[0] || null);
+      .then((res) => res.results?.[0] || null)) as unknown as NotionDatabasesRetrieve;
 
     return search;
   }
 
-  async getBlogProperties(): Promise<NotionBlogProperties> {
+  async getBlogProperties(): Promise<BlogProperties> {
     const databaseId = siteConfig.notion.baseBlock;
     const cacheKey = 'blog-properties';
     const NO_CACHED = 'no cached';
@@ -577,7 +580,7 @@ export class NotionClient {
         throw NO_CACHED;
       }
 
-      const cacheData = await this.getCache<CachedNotionBlogProperties>(cacheKey);
+      const cacheData = await this.getCache<CachedBlogProperties>(cacheKey);
       if (!cacheData) {
         throw NO_CACHED;
       }
@@ -606,36 +609,35 @@ export class NotionClient {
       }
       throw NO_CACHED;
     } catch (e) {
-      const database = await this.getDatabaseByDatabaseId({ databaseId });
-      const blocks = database.block as unknown as NotionDatabasesQuery;
-      const databaseInfo = database.pageInfo as INotionSearchDatabase;
+      const database = (await this.getDatabaseByDatabaseId({ databaseId })) as NotionDatabase;
+      const blocks = database.block;
+      const databaseInfo = database.pageInfo;
 
-      const tags: NotionBlogProperties['tags'] = sortBy(
+      const tags: BlogProperties['tags'] = sortBy(
         databaseInfo?.properties?.tags?.multi_select?.options || [],
         'name'
       );
 
-      const categories: NotionBlogProperties['categories'] = [];
+      const categories: BlogProperties['categories'] = [];
       if (databaseInfo?.properties.category?.type === 'select') {
-        const categoriesRecord = blocks.results.reduce<Record<string, typeof categories[number]>>(
-          (prev, current) => {
-            const category = current?.properties?.category?.select;
-            if (!category) {
-              return prev;
-            }
+        const categoriesRecord = blocks.results.reduce<
+          Record<string, BlogProperties['categories'][number]>
+        >((prev, current) => {
+          const category = current?.properties?.category?.select;
+          if (!category) {
+            return prev;
+          }
 
-            const newCategory: typeof categories[number] = {
-              ...category,
-              count: prev[category.name]?.count ? prev[category.name]?.count + 1 : 1
-            };
+          const newCategory = {
+            ...category,
+            count: prev[category.name]?.count ? prev[category.name]?.count + 1 : 1
+          };
 
-            return {
-              ...prev,
-              [category.name]: newCategory
-            };
-          },
-          {}
-        );
+          return {
+            ...prev,
+            [category.name]: newCategory
+          };
+        }, {});
 
         Object.keys(categoriesRecord).forEach((category) =>
           categories.push(categoriesRecord[category])
@@ -647,7 +649,7 @@ export class NotionClient {
         tags
       };
 
-      const cacheBlogProperties: CachedNotionBlogProperties = {
+      const cacheBlogProperties: CachedBlogProperties = {
         ...blogProperties,
         databaseId,
         lastEditedTime: database.pageInfo.last_edited_time,

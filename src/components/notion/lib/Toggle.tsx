@@ -1,10 +1,10 @@
 import type React from 'react';
 import { notionColorClasses } from 'src/lib/notion';
-import type { NotionBlock } from 'src/types/notion';
+import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 
 interface ToggleProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 export const Toggle: React.FC<ToggleProps> = ({ block }) => {

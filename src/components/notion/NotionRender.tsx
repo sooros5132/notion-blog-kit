@@ -8,39 +8,27 @@ import { HiHome, HiMenu } from 'react-icons/hi';
 import { siteConfig } from 'site-config';
 import type {
   RichText,
-  INotionPage,
-  NotionDatabasesQuery,
-  INotionSearchDatabase
+  GetNotionBlock,
+  NotionDatabaseBlocks,
+  NotionPageBlocks,
+  NotionBlocksRetrieve
 } from 'src/types/notion';
 import { NotionBlocksRender, NotionPageHeader, NotionSeo } from '.';
 import { NotionDatabasePageView } from './lib';
+import { richTextToPlainText } from './lib/utils';
 
 export interface NotionRenderProps {
   slug: string;
-  page: INotionPage;
+  notionBlock: GetNotionBlock;
 }
 
-// export const EllipsisWrapperBox = styled('div')({
-//   overflow: 'hidden',
-//   whiteSpace: 'nowrap',
-//   maxHeight: '3.1em',
-//   textOverflow: 'ellipsis',
-//   '& p, a, span': {
-//     display: '-webkit-box',
-//     whiteSpace: 'normal',
-//     WebkitBoxOrient: 'vertical',
-//     WebkitLineClamp: '2'
-//   }
-// });
-
 export const NotionRender: React.FC<NotionRenderProps> = (props) => {
-  const baseBlock = props?.page?.block;
+  const baseBlock = props?.notionBlock?.block;
   const blocks = baseBlock.results;
-  const pageInfo = props?.page?.pageInfo;
-  const userInfo = props?.page?.userInfo;
-  const slug = pageInfo?.id.replaceAll('-', '');
+  const pageInfo = props?.notionBlock.pageInfo;
+  const userInfo = props?.notionBlock?.userInfo;
 
-  if (!blocks || !props?.page.pageInfo) {
+  if (!blocks || !props?.notionBlock) {
     return (
       <div className='flex-center'>
         <progress className='radial-progress'></progress>
@@ -49,11 +37,10 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
   }
 
   const title =
-    pageInfo.object === 'page'
-      ? pageInfo?.properties?.title?.title?.map((text) => text?.plain_text).join('') || null
-      : pageInfo.object === 'database'
-      ? pageInfo.title?.map((text) => text?.plain_text).join('') || null
-      : null;
+    richTextToPlainText(
+      pageInfo.object === 'database' ? pageInfo.title : pageInfo.properties?.title?.title
+    ) || '';
+
   const description = blocks
     ?.slice(0, 10)
     ?.map((block: any) =>
@@ -64,16 +51,16 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
 
   return (
     <div className='w-full mb-5 whitespace-pre-wrap'>
-      <NotionSeo page={pageInfo} title={title} description={description} slug={slug} />
-      <NotionPageHeader page={pageInfo} title={title} userInfo={userInfo} />
+      <NotionSeo page={pageInfo} title={title} description={description} />
+      <NotionPageHeader pageInfo={pageInfo} title={title} userInfo={userInfo} />
       <div className='max-w-[var(--article-max-width)] mx-auto mt-10 sm:px-4'>
-        <div className={classNames(pageInfo.object === 'page' ? 'px-3' : null)}>
+        <div className={classNames(pageInfo ? 'px-3' : null)}>
           {pageInfo.object === 'page' ? (
-            <NotionBlocksRender baseBlock={baseBlock} blocks={blocks} />
+            <NotionBlocksRender blocks={blocks as Array<NotionBlocksRetrieve>} />
           ) : pageInfo.object === 'database' ? (
             <NotionDatabasePageView
-              pageInfo={pageInfo as INotionSearchDatabase}
-              baseBlock={baseBlock as unknown as NotionDatabasesQuery}
+              databaseInfo={pageInfo}
+              notionBlock={baseBlock as NotionDatabaseBlocks}
             />
           ) : null}
         </div>
@@ -83,8 +70,10 @@ export const NotionRender: React.FC<NotionRenderProps> = (props) => {
   );
 };
 
-const NotionFooter: React.FC<{ pageInfo: INotionPage['pageInfo'] }> = ({ pageInfo }) => {
-  const parentDatabaseId = pageInfo.parent.database_id?.replaceAll('-', '') || '';
+const NotionFooter: React.FC<{
+  pageInfo: GetNotionBlock['pageInfo'];
+}> = ({ pageInfo }) => {
+  const parentDatabaseId = pageInfo?.parent.database_id?.replaceAll('-', '') || '';
 
   if (!parentDatabaseId) {
     return <></>;

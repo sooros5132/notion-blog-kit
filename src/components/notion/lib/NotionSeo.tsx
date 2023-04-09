@@ -2,16 +2,15 @@ import type React from 'react';
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
 import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import { INotionSearchObject, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { GetNotionBlock, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 
 export interface NotionSeoProps {
-  page: INotionSearchObject;
+  page: GetNotionBlock['pageInfo'];
   title: string | null;
   description: string | null;
-  slug: string;
 }
 
-export const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description, slug }) => {
+export const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description }) => {
   const url = page?.cover
     ? page?.cover?.type === 'external'
       ? page.cover.external?.url ?? ''

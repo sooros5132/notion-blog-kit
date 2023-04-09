@@ -3,31 +3,31 @@ import type { GetStaticProps, NextPage } from 'next';
 import { siteConfig } from 'site-config';
 import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
-import { INotionPage, NotionBlogProperties } from 'src/types/notion';
 import { useNotionStore } from 'src/store/notion';
 import { REVALIDATE } from 'src/lib/notion';
 import { useSiteSettingStore } from 'src/store/siteSetting';
+import { BlogProperties, GetNotionBlock } from 'src/types/notion';
 
 interface HomeProps {
   slug: string;
-  database: INotionPage;
-  blogProperties: NotionBlogProperties;
+  notionBlock: GetNotionBlock;
+  blogProperties: BlogProperties;
 }
-const Home: NextPage<HomeProps> = ({ slug, database, blogProperties }) => {
+const Home: NextPage<HomeProps> = ({ slug, notionBlock, blogProperties }) => {
   const hydrated = useSiteSettingStore().hydrated;
   if (!hydrated) {
     useNotionStore.getState().init({
       slug,
       blogProperties: blogProperties,
-      baseBlock: database.block,
-      pageInfo: database.pageInfo,
-      userInfo: database.userInfo,
-      childrenRecord: database?.block?.childrenRecord || {},
-      databaseRecord: database?.block?.databaseRecord || {}
+      baseBlock: notionBlock.block,
+      pageInfo: notionBlock.pageInfo,
+      userInfo: notionBlock.userInfo,
+      childrensRecord: notionBlock?.block?.childrensRecord || {},
+      databasesRecord: notionBlock?.block?.databasesRecord || {}
     });
   }
 
-  return <NotionRender slug={slug} page={database} />;
+  return <NotionRender slug={slug} notionBlock={notionBlock} />;
 };
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
@@ -40,7 +40,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     return {
       props: {
         slug: siteConfig.notion.baseBlock,
-        database,
+        notionBlock: database,
         blogProperties
       },
       revalidate: REVALIDATE

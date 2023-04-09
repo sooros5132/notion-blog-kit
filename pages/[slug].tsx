@@ -1,7 +1,13 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { NotionRender } from 'src/components/notion';
-import { INotionPage, NotionBlogProperties, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import type {
+  BlogProperties,
+  GetNotionBlock,
+  NotionDatabasesRetrieve,
+  NotionPagesRetrieve
+} from 'src/types/notion';
+import { URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
 import { useNotionStore } from 'src/store/notion';
 import { siteConfig } from 'site-config';
@@ -13,22 +19,22 @@ import { useRouter } from 'next/router';
 
 interface SlugProps {
   slug: string;
-  page: INotionPage;
-  blogProperties: NotionBlogProperties;
+  notionBlock: GetNotionBlock;
+  blogProperties: BlogProperties;
 }
 
-export default function Slug({ slug, page, blogProperties }: SlugProps) {
+export default function Slug({ slug, notionBlock, blogProperties }: SlugProps) {
   const router = useRouter();
   const hydrated = useSiteSettingStore().hydrated;
   if (!hydrated) {
     useNotionStore.getState().init({
       slug,
       blogProperties,
-      baseBlock: page.block,
-      pageInfo: page.pageInfo,
-      userInfo: page.userInfo,
-      childrenRecord: page?.block?.childrenRecord || {},
-      databaseRecord: page?.block?.databaseRecord || {}
+      baseBlock: notionBlock.block,
+      pageInfo: notionBlock?.pageInfo,
+      userInfo: notionBlock.userInfo,
+      childrensRecord: notionBlock?.block?.childrensRecord || {},
+      databasesRecord: notionBlock?.block?.databasesRecord || {}
     });
   }
 
@@ -37,11 +43,11 @@ export default function Slug({ slug, page, blogProperties }: SlugProps) {
       useNotionStore.getState().init({
         slug,
         blogProperties,
-        baseBlock: page.block,
-        pageInfo: page.pageInfo,
-        userInfo: page.userInfo,
-        childrenRecord: page?.block?.childrenRecord || {},
-        databaseRecord: page?.block?.databaseRecord || {}
+        baseBlock: notionBlock.block,
+        pageInfo: notionBlock?.pageInfo,
+        userInfo: notionBlock.userInfo,
+        childrensRecord: notionBlock?.block?.childrensRecord || {},
+        databasesRecord: notionBlock?.block?.databasesRecord || {}
       });
     };
     router.events.on('routeChangeComplete', handleRouteChangeComplete);
@@ -49,19 +55,19 @@ export default function Slug({ slug, page, blogProperties }: SlugProps) {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
     };
-  }, [blogProperties, page.block, page.pageInfo, page.userInfo, router.events, slug]);
+  }, [blogProperties, notionBlock, router.events, slug]);
 
-  return <NotionRender key={router?.asPath || 'key'} slug={slug} page={page} />;
+  return <NotionRender key={router?.asPath || 'key'} slug={slug} notionBlock={notionBlock} />;
 }
 
-const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<INotionPage> => {
+const getBlock = async (blockId: string, type: 'database' | 'page') => {
   const notionClient = new NotionClient();
 
   switch (type) {
     case 'database': {
       const database = await notionClient.getDatabaseByDatabaseId({ databaseId: blockId });
 
-      return database as INotionPage;
+      return database;
     }
     case 'page': {
       const page = await notionClient.getPageByPageId(blockId);
@@ -126,7 +132,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         return {
           props: {
             slug,
-            page,
+            notionBlock: page,
             blogProperties
           },
           revalidate: REVALIDATE
@@ -136,10 +142,10 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
 
     {
       // title 검색
-      const pageInfo = (await notionClient.searchSlug({
+      const pageInfo = await notionClient.searchSlug({
         slug,
         property: 'title'
-      })) as INotionPage['pageInfo'];
+      });
 
       if (pageInfo) {
         if (pageInfo.parent.database_id?.replaceAll('-', '') === siteConfig.notion.baseBlock) {
@@ -159,7 +165,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         return {
           props: {
             slug,
-            page,
+            notionBlock: page,
             blogProperties
           },
           revalidate: REVALIDATE
@@ -169,7 +175,7 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
 
     {
       // uuid로 찾기
-      const [pageInfo, databaseInfo] = await Promise.all([
+      const [_pageInfo, _databaseInfo] = await Promise.all([
         notionClient.getPageInfo({
           pageId: slug
         }),
@@ -177,28 +183,38 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
           databaseId: slug
         })
       ]);
-      const page = pageInfo || databaseInfo;
+      const pageInfo = (_pageInfo || _databaseInfo) as GetNotionBlock['pageInfo'];
 
-      if (!page.object || (page.object !== 'page' && page.object !== 'database')) {
+      if (!pageInfo.object || (pageInfo.object !== 'page' && pageInfo.object !== 'database')) {
         throw 'page is not found';
       }
 
-      const searchedPageSlug =
-        page.object === 'database'
-          ? richTextToPlainText(
-              page?.title || page?.properties?.slug?.rich_text || page.properties.title?.title
-            )
-          : richTextToPlainText(
-              page?.properties?.slug?.rich_text || page.properties.title?.title || page.title
-            );
+      let searchedPageSlug = '';
+
+      switch (pageInfo.object) {
+        case 'database': {
+          searchedPageSlug = richTextToPlainText(
+            pageInfo?.title ||
+              pageInfo?.properties?.slug?.rich_text ||
+              pageInfo.properties.title?.title
+          );
+          break;
+        }
+        case 'page': {
+          richTextToPlainText(
+            pageInfo?.properties?.slug?.rich_text || pageInfo.properties.title?.title
+          );
+          break;
+        }
+      }
 
       if (searchedPageSlug) {
         return {
           redirect: {
             permanent: false,
-            destination: `/${encodeURIComponent(page.id.replaceAll('-', ''))}/${encodeURIComponent(
-              searchedPageSlug || 'Untitled'
-            )}`
+            destination: `/${encodeURIComponent(
+              pageInfo.id.replaceAll('-', '')
+            )}/${encodeURIComponent(searchedPageSlug || 'Untitled')}`
           }
         };
       }

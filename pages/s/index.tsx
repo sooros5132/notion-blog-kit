@@ -1,17 +1,19 @@
 import React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 import { SearchForm } from 'src/components/search/SearchForm';
-import { NotionBlogProperties } from 'src/types/notion';
+import { BlogProperties } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
 import { REVALIDATE } from 'src/lib/notion';
 import { useNotionStore } from 'src/store/notion';
 
 type SearchIndexProps = {
-  blogProperties: NotionBlogProperties;
+  blogProperties: BlogProperties;
 };
 
 const SearchIndex: NextPage<SearchIndexProps> = ({ blogProperties }) => {
   useNotionStore.getState().init({
+    childrensRecord: {},
+    databasesRecord: {},
     blogProperties
   });
   return (

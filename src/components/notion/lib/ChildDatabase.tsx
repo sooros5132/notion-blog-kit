@@ -1,11 +1,12 @@
 'use client';
 
 import type React from 'react';
+import type { NotionBlocksRetrieve, PropertyType } from 'src/types/notion';
 import { sortBy } from 'lodash';
 import { usePathname } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { BsArrowUpShort, BsArrowDownShort } from 'react-icons/bs';
-import { NotionBlock, PropertyType, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { CopyHeadingLink, HeadingContainer, HeadingInner } from './Heading';
 import { ChildDatabaseItem } from './ChildDatabaseItem';
 import { useNotionStore } from 'src/store/notion';
@@ -13,7 +14,7 @@ import Link from 'next/link';
 import { richTextToPlainText } from './utils';
 
 export interface ChildDatabaseProps {
-  block: NotionBlock;
+  block: NotionBlocksRetrieve;
 }
 
 type SortKeys = 'title' | 'created_time' | 'last_edited_time';
@@ -34,7 +35,7 @@ const defaultSortRecord = {
 const orderKeys = Object.keys(defaultSortRecord) as Array<keyof typeof defaultSortRecord>;
 
 export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
-  const database = useNotionStore.getState().databaseRecord?.[block.id];
+  const database = useNotionStore.getState().databasesRecord?.[block.id];
 
   // const sortKeyRecord = {
   //   ...defaultSortRecord

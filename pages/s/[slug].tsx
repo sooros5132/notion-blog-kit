@@ -1,14 +1,14 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import { INotionSearchObject, NotionBlogProperties, NotionDatabase } from 'src/types/notion';
+import { BlogProperties, NotionPagesRetrieve, NotionSearch } from 'src/types/notion';
 import { ChildDatabaseItem } from 'src/components/notion/lib/ChildDatabaseItem';
 import { SearchForm } from 'src/components/search/SearchForm';
 import { NotionClient } from 'lib/notion/Notion';
 
 interface SearchResult {
   searchValue?: string;
-  searchResult?: Array<INotionSearchObject>;
-  blogProperties?: NotionBlogProperties;
+  searchResult?: NotionSearch['results'];
+  blogProperties?: BlogProperties;
 }
 
 export default function Search({ searchValue, searchResult }: SearchResult) {
@@ -27,7 +27,7 @@ export default function Search({ searchValue, searchResult }: SearchResult) {
               {searchResult.map((search) => (
                 <ChildDatabaseItem
                   key={`search-${search.id}`}
-                  block={search as NotionDatabase}
+                  block={search as NotionPagesRetrieve}
                   sortKey={'created_time'}
                 />
               ))}
@@ -60,13 +60,13 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
     }),
     notionClient.getSearchPagesByWorkspace({
       direction: 'descending',
-      filter: 'page',
+      // filter: 'page',
       searchValue: slug
     }),
     notionClient.getBlogProperties()
   ]);
 
-  const resultRecord: Record<string, INotionSearchObject> = {};
+  const resultRecord: Record<string, NotionSearch['results'][number]> = {};
 
   for (const database of databaseResult) {
     resultRecord[database.id] = database;
@@ -74,7 +74,7 @@ export const getServerSideProps: GetServerSideProps<SearchResult> = async ({ que
   for (const workspace of workspaceResult) {
     resultRecord[workspace.id] = workspace;
   }
-  const result: Array<INotionSearchObject> = Object.values(resultRecord);
+  const result: NotionSearch['results'] = Object.values(resultRecord);
 
   return {
     props: {
