@@ -639,9 +639,8 @@ export class NotionClient {
           };
         }, {});
 
-        Object.keys(categoriesRecord).forEach((category) =>
-          categories.push(categoriesRecord[category])
-        );
+        const keys = Object.keys(categoriesRecord).sort();
+        keys.forEach((category) => categories.push(categoriesRecord[category]));
       }
 
       const blogProperties = {
