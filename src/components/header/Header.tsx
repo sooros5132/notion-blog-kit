@@ -30,6 +30,15 @@ const Header: React.FC = (): JSX.Element => {
 
     const scrollEvent = () => {
       const nextYOffset = window.pageYOffset;
+      if (
+        nextYOffset === 0 ||
+        Math.round(window.innerHeight + window.pageYOffset) >
+          Math.round(document.body.scrollHeight - 44)
+      ) {
+        prevYOffset = nextYOffset;
+        setVisibleHeader(true);
+        return;
+      }
       if (prevYOffset > nextYOffset) {
         setVisibleHeader(true);
       } else if (prevYOffset < nextYOffset) {
