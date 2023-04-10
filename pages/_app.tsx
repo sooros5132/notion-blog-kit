@@ -8,10 +8,24 @@ import { siteConfig } from 'site-config';
 import { useEffect } from 'react';
 import { useSiteSettingStore } from 'src/store/siteSetting';
 import 'src/styles/globals.css';
+import { useCreateNotionStore, NotionZustandContext, NotionState } from 'src/store/notion';
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const notionProps: NotionState = {
+    slug: pageProps?.slug,
+    blogProperties: pageProps?.blogProperties,
+    blogArticleRelation: pageProps?.blogArticleRelation,
+    baseBlock: pageProps?.notionBlock?.block,
+    pageInfo: pageProps?.notionBlock?.pageInfo,
+    userInfo: pageProps?.notionBlock?.userInfo,
+    childrensRecord: pageProps?.notionBlock?.block?.childrensRecord || {},
+    databasesRecord: pageProps?.notionBlock?.block?.databasesRecord || {}
+  };
+
+  const createStore = useCreateNotionStore({ ...notionProps });
+
   return (
-    <>
+    <NotionZustandContext.Provider createStore={createStore}>
       <NextSeo
         title={siteConfig.infomation.blogname}
         defaultTitle={siteConfig.infomation.blogname}
@@ -53,7 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </Layout>
       <SideWorks />
-    </>
+    </NotionZustandContext.Provider>
   );
 }
 

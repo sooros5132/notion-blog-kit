@@ -1,63 +1,22 @@
 import type React from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { NotionRender } from 'src/components/notion';
-import type {
-  BlogProperties,
-  GetNotionBlock,
-  NotionDatabasesRetrieve,
-  NotionPagesRetrieve
-} from 'src/types/notion';
+import type { BlogArticleRelation, BlogProperties, GetNotionBlock } from 'src/types/notion';
 import { URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
 import { NotionClient } from 'lib/notion/Notion';
-import { useNotionStore } from 'src/store/notion';
 import { siteConfig } from 'site-config';
 import { richTextToPlainText } from 'src/components/notion/lib/utils';
 import { REVALIDATE } from 'src/lib/notion';
-import { useSiteSettingStore } from 'src/store/siteSetting';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 interface SlugProps {
   slug: string;
   notionBlock: GetNotionBlock;
   blogProperties: BlogProperties;
+  blogArticleRelation?: BlogArticleRelation;
 }
 
-export default function Slug({ slug, notionBlock, blogProperties }: SlugProps) {
-  const router = useRouter();
-  const hydrated = useSiteSettingStore().hydrated;
-  if (!hydrated) {
-    useNotionStore.getState().init({
-      slug,
-      blogProperties,
-      baseBlock: notionBlock.block,
-      pageInfo: notionBlock?.pageInfo,
-      userInfo: notionBlock.userInfo,
-      childrensRecord: notionBlock?.block?.childrensRecord || {},
-      databasesRecord: notionBlock?.block?.databasesRecord || {}
-    });
-  }
-
-  useEffect(() => {
-    const handleRouteChangeComplete = () => {
-      useNotionStore.getState().init({
-        slug,
-        blogProperties,
-        baseBlock: notionBlock.block,
-        pageInfo: notionBlock?.pageInfo,
-        userInfo: notionBlock.userInfo,
-        childrensRecord: notionBlock?.block?.childrensRecord || {},
-        databasesRecord: notionBlock?.block?.databasesRecord || {}
-      });
-    };
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChangeComplete);
-    };
-  }, [blogProperties, notionBlock, router.events, slug]);
-
-  return <NotionRender key={router?.asPath || 'key'} slug={slug} notionBlock={notionBlock} />;
+export default function Slug() {
+  return <NotionRender />;
 }
 
 const getBlock = async (blockId: string, type: 'database' | 'page') => {
@@ -128,12 +87,20 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
       if (pageInfo) {
         const page = await getBlock(pageInfo.id, pageInfo.object);
         const blogProperties = await notionClient.getBlogProperties();
+        let blogArticleRelation = undefined;
+
+        if (page?.pageInfo?.object === 'page') {
+          blogArticleRelation = await notionClient.getBlogArticleRelation({
+            pageId: pageInfo.id.replaceAll('-', '')
+          });
+        }
 
         return {
           props: {
             slug,
             notionBlock: page,
-            blogProperties
+            blogProperties,
+            blogArticleRelation
           },
           revalidate: REVALIDATE
         };
@@ -161,12 +128,20 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         }
         const page = await getBlock(pageInfo.id, pageInfo.object);
         const blogProperties = await notionClient.getBlogProperties();
+        let blogArticleRelation = undefined;
+
+        if (page?.pageInfo?.object === 'page') {
+          blogArticleRelation = await notionClient.getBlogArticleRelation({
+            pageId: pageInfo.id.replaceAll('-', '')
+          });
+        }
 
         return {
           props: {
             slug,
             notionBlock: page,
-            blogProperties
+            blogProperties,
+            blogArticleRelation
           },
           revalidate: REVALIDATE
         };

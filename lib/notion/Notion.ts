@@ -2,9 +2,14 @@ import { Client, LogLevel } from '@notionhq/client';
 import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
 import { sortBy } from 'lodash';
 import { siteConfig } from 'site-config';
+import { richTextToPlainText } from 'src/components/notion/lib/utils';
 import { REVALIDATE } from 'src/lib/notion';
 import {
+  BlogArticle,
+  BlogArticleRelation,
+  BlogArticleRelationRecord,
   BlogProperties,
+  CachedBlogArticleRelationRecord,
   CachedBlogProperties,
   CachedNotionDatabase,
   CachedNotionPage,
@@ -658,6 +663,93 @@ export class NotionClient {
       await this.setCache(cacheKey, cacheBlogProperties);
 
       return blogProperties;
+    }
+  }
+
+  async getBlogArticleRelation(querys: { pageId: string }): Promise<BlogArticleRelation> {
+    const pageId = querys.pageId;
+    const databaseId = siteConfig.notion.baseBlock;
+    const cacheKey = 'blog-article-relations';
+    const NO_CACHED = 'no cached';
+    const defaultRelation = { prev: null, next: null };
+    try {
+      const exists = await this.accessCache(cacheKey);
+      if (!exists) {
+        throw NO_CACHED;
+      }
+
+      const cacheData = await this.getCache<CachedBlogArticleRelationRecord>(cacheKey);
+      if (!cacheData) {
+        throw NO_CACHED;
+      }
+
+      const { cachedTime, lastEditedTime, relationRecord } = cacheData;
+      const blogArticleRelation = relationRecord[pageId];
+
+      if (!lastEditedTime || !blogArticleRelation) {
+        throw NO_CACHED;
+      }
+
+      const timeDiff = Date.now() - new Date(cachedTime).getTime();
+
+      // 캐시된 시간이 55분이 지났으면 다시
+      if (!cachedTime || timeDiff > 55 * 60 * 1000) {
+        throw NO_CACHED;
+      }
+
+      // REVALIDATE 안이면 리턴
+      if (timeDiff <= REVALIDATE * 1000) {
+        return blogArticleRelation || defaultRelation;
+      }
+
+      const newestDatabaseInfo = await this.getDatabaseInfo({ databaseId });
+
+      if (lastEditedTime === newestDatabaseInfo.last_edited_time) {
+        return blogArticleRelation || defaultRelation;
+      }
+
+      throw NO_CACHED;
+    } catch (e) {
+      const databaseInfo = await this.getDatabaseInfo({ databaseId });
+      const relationRecord = await this.getAllPublishedPageInDatabase({
+        databaseId,
+        databaseProperties: databaseInfo.properties
+      }).then((res) => {
+        const pages = res.results.map<BlogArticle>((page) => {
+          return {
+            title: richTextToPlainText(page.properties.title?.title),
+            slug: richTextToPlainText(page.properties.slug?.rich_text),
+            id: page.id.replaceAll('-', ''),
+            publishedAt: page.properties.publishedAt?.date,
+            url: page.url
+          };
+        });
+
+        const relationRecord: BlogArticleRelationRecord = {};
+
+        pages.forEach((page, idx) => {
+          const prev = pages[idx + 1] || null;
+          const next = pages[idx - 1] || null;
+          relationRecord[page.id] = {
+            id: page.id,
+            prev,
+            next
+          };
+        });
+
+        return relationRecord;
+      });
+
+      const cacheBlogProperties: CachedBlogArticleRelationRecord = {
+        databaseId,
+        lastEditedTime: databaseInfo.last_edited_time,
+        cachedTime: Date.now(),
+        relationRecord
+      };
+
+      await this.setCache(cacheKey, cacheBlogProperties);
+
+      return relationRecord[pageId] || defaultRelation;
     }
   }
 

@@ -1,5 +1,14 @@
-import { BlogProperties, ChildrensRecord, DatabasesRecord, GetNotionBlock } from 'src/types/notion';
-import create from 'zustand';
+import type React from 'react';
+import { useLayoutEffect } from 'react';
+import {
+  BlogArticleRelation,
+  BlogProperties,
+  ChildrensRecord,
+  DatabasesRecord,
+  GetNotionBlock
+} from 'src/types/notion';
+import create, { StoreApi } from 'zustand';
+import createContext from 'zustand/context';
 
 export interface NotionState {
   slug?: string;
@@ -9,6 +18,7 @@ export interface NotionState {
   databasesRecord: DatabasesRecord;
   childrensRecord: ChildrensRecord;
   blogProperties?: BlogProperties;
+  blogArticleRelation?: BlogArticleRelation;
 }
 
 export interface NotionStore extends NotionState {
@@ -26,11 +36,41 @@ const defaultState: NotionState = {
 
 const initialState = { ...defaultState };
 
-export const useNotionStore = create<NotionStore>((set, get) => ({
-  ...initialState,
-  init(params) {
-    set({
-      ...params
-    });
+export const initializeNotionStore = (preloadedState = {}) =>
+  create<NotionStore>((set) => ({
+    ...initialState,
+    ...preloadedState,
+    init(params) {
+      set({
+        ...params
+      });
+    }
+  }));
+
+/** Dashboard Store with zustand and context api */
+let store: ReturnType<typeof initializeNotionStore>;
+
+export const useCreateNotionStore = (initialState: NotionState) => {
+  if (typeof window === 'undefined') {
+    return () => initializeNotionStore(initialState);
   }
-}));
+
+  store = store ?? initializeNotionStore(initialState);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useLayoutEffect(() => {
+    if (initialState && store) {
+      store.setState({
+        ...store.getState(),
+        ...initialState
+      });
+    }
+  }, [initialState]);
+
+  return () => store;
+};
+
+export const NotionZustandContext = createContext<StoreApi<NotionState>>();
+
+const useNotionStore = NotionZustandContext.useStore;
+export { useNotionStore };

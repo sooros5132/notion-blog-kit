@@ -3,12 +3,8 @@ import type { GetStaticPaths, GetStaticProps } from 'next';
 import type { BlogProperties, GetNotionBlock } from 'src/types/notion';
 import { NotionRender } from 'src/components/notion';
 import { NotionClient } from 'lib/notion/Notion';
-import { useNotionStore } from 'src/store/notion';
 import { siteConfig } from 'site-config';
 import { richTextToPlainText } from 'src/components/notion/lib/utils';
-import { useSiteSettingStore } from 'src/store/siteSetting';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 interface SlugProps {
   slug: string;
@@ -16,41 +12,8 @@ interface SlugProps {
   blogProperties: BlogProperties;
 }
 
-export default function Slug({ slug, notionBlock, blogProperties }: SlugProps) {
-  const router = useRouter();
-  const hydrated = useSiteSettingStore().hydrated;
-  if (!hydrated) {
-    useNotionStore.getState().init({
-      slug,
-      blogProperties,
-      baseBlock: notionBlock.block,
-      pageInfo: notionBlock.pageInfo,
-      userInfo: notionBlock.userInfo,
-      childrensRecord: notionBlock?.block?.childrensRecord || {},
-      databasesRecord: notionBlock?.block?.databasesRecord || {}
-    });
-  }
-
-  useEffect(() => {
-    const handleRouteChangeComplete = () => {
-      useNotionStore.getState().init({
-        slug,
-        blogProperties,
-        baseBlock: notionBlock.block,
-        pageInfo: notionBlock.pageInfo,
-        userInfo: notionBlock.userInfo,
-        childrensRecord: notionBlock?.block?.childrensRecord || {},
-        databasesRecord: notionBlock?.block?.databasesRecord || {}
-      });
-    };
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChangeComplete);
-    };
-  }, [blogProperties, notionBlock, router.events, slug]);
-
-  return <NotionRender key={router?.asPath || 'key'} slug={slug} notionBlock={notionBlock} />;
+export default function Slug() {
+  return <NotionRender />;
 }
 
 const getBlock = async (blockId: string, type: 'database' | 'page'): Promise<GetNotionBlock> => {
@@ -117,8 +80,9 @@ export const getStaticProps: GetStaticProps<SlugProps> = async ({ params }) => {
         pageInfo?.object === 'page'
           ? richTextToPlainText(pageInfo?.properties?.slug?.rich_text)
           : '';
-
-      if (pageInfo?.parent?.database_id?.replaceAll('-', '') === siteConfig.notion.baseBlock) {
+      const parentIsBaseDatabase =
+        pageInfo?.parent?.database_id?.replaceAll('-', '') === siteConfig.notion.baseBlock;
+      if (parentIsBaseDatabase) {
         return {
           redirect: {
             permanent: false,

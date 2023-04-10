@@ -4,51 +4,15 @@ import type { BlogProperties, GetNotionBlock } from 'src/types/notion';
 import { siteConfig } from 'site-config';
 import { NotionClient } from 'lib/notion/Notion';
 import { NotionRender } from 'src/components/notion';
-import { useNotionStore } from 'src/store/notion';
 import { REVALIDATE } from 'src/lib/notion';
-import { useSiteSettingStore } from 'src/store/siteSetting';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 
 interface CategoryProps {
   slug: string;
   notionBlock: GetNotionBlock;
   blogProperties: BlogProperties;
 }
-const Category: NextPage<CategoryProps> = ({ slug, notionBlock, blogProperties }) => {
-  const router = useRouter();
-  const hydrated = useSiteSettingStore().hydrated;
-  if (!hydrated) {
-    useNotionStore.getState().init({
-      slug,
-      blogProperties,
-      baseBlock: notionBlock.block,
-      pageInfo: notionBlock?.pageInfo,
-      userInfo: notionBlock.userInfo,
-      childrensRecord: notionBlock?.block?.childrensRecord || {},
-      databasesRecord: notionBlock?.block?.databasesRecord || {}
-    });
-  }
-  useEffect(() => {
-    const handleRouteChangeComplete = () => {
-      useNotionStore.getState().init({
-        slug,
-        blogProperties,
-        baseBlock: notionBlock.block,
-        pageInfo: notionBlock?.pageInfo,
-        userInfo: notionBlock.userInfo,
-        childrensRecord: notionBlock?.block?.childrensRecord || {},
-        databasesRecord: notionBlock?.block?.databasesRecord || {}
-      });
-    };
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChangeComplete);
-    };
-  }, [blogProperties, notionBlock, router.events, slug]);
-
-  return <NotionRender key={router?.asPath || 'key'} slug={slug} notionBlock={notionBlock} />;
+const Category: NextPage<CategoryProps> = () => {
+  return <NotionRender />;
 };
 
 export const getStaticPaths: GetStaticPaths<{ category: string }> = async () => {

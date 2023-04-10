@@ -523,6 +523,22 @@ export type BlogProperties = {
   }>;
 };
 
+export type BlogArticle = {
+  id: string;
+  slug: string;
+  title: string;
+  publishedAt?: DateObject;
+  url: string;
+};
+
+export type BlogArticleRelation = {
+  id: string;
+  next: BlogArticle | null;
+  prev: BlogArticle | null;
+};
+
+export type BlogArticleRelationRecord = Record<ID, BlogArticleRelation>;
+
 export type CachedObject = {
   cachedTime: number;
 };
@@ -536,3 +552,9 @@ export type CachedBlogProperties = BlogProperties &
     databaseId: string;
     lastEditedTime: string;
   };
+
+export type CachedBlogArticleRelationRecord = CachedObject & {
+  relationRecord: BlogArticleRelationRecord;
+  databaseId: string;
+  lastEditedTime: string;
+};

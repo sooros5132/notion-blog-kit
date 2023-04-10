@@ -9,11 +9,10 @@ import { useNotionStore } from 'src/store/notion';
 import { notionTagColorClasses } from 'src/lib/notion';
 import { ThemeChangeButton } from 'src/components/modules/ThemeChangeButton';
 import { SearchForm } from 'src/components/search/SearchForm';
-import shallow from 'zustand/shallow';
 import type { BlogProperties } from 'src/types/notion';
 
 export const SideBarMenu: React.FC = memo(() => {
-  const blogProperties = useNotionStore((state) => state.blogProperties, shallow);
+  const blogProperties = useNotionStore((state) => state.blogProperties);
 
   if (!blogProperties) {
     return <></>;

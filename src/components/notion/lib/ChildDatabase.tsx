@@ -35,7 +35,8 @@ const defaultSortRecord = {
 const orderKeys = Object.keys(defaultSortRecord) as Array<keyof typeof defaultSortRecord>;
 
 export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
-  const database = useNotionStore.getState().databasesRecord?.[block.id];
+  const databasesRecord = useNotionStore().databasesRecord;
+  const database = databasesRecord?.[block.id];
 
   // const sortKeyRecord = {
   //   ...defaultSortRecord

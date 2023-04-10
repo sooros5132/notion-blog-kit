@@ -9,9 +9,9 @@ interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ block }) => {
-  const childrenRecord = useNotionStore.getState().childrensRecord;
+  const childrensRecord = useNotionStore().childrensRecord;
   // ((state) => state.childrenRecord, shallow);
-  const tbodyBlock = childrenRecord?.[block.id];
+  const tbodyBlock = childrensRecord?.[block.id];
 
   if (!block?.table || !tbodyBlock) {
     return null;
