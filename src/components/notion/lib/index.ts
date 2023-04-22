@@ -24,3 +24,4 @@ export { Synced as NotionSyncedBlock } from './Synced';
 export { NotionDatabasePageView } from './DatabaseView';
 export { Equation as NotionEquationBlock } from './Equation';
 export { File as NotionFileBlock } from './File';
+export { TableOfContents as NotionTableOfContents } from './TableOfContents';

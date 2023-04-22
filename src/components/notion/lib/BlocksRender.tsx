@@ -22,7 +22,8 @@ import {
   NotionCodeBlock,
   NotionSyncedBlock,
   NotionEquationBlock,
-  NotionFileBlock
+  NotionFileBlock,
+  NotionTableOfContents
 } from '.';
 
 export type NotionBlocksProps = {
@@ -83,7 +84,7 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           case 'divider': {
             return (
               <NotionHasChildrenRender key={`block-${block.id}-${i}`} block={block}>
-                <hr className='my-2 border-base-content/60' />
+                <hr className='my-2 border-base-content/40' />
               </NotionHasChildrenRender>
             );
           }
@@ -157,6 +158,11 @@ export const BlocksRender: React.FC<NotionBlocksProps> = ({ blocks }) => {
           }
           case 'table': {
             return <NotionTableBlock key={`block-${block.id}-${i}`} block={block} />;
+          }
+          case 'table_of_contents': {
+            return (
+              <NotionTableOfContents key={`block-${block.id}-${i}`} blocks={blocks} block={block} />
+            );
           }
           case 'to_do': {
             return (

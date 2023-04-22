@@ -23,7 +23,8 @@ export {
   NotionDatabasePageView,
   NotionEquationBlock,
   NotionFileBlock,
-  NotionSyncedBlock
+  NotionSyncedBlock,
+  NotionTableOfContents
 } from './lib';
 
 export { NotionRender } from './NotionRender';
