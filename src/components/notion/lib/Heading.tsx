@@ -5,6 +5,7 @@ import { copyTextAtClipBoard } from 'src/lib/utils';
 import type { NotionBlocksRetrieve } from 'src/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 import { richTextToPlainText } from './utils';
+import { useRouter } from 'next/router';
 
 export type HeadingType = 'heading_1' | 'heading_2' | 'heading_3' | 'child_database' | 'normal';
 export interface HeadingContainerProps {
@@ -80,21 +81,24 @@ interface HeadingProps {
 }
 
 export const Heading: React.FC<HeadingProps> = ({ block }) => {
+  const router = useRouter();
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
+  const isToggleableHeading = block.has_children;
+
+  const path = router.asPath.replace(/#.*$/, '');
   const hash = richTextToPlainText(block[type].rich_text);
-  const href = encodeURIComponent(hash);
-  const toggleableHeading = block.has_children;
+  const href = `${path}#${encodeURIComponent(hash)}`;
 
   const headingEl = (
     <NotionParagraphBlock
       blockId={block.id}
       richText={block[type].rich_text}
       color={block[type].color}
-      headingLink={`#${href}`}
+      headingLink={href}
     />
   );
 
-  if (toggleableHeading) {
+  if (isToggleableHeading) {
     return (
       <HeadingContainer id={href} type={type}>
         <details>
