@@ -100,7 +100,7 @@ export const Heading: React.FC<HeadingProps> = ({ block }) => {
 
   if (isToggleableHeading) {
     return (
-      <HeadingContainer id={href} type={type}>
+      <HeadingContainer id={hash} type={type}>
         <details>
           <summary className='cursor-pointer [&>*]:inline [&>*>*]:inline'>
             <HeadingInner type={type}>{headingEl}</HeadingInner>
