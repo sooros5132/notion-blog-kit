@@ -6,6 +6,9 @@ import { NotionMagazineView } from '@/components/notion/lib/NotionMagaginView';
 import { GetNotionBlock, NotionDatabaseBlocks, NotionDatabasesRetrieve } from '@/types/notion';
 import { NotionLayout } from '@/components/notion/lib/NotionLayout';
 import { NotionStoreProvider } from '@/store/notion';
+import { REVALIDATE } from '@/lib/notion';
+
+export const revalidate = REVALIDATE;
 
 async function getHomeData() {
   try {

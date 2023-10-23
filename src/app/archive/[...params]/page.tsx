@@ -2,6 +2,9 @@ import { NotionClient } from '@/server/notion/Notion';
 import Archive, { ArchiveParams } from '../page';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { siteConfig } from '@/lib/site-config';
+import { REVALIDATE } from '@/lib/notion';
+
+export const revalidate = REVALIDATE;
 
 export default Archive;
 

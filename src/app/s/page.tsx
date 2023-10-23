@@ -1,9 +1,12 @@
 import { SearchForm } from '@/components/search/SearchForm';
+import { REVALIDATE } from '@/lib/notion';
 import { siteConfig } from '@/lib/site-config';
 import { NotionClient } from '@/server/notion/Notion';
 import { NotionStoreProvider } from '@/store/notion';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export const revalidate = REVALIDATE;
 
 export default async function SearchIndex() {
   const data = await getBlogProperties();

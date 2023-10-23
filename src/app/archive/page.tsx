@@ -11,6 +11,9 @@ import { ARCHIVE_PATH, POST_LIMIT } from '@/lib/constants';
 import type { ResolvingMetadata, Metadata } from 'next';
 import { NotionStoreProvider } from '@/store/notion';
 import { HiOutlineLibrary } from 'react-icons/hi';
+import { REVALIDATE } from '@/lib/notion';
+
+export const revalidate = REVALIDATE;
 
 export type ArchiveParams = { params: { params?: ['category' | 'tag', string, string] } };
 
