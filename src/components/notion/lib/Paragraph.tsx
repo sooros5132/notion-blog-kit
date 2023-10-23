@@ -1,15 +1,16 @@
-import type React from 'react';
-import classnames from 'classnames';
+'use client';
+
 import type { ReactNode } from 'react';
 import {
   notionBlockUrlToRelativePath,
   notionColorClasses,
   paragraphTextClasses
-} from 'src/lib/notion';
-import type { Color, RichText } from 'src/types/notion';
+} from '@/lib/notion';
+import type { Color, RichText } from '@/types/notion';
 import { NotionCopyHeadingLink } from '.';
 import Link from 'next/link';
 import { FiArrowUpRight } from 'react-icons/fi';
+import { cn } from '@/lib/utils';
 
 export interface ParagraphTextProps {
   bold?: string;
@@ -33,13 +34,26 @@ export const ParagraphText: React.FC<ParagraphTextProps> = ({
   const colorClass =
     color && color !== 'default' && !color.match(/_background$/) && notionColorClasses[color];
   const backgroundClass = color && color.match(/_background$/) && notionColorClasses[color];
+
+  const decorationClass = [];
+  if (strikethrough) decorationClass.push('line-through');
+  if (underline) decorationClass.push('underline');
+
   return (
     <span
-      className={classnames(
+      style={
+        // line-through, underline를 동시에 쓰기 위해 style로 변경
+        decorationClass.length > 0
+          ? {
+              textDecorationLine: decorationClass.join(' ')
+            }
+          : undefined
+      }
+      className={cn(
         bold && 'font-bold',
         italic && 'italic',
-        strikethrough && 'line-through',
-        underline && 'underline',
+        // strikethrough && 'line-through',
+        // underline && 'underline',
         code && paragraphTextClasses.code[code],
         code && !colorClass && notionColorClasses['code'],
         code && !backgroundClass && notionColorClasses['code_background'],
@@ -73,8 +87,8 @@ export const Paragraph: React.FC<ParagraphProps> = ({
 
   return (
     <div
-      className={classnames(
-        'break-all',
+      className={cn(
+        'break-words',
         color && color !== 'default' && !color.match(/_background$/)
           ? notionColorClasses[color]
           : annotationsProps?.color
@@ -115,7 +129,7 @@ export const Paragraph: React.FC<ParagraphProps> = ({
           return (
             <a
               key={`block-anchor-${blockId}-${i}`}
-              className='inline-flex items-center bg-base-content/10 rounded-md px-1'
+              className='inline-flex items-center bg-foreground/5 rounded-md px-1'
               href={href ? notionBlockUrlToRelativePath(href) : undefined}
               rel='noreferrer'
               target='_blank'
@@ -149,7 +163,9 @@ export const Paragraph: React.FC<ParagraphProps> = ({
       })}
       {headingLink && (
         <NotionCopyHeadingLink href={headingLink}>
-          <Link href={headingLink}>&nbsp;🔗</Link>
+          <Link href={headingLink} shallow>
+            &nbsp;🔗
+          </Link>
         </NotionCopyHeadingLink>
       )}
     </div>

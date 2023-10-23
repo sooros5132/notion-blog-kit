@@ -34,9 +34,10 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+next-env.d.ts
 
 # notion block cache
-/lib/notion/cache/*
+/src/server/notion/cache/*
 
 # pwa service worker
 public/sw.js*

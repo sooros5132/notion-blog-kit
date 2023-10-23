@@ -1,7 +1,9 @@
-import type React from 'react';
+'use client';
+
 import { FC, PropsWithChildren } from 'react';
 import { BiCopy } from 'react-icons/bi';
-import { copyTextAtClipBoard } from '../../lib/utils';
+import { copyTextAtClipBoard } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 export const CopyButtonWrapper: FC<PropsWithChildren<{ content?: string }>> = ({
   content,
@@ -13,12 +15,14 @@ export const CopyButtonWrapper: FC<PropsWithChildren<{ content?: string }>> = ({
   return (
     <div className='group relative'>
       {children}
-      <button
-        className='btn btn-xs absolute top-1 right-1 bg-base-content/10 border-none text-base-content cursor-pointer invisible hover:bg-base-content/20 group-hover:visible'
+      <Button
+        variant='ghost'
+        size='icon'
+        className='absolute top-1 right-1 bg-background border-none text-foreground cursor-pointer invisible hover:bg-background/90 group-hover:visible'
         onClick={handleClickCopyButton}
       >
         <BiCopy />
-      </button>
+      </Button>
     </div>
   );
 };

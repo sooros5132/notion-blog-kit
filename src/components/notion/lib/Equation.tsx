@@ -1,7 +1,8 @@
-import type React from 'react';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+'use client';
+
+import type { NotionBlocksRetrieve } from '@/types/notion';
 import katex from 'katex';
-import { CopyButtonWrapper } from 'src/components/modules/CopyButtonWrapper';
+import { CopyButtonWrapper } from '@/components/modules/CopyButtonWrapper';
 
 interface EquationProps {
   block: NotionBlocksRetrieve;
@@ -26,7 +27,7 @@ export const Equation: React.FC<EquationProps> = ({ block }) => {
 
   return (
     <CopyButtonWrapper content={expression}>
-      <div className='py-3 rounded-md text-lg group-hover:bg-base-content/5'>
+      <div className='py-3 rounded-md text-lg group-hover:bg-foreground/5'>
         <div dangerouslySetInnerHTML={{ __html: katexRendered }} />
       </div>
     </CopyButtonWrapper>

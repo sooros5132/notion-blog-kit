@@ -1,11 +1,12 @@
-import type React from 'react';
-import classnames from 'classnames';
+'use client';
+
 import type { ReactNode } from 'react';
-import { copyTextAtClipBoard } from 'src/lib/utils';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+import { copyTextAtClipBoard } from '@/lib/utils';
+import type { ChildrensRecord, DatabasesRecord, NotionBlocksRetrieve } from '@/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
 import { richTextToPlainText } from './utils';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export type HeadingType = 'heading_1' | 'heading_2' | 'heading_3' | 'child_database' | 'normal';
 export interface HeadingContainerProps {
@@ -17,7 +18,7 @@ export const HeadingContainer: React.FC<HeadingContainerProps> = ({ id, type, ch
   return (
     <section
       id={id}
-      className={classnames(
+      className={cn(
         'pt-[1.2em]',
         type === 'heading_1'
           ? 'text-[2rem]'
@@ -35,7 +36,7 @@ export const HeadingContainer: React.FC<HeadingContainerProps> = ({ id, type, ch
 
 export const HeadingInner: React.FC<HeadingInnerProps> = ({ type, children }) => {
   const props = {
-    className: 'notion-heading-link-copy flex mb-1 font-bold break-all'
+    className: 'notion-heading-link-copy flex mb-1 font-bold'
   };
 
   switch (type) {
@@ -78,16 +79,20 @@ export const CopyHeadingLink: React.FC<{ href: string; children: React.ReactNode
 
 interface HeadingProps {
   block: NotionBlocksRetrieve;
+  childrensRecord: ChildrensRecord;
+  databasesRecord: DatabasesRecord;
 }
 
-export const Heading: React.FC<HeadingProps> = ({ block }) => {
-  const router = useRouter();
-  const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
-  const isToggleableHeading = block.has_children;
+export const Heading: React.FC<HeadingProps> = ({ block, childrensRecord, databasesRecord }) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams().toString();
 
-  const path = router.asPath.replace(/#.*$/, '');
+  const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
+  const isToggleableHeading = block?.[type]?.is_toggleable;
+
+  const path = `${pathname}${searchParams ? '?' : ''}${searchParams}`; //router.asPath.replace(/#.*$/, '');
   const hash = richTextToPlainText(block[type].rich_text);
-  const href = `${path}#${encodeURIComponent(hash)}`;
+  const href = `${path}#${hash}`;
 
   const headingEl = (
     <NotionParagraphBlock
@@ -107,7 +112,12 @@ export const Heading: React.FC<HeadingProps> = ({ block }) => {
           </summary>
           <div className='pl-[0.9em]'>
             <div className='text-base'>
-              <NotionHasChildrenRender block={block} noLeftPadding />
+              <NotionHasChildrenRender
+                block={block}
+                noLeftPadding
+                childrensRecord={childrensRecord}
+                databasesRecord={databasesRecord}
+              />
             </div>
           </div>
         </details>

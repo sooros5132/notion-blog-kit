@@ -1,19 +1,69 @@
-import type React from 'react';
-import classnames from 'classnames';
-import type { ReactNode } from 'react';
-import type { Color, FileObject, NotionBlocksRetrieve } from 'src/types/notion';
-import { NotionHasChildrenRender, NotionParagraphBlock, NotionSecureImage } from '.';
-import { notionColorClasses } from 'src/lib/notion';
+'use client';
 
-interface CalloutBlockContainerProps {
-  color: Color;
-  children: ReactNode;
+import type { PropsWithChildren } from 'react';
+import type {
+  ChildrensRecord,
+  Color,
+  DatabasesRecord,
+  FileObject,
+  NotionBlocksRetrieve
+} from '@/types/notion';
+import { NotionHasChildrenRender, NotionParagraphBlock, NotionSecureImage } from '.';
+import { notionColorClasses } from '@/lib/notion';
+import { cn } from '@/lib/utils';
+
+interface CalloutProps {
+  block: NotionBlocksRetrieve;
+  childrensRecord: ChildrensRecord;
+  databasesRecord: DatabasesRecord;
 }
 
-const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) => {
+export const Callout: React.FC<CalloutProps> = ({ block, childrensRecord, databasesRecord }) => {
+  const callout = block.callout;
+  const { color, icon, rich_text } = callout;
+
+  return (
+    <CalloutBlockStyleWapper color={color}>
+      <NotionHasChildrenRender
+        block={block}
+        className='pl-8 mt-2'
+        noLeftPadding
+        childrensRecord={childrensRecord}
+        databasesRecord={databasesRecord}
+      >
+        <div className='flex gap-x-2'>
+          <div className='w-6 h-6 shrink-0 flex justify-center'>
+            <div className='text-xl font-emoji'>
+              {icon.file && icon.type === 'file' && (
+                <NotionSecureImage
+                  useNextImage
+                  alt='callout-icon'
+                  blockId={block.id}
+                  blockType={'callout'}
+                  useType={'icon'}
+                  initialFileObject={icon as FileObject}
+                />
+              )}
+              {icon?.emoji && icon?.type === 'emoji' && icon?.emoji}
+            </div>
+          </div>
+          <div className='self-center'>
+            <NotionParagraphBlock blockId={block.id} richText={rich_text} />
+          </div>
+        </div>
+      </NotionHasChildrenRender>
+    </CalloutBlockStyleWapper>
+  );
+};
+
+interface CalloutBlockStyleWapperProps extends PropsWithChildren {
+  color: Color;
+}
+
+const CalloutBlockStyleWapper = ({ color, children }: CalloutBlockStyleWapperProps) => {
   return (
     <div
-      className={classnames(
+      className={cn(
         'my-1 p-2',
         color && color !== 'default' && !color.match(/_background$/) && notionColorClasses[color],
         color && color.match(/_background$/) && notionColorClasses[color]
@@ -21,40 +71,5 @@ const CalloutBlockContainer = ({ color, children }: CalloutBlockContainerProps) 
     >
       {children}
     </div>
-  );
-};
-
-interface CalloutProps {
-  block: NotionBlocksRetrieve;
-}
-
-export const Callout: React.FC<CalloutProps> = ({ block }) => {
-  return (
-    <CalloutBlockContainer color={block.callout.color}>
-      <NotionHasChildrenRender block={block} className='pl-8 mt-2' noLeftPadding>
-        <div className='flex gap-x-2'>
-          <div className='w-6 h-6 shrink-0 flex justify-center'>
-            <div className='text-xl font-emoji'>
-              {block.callout.icon.file && block.callout.icon.type === 'file' && (
-                <NotionSecureImage
-                  useNextImage
-                  alt='callout-icon'
-                  blockId={block.id}
-                  blockType={'callout'}
-                  useType={'icon'}
-                  initialFileObject={block.callout.icon as FileObject}
-                />
-              )}
-              {block.callout?.icon?.emoji &&
-                block.callout?.icon?.type === 'emoji' &&
-                block.callout?.icon?.emoji}
-            </div>
-          </div>
-          <div className='self-center'>
-            <NotionParagraphBlock blockId={block.id} richText={block.callout.rich_text} />
-          </div>
-        </div>
-      </NotionHasChildrenRender>
-    </CalloutBlockContainer>
   );
 };

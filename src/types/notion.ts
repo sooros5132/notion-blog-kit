@@ -230,7 +230,7 @@ export type CaptionObject = {
 export type BookmarkObject = {
   caption: Array<RichText>;
   url: string;
-};
+} & LinkPreviewAddedProperties;
 
 export type TableObject = {
   table_width: number;
@@ -248,18 +248,47 @@ export type TodoObject = {
   color: Color;
 };
 
+type LinkPreviewAddedProperties = {
+  icon?: string | null;
+  title?: string | null;
+  description?: string | null;
+  image?: {
+    url: string | null;
+    alt: string | null;
+  } | null;
+  username?: string | null;
+  type?: string | null;
+  media?: string | null;
+};
+
 export type CodeBlock = RichTextObject & CaptionObject & { language: Code };
 export type CalloutBlock = RichTextObject & { icon: IconObject };
 export type EquationBlock = { expression: string };
-export type LinkPreviewBlock = { url: string };
+export type LinkPreviewObject = {
+  url: string;
+} & LinkPreviewAddedProperties;
 export type ImageBlock = FileObject & CaptionObject;
 export type VideoBlock = FileObject & CaptionObject;
+export type EmbedBlock = {
+  url: string;
+} & CaptionObject;
+
+export type SyncedBlockObject = {
+  synced_from: {
+    type: 'block_id';
+    block_id: string;
+  } | null;
+};
+
+export type HeadingRichTextObject = RichTextObject & {
+  is_toggleable: boolean;
+};
 
 export interface NotionBlockRetrieveItem extends Record<BlockType, any> {
   paragraph: RichTextObject;
-  heading_1: RichTextObject;
-  heading_2: RichTextObject;
-  heading_3: RichTextObject;
+  heading_1: HeadingRichTextObject;
+  heading_2: HeadingRichTextObject;
+  heading_3: HeadingRichTextObject;
   bulleted_list_item: RichTextObject;
   numbered_list_item: RichTextObject;
   to_do: TodoObject;
@@ -267,7 +296,7 @@ export interface NotionBlockRetrieveItem extends Record<BlockType, any> {
   child_page: RichTextObject;
   child_database: ChildDatabaseObject;
   code: CodeBlock;
-  embed: RichTextObject;
+  embed: EmbedBlock;
   image: ImageBlock;
   video: VideoBlock;
   file: FileObject;
@@ -280,8 +309,8 @@ export interface NotionBlockRetrieveItem extends Record<BlockType, any> {
   table_of_contents: RichTextObject;
   column: RichTextObject;
   column_list: RichTextObject;
-  link_preview: LinkPreviewBlock;
-  synced_block: RichTextObject;
+  link_preview: LinkPreviewObject;
+  synced_block: SyncedBlockObject;
   template: RichTextObject;
   link_to_page: RichTextObject;
   table: TableObject;
@@ -514,7 +543,7 @@ export type BlogProperties = {
     id: string;
     name: string;
     color: Color;
-    count: number;
+    count?: number;
   }>;
   tags: Array<{
     id: string;
@@ -528,6 +557,7 @@ export type BlogArticle = {
   slug: string;
   title: string;
   publishedAt?: DateObject;
+  category: PagesRetrieveProperties['category'];
   url: string;
 };
 

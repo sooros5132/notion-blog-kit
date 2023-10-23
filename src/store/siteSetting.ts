@@ -1,5 +1,4 @@
-import create from 'zustand';
-
+import { createWithEqualityFn } from 'zustand/traditional';
 interface ISiteSettingState {
   hydrated: boolean;
   enableSideBarMenu: boolean;
@@ -16,21 +15,24 @@ interface ISiteSettingStore extends ISiteSettingState {
   closeSideBarMenu: () => void;
 }
 
-export const useSiteSettingStore = create<ISiteSettingStore>((set, get) => ({
-  ...defaultState,
-  setHydrated() {
-    set({
-      hydrated: true
-    });
-  },
-  openSideBarMenu() {
-    set({
-      enableSideBarMenu: true
-    });
-  },
-  closeSideBarMenu() {
-    set({
-      enableSideBarMenu: false
-    });
-  }
-}));
+export const useSiteSettingStore = createWithEqualityFn<ISiteSettingStore>(
+  (set, get) => ({
+    ...defaultState,
+    setHydrated() {
+      set({
+        hydrated: true
+      });
+    },
+    openSideBarMenu() {
+      set({
+        enableSideBarMenu: true
+      });
+    },
+    closeSideBarMenu() {
+      set({
+        enableSideBarMenu: false
+      });
+    }
+  }),
+  Object.is
+);

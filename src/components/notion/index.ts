@@ -6,6 +6,7 @@ export {
   NotionCodeBlock,
   NotionColumnListBlock,
   NotionCopyHeadingLink,
+  NotionEmbedBlock,
   NotionHeadingBlock,
   NotionImageBlock,
   NotionLinkPreviewBlock,

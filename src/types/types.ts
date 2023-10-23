@@ -12,6 +12,8 @@ export type LinkPreview = {
 };
 
 export interface SiteConfig extends Record<string, any> {
+  language: string;
+  TZ: string;
   path: string;
   notion: {
     baseBlock: string;
@@ -23,15 +25,16 @@ export interface SiteConfig extends Record<string, any> {
     name: string;
     slug: string;
   }>;
-  TZ: string;
   infomation: {
     blogname: string;
+    origin: string;
     email?: string;
     github?: string;
     repository?: string;
   };
   enableImageOptimization: boolean;
   hidePoweredBy: boolean;
+  showSourceCodeLink: boolean;
   googleGTag?: string;
 }
 

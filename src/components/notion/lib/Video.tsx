@@ -1,12 +1,13 @@
-import type React from 'react';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+'use client';
+
+import type { NotionBlocksRetrieve } from '@/types/notion';
 import { IoClose } from 'react-icons/io5';
 import { NotionParagraphBlock } from '.';
 import queryString from 'querystring';
-import { useRenewExpiredFile } from './utils';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { useEffect, useRef } from 'react';
-import NoSsrWrapper from 'src/components/modules/NoSsrWrapper';
+import { NoSsrWrapper } from '@/components/modules/NoSsrWrapper';
+import { useRenewExpiredFile } from '@/lib/useRenewExpiredFile';
 
 interface VideoProps {
   block: NotionBlocksRetrieve;

@@ -1,30 +1,14 @@
-import type React from 'react';
+'use client';
+
 import { SiGithub, SiMaildotru } from 'react-icons/si';
 import { RiGitRepositoryFill } from 'react-icons/ri';
-import { siteConfig } from 'site-config';
+import { siteConfig } from '@/lib/site-config';
 
 const Footer: React.FC = (): JSX.Element => {
   return (
-    <footer className='text-base-content'>
-      {!siteConfig.hidePoweredBy && (
-        <div className='mt-4 mb-2 text-zinc-400 dark:text-zinc-700 text-center text-xs'>
-          <p>
-            Powered by{' '}
-            <a
-              className='underline'
-              href='https://github.com/sooros5132/notion-blog-kit'
-              rel='noreferrer'
-              target='_blank'
-              aria-label='notion blog kit repository'
-              tabIndex={-1}
-            >
-              Notion-Blog-Kit
-            </a>
-          </p>
-        </div>
-      )}
-      <div className='bg-base-200'>
-        <div className='flex justify-between align-center mx-auto py-2 px-4'>
+    <footer className='text-foreground'>
+      <div className='bg-card'>
+        <div className='max-w-7xl flex justify-between align-center mx-auto py-2 px-4'>
           <div className='text-xl font-bold'>{siteConfig.infomation.blogname}</div>
           <div className='flex items-center gap-2 text-2xl'>
             {siteConfig.infomation.email && (

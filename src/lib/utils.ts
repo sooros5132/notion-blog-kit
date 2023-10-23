@@ -1,3 +1,10 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 export function copyTextAtClipBoard(text: string) {
   if (!document.queryCommandSupported && document.queryCommandSupported('copy')) {
     return false;

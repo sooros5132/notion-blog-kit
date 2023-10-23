@@ -1,21 +1,20 @@
-import type React from 'react';
-import { formatDistance } from 'date-fns';
-import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';
-import { siteConfig } from 'site-config';
+'use client';
+
 import Link from 'next/link';
-import { useState, memo, useEffect } from 'react';
+import { memo } from 'react';
 import { SiNotion } from 'react-icons/si';
-import { FileObject, NotionDatabasesRetrieve, NotionPagesRetrieve } from 'src/types/notion';
+import { FileObject, NotionDatabasesRetrieve, NotionPagesRetrieve } from '@/types/notion';
 import isEqual from 'react-fast-compare';
-import { NotionParagraphBlock, NotionSecureImage } from '.';
-import { enUS } from 'date-fns/locale';
+import { NotionSecureImage } from '.';
 import { richTextToPlainText } from './utils';
+import { siteConfig } from '@/lib/site-config';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { DateTimeFormat } from '@/components/modules/DateTimeFormat';
 
 export const ChildDatabaseItem: React.FC<{
   block: NotionPagesRetrieve | NotionDatabasesRetrieve;
   sortKey: 'created_time' | 'last_edited_time' | 'title';
 }> = memo(({ block, sortKey }) => {
-  const [isMounted, setMounted] = useState(false);
   const slug = richTextToPlainText(
     block?.properties?.slug?.rich_text || block?.properties?.title?.title
   );
@@ -29,32 +28,11 @@ export const ChildDatabaseItem: React.FC<{
 
   const href =
     parentDatabaseId === siteConfig.notion.baseBlock
-      ? `/${encodeURIComponent(slug)}`
-      : `/${encodeURIComponent(block.id.replaceAll('-', ''))}/${encodeURIComponent(
-          slug || title || 'Untitled'
-        )}`;
+      ? `/${slug}`
+      : `/${block.id.replaceAll('-', '')}/${slug || title || 'Untitled'}`;
 
-  const date = isMounted
-    ? formatDistance(
-        utcToZonedTime(
-          new Date(block[sortKey === 'last_edited_time' ? 'last_edited_time' : 'created_time']),
-          siteConfig.TZ
-        ),
-        utcToZonedTime(new Date(), siteConfig.TZ),
-        {
-          locale: enUS,
-          addSuffix: true
-        }
-      )
-    : (block?.created_time &&
-        formatInTimeZone(new Date(block.created_time), siteConfig.TZ, 'yyyy-MM-dd', {
-          locale: enUS
-        })) ??
-      undefined;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const _publishedAt = block?.properties?.publishedAt?.date?.start || block?.created_time || null;
+  const publishedAt = _publishedAt ? zonedTimeToUtc(new Date(_publishedAt), siteConfig.TZ) : null;
 
   return (
     // borderRadius: theme.size.px10,
@@ -79,9 +57,9 @@ export const ChildDatabaseItem: React.FC<{
     //   }
     // }
     <div>
-      <div className='rounded-xl min-w-[100px] bg-base-content/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
+      <div className='min-w-[100px] rounded-xl bg-foreground/5 isolate overflow-hidden [&>a>.page-cover]:brightness-90 [&:hover>a>.page-cover]:brightness-100 [&:hover>a>.page-cover>div>img]:scale-[1.05] [&:hover>a>.page-cover>.notion-database-item-empty-cover]:scale-[1.05]'>
         <Link href={href}>
-          <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-base-content/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
+          <div className='page-cover h-48 transition-[filter] duration-200 ease-linear bg-foreground/5 overflow-hidden [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full [&>div>img]:trasnition-transform [&>div>img]:duration-200 [&>div>img]:ease-linear'>
             {block?.cover ? (
               <NotionSecureImage
                 useNextImage
@@ -104,21 +82,28 @@ export const ChildDatabaseItem: React.FC<{
                   alt={'page-icon'}
                 />
               ) : (
-                <div className='notion-database-item-empty-cover text-base-content/10'>
+                <div className='notion-database-item-empty-cover text-foreground/5'>
                   <SiNotion />
                 </div>
               )
             ) : (
-              <div className='notion-database-item-empty-cover text-base-content/10'>
+              <div className='notion-database-item-empty-cover text-foreground/5'>
                 <SiNotion />
               </div>
             )}
           </div>
           <div className='flex items-center justify-between px-3 py-2 gap-x-2'>
             <div className='overflow-hidden max-h-[3.3em] [&>div]:line-clamp-2'>{title}</div>
-            <div className='whitespace-nowrap'>
-              <p>{date}</p>
-            </div>
+            {publishedAt && (
+              <span className='group text-zinc-500 whitespace-nowrap'>
+                <span className='inline group-hover:hidden'>
+                  <DateTimeFormat date={publishedAt} relativeTime={{ now: true }} />
+                </span>
+                <span className='hidden group-hover:inline'>
+                  <DateTimeFormat date={publishedAt} />
+                </span>
+              </span>
+            )}
           </div>
         </Link>
       </div>

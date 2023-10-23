@@ -1,38 +1,34 @@
-import type React from 'react';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+'use client';
+
+import type { NotionBlocksRetrieve } from '@/types/notion';
 import { NotionParagraphBlock } from '.';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface TodoProps {
   block: NotionBlocksRetrieve;
 }
 
 export const Todo: React.FC<TodoProps> = ({ block }) => {
+  const todo = block.to_do;
+  const { checked, color, rich_text } = todo;
+
   return (
-    <div className='form-control'>
-      <label className='label p-0'>
-        <div className='shrink-0 grow-0 pt-0.5 pr-1 self-start'>
-          <input
-            type='checkbox'
-            checked={block?.to_do?.checked ?? false}
-            readOnly
-            className='rounded-sm checkbox checkbox-xs'
-          />
-        </div>
-        <div className='flex-auto'>
-          <NotionParagraphBlock
-            blockId={block.id}
-            richText={block.to_do.rich_text}
-            color={block.to_do.color}
-            annotations={
-              block?.to_do?.checked
-                ? {
-                    color: 'gray',
-                    strikethrough: true
-                  }
-                : undefined
-            }
-          />
-        </div>
+    <div className='flex items-center space-x-2'>
+      <Checkbox checked={checked ?? false} />
+      <label>
+        <NotionParagraphBlock
+          blockId={block.id}
+          richText={rich_text}
+          color={color}
+          annotations={
+            checked
+              ? {
+                  color: 'gray',
+                  strikethrough: true
+                }
+              : undefined
+          }
+        />
       </label>
     </div>
   );

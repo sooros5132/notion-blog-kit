@@ -1,21 +1,24 @@
-import type React from 'react';
+'use client';
+
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
-import { siteConfig } from 'site-config';
-import { SearchForm } from 'src/components/search/SearchForm';
-import classNames from 'classnames';
-import { ThemeChangeButton } from '../modules/ThemeChangeButton';
-import { useSiteSettingStore } from 'src/store/siteSetting';
+import { SearchForm } from '@/components/search/SearchForm';
+import { useSiteSettingStore } from '@/store/siteSetting';
 import { FaArrowRight } from 'react-icons/fa';
 import { HiMenu } from 'react-icons/hi';
-import { useNotionStore } from 'src/store/notion';
-import shallow from 'zustand/shallow';
+import { useNotionStore } from '@/store/notion';
+import { siteConfig } from '@/lib/site-config';
+import { cn } from '@/lib/utils';
+import { ThemeToggle } from '../ThemeToggle';
+import { NoSsrWrapper } from '../modules/NoSsrWrapper';
+import { Button } from '../ui/button';
+import { ARCHIVE_PATH } from '@/lib/constants';
 
 const Header: React.FC = (): JSX.Element => {
   const [visibleHeader, setVisibleHeader] = useState(true);
-  const { hydrated, enableSideBarMenu, closeSideBarMenu, openSideBarMenu } = useSiteSettingStore();
-  const blogProperties = useNotionStore(({ blogProperties }) => blogProperties, shallow);
+  const { enableSideBarMenu, closeSideBarMenu, openSideBarMenu } = useSiteSettingStore();
+  const blogProperties = useNotionStore(({ blogProperties }) => blogProperties);
 
   const handleClickSideBarMenuButton = () => {
     if (enableSideBarMenu) {
@@ -55,18 +58,14 @@ const Header: React.FC = (): JSX.Element => {
 
   return (
     <nav
-      className={classNames(
-        'sticky left-0 h-[var(--header-height)] bg-base-200/50 backdrop-blur-xl transition-[top] duration-300 z-10',
+      className={cn(
+        'sticky left-0 h-[var(--header-height)] bg-background/70 backdrop-blur-xl transition-[top] duration-300 z-10',
         visibleHeader && !enableSideBarMenu ? 'top-0' : '-top-[var(--header-height)]'
       )}
     >
-      <div className='h-full flex justify-between items-center mx-auto p-2 gap-x-1'>
+      <div className='max-w-7xl h-full flex justify-between items-center mx-auto p-2 gap-x-1'>
         <div className='flex-1 whitespace-nowrap'>
-          <Link
-            className='text-xl rounded-md btn btn-ghost btn-sm h-full normal-case px-2'
-            href='/'
-          >
-            {/* <AiFillThunderbolt />&nbsp; */}
+          <Link className='font-bold text-xl px-2' href='/'>
             {siteConfig.infomation.blogname}
           </Link>
         </div>
@@ -79,7 +78,7 @@ const Header: React.FC = (): JSX.Element => {
               siteConfig.headerNav.map((item, i) => (
                 <li key={`header-nav-item-${i}`}>
                   <Link
-                    href={`/${encodeURIComponent(item.slug)}`}
+                    href={`/${item.slug}`}
                     className='btn-sm rounded-lg h-full py-1 px-2'
                   >
                     {item.name}
@@ -88,23 +87,24 @@ const Header: React.FC = (): JSX.Element => {
               ))}
           </ul>
         </div> */}
-        <div className='max-w-[150px] sm:max-w-[200px]'>
+        <Link href={ARCHIVE_PATH}>
+          <Button variant='ghost'>Archive</Button>
+        </Link>
+        <div className='hidden sm:block max-w-[150px] sm:max-w-[200px]'>
           <SearchForm />
         </div>
         <div className='flex items-center'>
-          <ThemeChangeButton />
-          {hydrated ? (
-            blogProperties && (
+          <ThemeToggle />
+          <NoSsrWrapper>
+            {blogProperties && (
               <button
                 className='btn btn-circle btn-sm btn-ghost text-xl'
                 onClick={handleClickSideBarMenuButton}
               >
                 {enableSideBarMenu ? <FaArrowRight /> : <HiMenu />}
               </button>
-            )
-          ) : (
-            <div className='w-8' />
-          )}
+            )}
+          </NoSsrWrapper>
         </div>
       </div>
       {/* <ScrollProgressBar /> */}
@@ -137,13 +137,13 @@ const ScrollProgressBar = () => {
 
   return (
     <div
-      className='h-0.5 bg-base-content/30'
+      className='h-0.5 bg-foreground/30'
       // style={{
       //   background: `linear-gradient(90deg, hsl(var(--bc)) 0%, hsl(var(--bc)) ${progress}%, rgba(255, 255, 255, 0.15) ${progress}%)`
       // }}
     >
       <div
-        className='h-0.5 transition-[width] duration-100 ease-linear bg-base-content/70'
+        className='h-0.5 transition-[width] duration-100 ease-linear bg-foreground/70'
         style={{
           width: `${progress}%`
         }}

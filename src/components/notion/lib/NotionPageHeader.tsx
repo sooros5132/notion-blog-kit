@@ -1,16 +1,15 @@
-import type React from 'react';
-import classnames from 'classnames';
-import { formatInTimeZone } from 'date-fns-tz';
-import { siteConfig } from 'site-config';
-import { FileObject, GetNotionBlock, NotionUser } from 'src/types/notion';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { FileObject, GetNotionBlock, NotionUser } from '@/types/notion';
 import { NotionParagraphText, NotionSecureImage } from '.';
-import { enUS } from 'date-fns/locale';
-import classNames from 'classnames';
 import Image from 'next/image';
 import { BsDot } from 'react-icons/bs';
-import { notionTagColorClasses } from 'src/lib/notion';
+import { notionTagColorClasses } from '@/lib/notion';
 import { Paragraph } from './Paragraph';
-import { OptionalNextLink } from 'src/components/modules/OptionalNextLink';
+import { OptionalNextLink } from '@/components/modules/OptionalNextLink';
+import { cn } from '@/lib/utils';
+import { siteConfig } from '@/lib/site-config';
+import { CATEGORY_PATH, TAG_PATH } from '@/lib/constants';
+import { DateTimeFormat } from '@/components/modules/DateTimeFormat';
 
 export interface NotionPageHeaderProps {
   pageInfo: GetNotionBlock['pageInfo'];
@@ -24,7 +23,7 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
   userInfo
 }) => {
   const tags = pageInfo?.properties?.tags?.multi_select;
-  const date = pageInfo?.properties?.publishedAt?.date?.start;
+  const _publishedAt = pageInfo?.properties?.publishedAt?.date?.start || pageInfo.created_time;
   const category =
     (pageInfo.object === 'page' && pageInfo?.properties.category?.select?.name) || null;
   const parentIsBaseDatabase = Boolean(
@@ -32,10 +31,12 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
       siteConfig.notion.baseBlock === pageInfo.parent.database_id.replaceAll('-', '')
   );
 
+  const publishedAt = _publishedAt ? zonedTimeToUtc(new Date(_publishedAt), siteConfig.TZ) : null;
+
   return (
     <div>
       {pageInfo?.cover?.[pageInfo?.cover?.type]?.url && (
-        <div className='relative h-[25vh] min-h-[250px] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[30vh] lg:shadow-xl'>
+        <div className='relative h-[20vh] min-h-[250px] shadow-lg overflow-hidden pointer-events-none [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full md:h-[23vh] lg:shadow-xl'>
           <NotionSecureImage
             useNextImage
             blockId={pageInfo.id}
@@ -48,8 +49,8 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
         </div>
       )}
       <div
-        className={classnames(
-          'relative max-w-[var(--article-max-width)] mx-auto px-4 text-center sm:px-6 lg:px-10',
+        className={cn(
+          'relative max-w-article mx-auto px-4 text-center sm:px-6 lg:px-10',
           pageInfo?.cover ? (pageInfo.icon ? 'mt-[-50px]' : '') : 'mt-[50px]',
           !pageInfo?.cover && pageInfo.icon && 'pt-[20px]'
         )}
@@ -82,17 +83,15 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
           {category && (
             <OptionalNextLink
               wrappingAnchor={parentIsBaseDatabase}
-              href={`/category/${category}`}
+              href={`${CATEGORY_PATH}/${category}`}
               prefetch={false}
             >
-              <span
-                className={classNames('text-zinc-500', parentIsBaseDatabase && 'hover:underline')}
-              >
+              <span className={cn('text-zinc-500', parentIsBaseDatabase && 'hover:underline')}>
                 {category}
               </span>
             </OptionalNextLink>
           )}
-          <div className='mb-3 text-[40px] font-bold break-all'>
+          <div className='mb-3 text-[40px] font-bold'>
             <NotionParagraphText>{title || 'Untitled'}</NotionParagraphText>
           </div>
         </div>
@@ -119,18 +118,17 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
               </div>
             ) : null}
             {userInfo?.name && <span className='ml-0.5'>{userInfo?.name}</span>}
-            {(date || typeof pageInfo?.created_time === 'string') && <BsDot className='inline' />}
-            <span>
-              {(date || typeof pageInfo?.created_time === 'string') &&
-                `${formatInTimeZone(
-                  new Date(date || pageInfo.created_time),
-                  siteConfig.TZ,
-                  'yyyy-MM-dd',
-                  {
-                    locale: enUS
-                  }
-                )}`}
-            </span>
+            {publishedAt && <BsDot className='inline' />}
+            {publishedAt && (
+              <span className='group text-zinc-500'>
+                <span className='inline group-hover:hidden'>
+                  <DateTimeFormat date={publishedAt} relativeTime={{ now: true }} />
+                </span>
+                <span className='hidden group-hover:inline'>
+                  <DateTimeFormat date={publishedAt} />
+                </span>
+              </span>
+            )}
             {Array.isArray(tags) && Boolean(tags.length) && <BsDot className='inline' />}
             {Array.isArray(tags) && (
               <span className='text-sm'>
@@ -138,13 +136,13 @@ export const NotionPageHeader: React.FC<NotionPageHeaderProps> = ({
                   <OptionalNextLink
                     key={tag.id}
                     wrappingAnchor={parentIsBaseDatabase}
-                    href={`/tag/${tag.name}`}
+                    href={`${TAG_PATH}/${tag.name}`}
                     prefetch={false}
                   >
                     <>
                       <span
-                        className={classNames(
-                          'px-1.5 rounded-md text-opacity-80',
+                        className={cn(
+                          'px-1.5 rounded-md hover:brightness-110',
                           notionTagColorClasses[tag.color],
                           notionTagColorClasses[
                             (tag.color + '_background') as keyof typeof notionTagColorClasses

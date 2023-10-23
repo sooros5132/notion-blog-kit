@@ -1,22 +1,22 @@
-import type React from 'react';
-import { useLayoutEffect } from 'react';
-import {
+'use client';
+
+import { createWithEqualityFn as create } from 'zustand/traditional';
+import type {
   BlogArticleRelation,
   BlogProperties,
   ChildrensRecord,
   DatabasesRecord,
   GetNotionBlock
-} from 'src/types/notion';
-import create, { StoreApi } from 'zustand';
-import createContext from 'zustand/context';
+} from '@/types/notion';
+import { useEffect, type PropsWithChildren } from 'react';
 
 export interface NotionState {
   slug?: string;
   baseBlock?: GetNotionBlock['block'];
   userInfo?: GetNotionBlock['userInfo'];
   pageInfo?: GetNotionBlock['pageInfo'];
-  databasesRecord: DatabasesRecord;
-  childrensRecord: ChildrensRecord;
+  databasesRecord?: DatabasesRecord;
+  childrensRecord?: ChildrensRecord;
   blogProperties?: BlogProperties;
   blogArticleRelation?: BlogArticleRelation;
 }
@@ -36,41 +36,26 @@ const defaultState: NotionState = {
 
 const initialState = { ...defaultState };
 
-export const initializeNotionStore = (preloadedState = {}) =>
-  create<NotionStore>((set) => ({
+export const useNotionStore = create<NotionStore>(
+  (set) => ({
     ...initialState,
-    ...preloadedState,
     init(params) {
       set({
         ...params
       });
     }
-  }));
+  }),
+  Object.is
+);
 
-/** Dashboard Store with zustand and context api */
-let store: ReturnType<typeof initializeNotionStore>;
+type NotionStoreProviderProps = {
+  store?: Partial<NotionState>;
+} & PropsWithChildren;
 
-export const useCreateNotionStore = (initialState: NotionState) => {
-  if (typeof window === 'undefined') {
-    return () => initializeNotionStore(initialState);
-  }
+export const NotionStoreProvider: React.FC<NotionStoreProviderProps> = ({ store, children }) => {
+  useEffect(() => {
+    if (typeof store !== 'undefined') useNotionStore.getState().init(store);
+  }, [store]);
 
-  store = store ?? initializeNotionStore(initialState);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useLayoutEffect(() => {
-    if (initialState && store) {
-      store.setState({
-        ...store.getState(),
-        ...initialState
-      });
-    }
-  }, [initialState]);
-
-  return () => store;
+  return typeof children !== 'undefined' ? children : null;
 };
-
-export const NotionZustandContext = createContext<StoreApi<NotionState>>();
-
-const useNotionStore = NotionZustandContext.useStore;
-export { useNotionStore };

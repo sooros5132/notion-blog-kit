@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/** @type {import('next').NextConfig} */
 const withPWA = require('next-pwa');
 const isProduction = process.env.NODE_ENV === 'production';
-const debugLogs = Boolean(process.env.DEBUG_LOGS);
+const debugLogs = process.env.DEBUG_LOGS === 'true';
 const enableProgressiveWebApp = process.env.ENABLE_PROGRESSIVE_WEB_APP === 'true';
 
 try {
@@ -15,6 +13,9 @@ try {
   if (!process.env.NEXT_PUBLIC_INFOMATION_BLOGNAME) {
     throw 'NEXT_PUBLIC_INFOMATION_BLOGNAME';
   }
+  if (!process.env.NEXT_PUBLIC_INFOMATION_ORIGIN) {
+    throw 'NEXT_PUBLIC_INFOMATION_ORIGIN';
+  }
 } catch (err) {
   if (typeof err === 'string') {
     const message = `The environment variable \`${err}\` is required. Please check the \`/.env.sample\` and correct it.`;
@@ -24,12 +25,16 @@ try {
   }
 }
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
-  // experimental: {
-  //   appDir: true
-  // },
-  staticPageGenerationTimeout: 300, // 초 단위, 5분 적용(기본은 1분)
+  swcMinify: true,
+  reactStrictMode: true,
+  modularizeImports: {
+    lodash: {
+      transform: 'lodash/{{member}}'
+    }
+  },
+  staticPageGenerationTimeout: 600, // 초 단위, 10분 적용(기본은 1분)
   images: {
     domains: [
       'www.notion.so',

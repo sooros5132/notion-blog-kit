@@ -1,7 +1,8 @@
+'use client';
+
 import Link from 'next/link';
-import type React from 'react';
-import { notionColorClasses } from 'src/lib/notion';
-import type { NotionBlocksRetrieve, RichText, RichTextObject } from 'src/types/notion';
+import { notionColorClasses } from '@/lib/notion';
+import type { NotionBlocksRetrieve, RichText, RichTextObject } from '@/types/notion';
 import { richTextToPlainText } from './utils';
 
 interface TableOfContentsProps {
@@ -31,12 +32,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ blocks, block 
                 : undefined
             }
           >
-            <Link
-              className='underline'
-              href={`#${encodeURIComponent(title)}`}
-              prefetch={false}
-              shallow
-            >
+            <Link className='underline' href={`#${title}`} prefetch={false} shallow>
               {title}
             </Link>
           </div>

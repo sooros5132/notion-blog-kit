@@ -1,12 +1,13 @@
-import type React from 'react';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+'use client';
+
+import type { NotionBlocksRetrieve } from '@/types/notion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism, vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { NotionParagraphBlock } from '.';
-import { useThemeStore } from 'src/store/theme';
 import { useEffect, useState } from 'react';
 import { FaCircle } from 'react-icons/fa';
-import { CopyButtonWrapper } from 'src/components/modules/CopyButtonWrapper';
+import { CopyButtonWrapper } from '@/components/modules/CopyButtonWrapper';
+import { useTheme } from 'next-themes';
 
 interface CodeProps {
   block: NotionBlocksRetrieve;
@@ -15,7 +16,7 @@ interface CodeProps {
 export const Code: React.FC<CodeProps> = ({ block }) => {
   const language = block?.code?.language;
   const cantion = block?.code?.caption;
-  const { mode } = useThemeStore();
+  const { resolvedTheme } = useTheme();
 
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -28,19 +29,19 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
   return (
     <>
       <div className='shadow-md rounded-lg overflow-hidden mt-[0.5em]'>
-        <div className='flex justify-between items-center gap-x-2 py-2 px-3 bg-base-content/10 text-xs'>
+        <div className='flex justify-between items-center gap-x-2 py-2 px-3 bg-foreground/10 text-xs'>
           <div className='flex items-center gap-x-2'>
             <FaCircle className='text-[#FF5F57]' />
             <FaCircle className='text-[#FFBC2E]' />
             <FaCircle className='text-[#29C841]' />
           </div>
-          <div className='text-base-content/70 select-none capitalize'>{language}</div>
+          <div className='text-foreground/70 select-none capitalize'>{language}</div>
         </div>
         <CopyButtonWrapper content={codes}>
-          <div className='bg-base-content/5 [&>pre]:scrollbar-hidden'>
+          <div className='bg-foreground/5 [&>pre]:scrollbar-hidden'>
             <SyntaxHighlighter
               language={language}
-              style={!isHydrated || mode === 'dark' ? vscDarkPlus : prism}
+              style={!isHydrated || resolvedTheme === 'dark' ? vscDarkPlus : prism}
               customStyle={{
                 fontSize: '1em',
                 lineHeight: '1.25em',
@@ -50,7 +51,7 @@ export const Code: React.FC<CodeProps> = ({ block }) => {
                 background: 'none'
               }}
               lineProps={{
-                style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' }
+                style: { wordBreak: 'break-word', whiteSpace: 'pre-wrap' }
               }}
               codeTagProps={{
                 style: {

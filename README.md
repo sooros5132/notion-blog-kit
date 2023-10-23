@@ -30,13 +30,13 @@ Create `/.env` file and according to the table below or refrence `/.env.sample`
 |*`NOTION_API_SECRET_KEY`|[Create notion integration `secret token`](https://www.notion.so/my-integrations)<br />please check read only access<br />ex) `secret_zhL...`|
 |*`NEXT_PUBLIC_NOTION_DATABASE_ID`|ex) `cd9c83dd...`|
 |*`NEXT_PUBLIC_INFOMATION_BLOGNAME`|ex) `soolog`|
+|*`NEXT_PUBLIC_INFOMATION_ORIGIN`|ex) `https://example.com`|
 |`NEXT_PUBLIC_INFOMATION_EMAIL`|ex) `contact@sooros.com`|
 |`NEXT_PUBLIC_INFOMATION_GITHUB`|ex) `https://github.com/sooros5132`|
 |`NEXT_PUBLIC_INFOMATION_REPOSITORY`|ex) `https://github.com/sooros5132/notion-blog-kit`|
 |`NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN`|[docs) notion.site domain setting](https://www.notion.so/ko-kr/blog/personalize-public-pages)<br />recommend setting this variable.<br />ex) `sooros`|
 |`NEXT_PUBLIC_GOOGLE_G_TAG`|google analytics tag<br />ex) `G-ER...`|
 |`NEXT_PUBLIC_ENABLE_IMAGE_OPTIMIZATION`|This function has the effect of being reflected in the Google search ranking. For fast processing, this feature requires server performance as high as Intel Pentium.|
-|`NEXT_PUBLIC_HIDE_POWERED_BY`|Delete 'Powered by Notion-Blog-Kit' sentence in footer<br />The notion blog kit is an open source, so you can delete it.<br />ex) `true`|
 <br />
 
 ## Deploy with Vercel

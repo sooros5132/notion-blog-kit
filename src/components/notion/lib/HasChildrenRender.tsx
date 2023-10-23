@@ -1,32 +1,37 @@
-import classNames from 'classnames';
-import type React from 'react';
-import { useNotionStore } from 'src/store/notion';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+'use client';
+
+import type { ChildrensRecord, DatabasesRecord, ID, NotionBlocksRetrieve } from '@/types/notion';
 import { NotionBlocksRender } from '.';
+import { cn } from '@/lib/utils';
 
 interface HasChildrenRenderProps {
   block: NotionBlocksRetrieve;
+  fromBlockId?: ID;
   children?: React.ReactNode;
   noLeftPadding?: boolean;
   className?: string;
+  childrensRecord: ChildrensRecord;
+  databasesRecord: DatabasesRecord;
 }
 
 export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
   block,
+  fromBlockId,
   children,
   noLeftPadding,
-  className
+  className,
+  childrensRecord,
+  databasesRecord
 }) => {
-  const childrensRecord = useNotionStore().childrensRecord;
-
   return (
     <>
       {children}
       {block?.has_children && (
-        <div className={classNames(className ? className : '', noLeftPadding ? '' : 'pl-6')}>
+        <div className={cn(className ? className : '', noLeftPadding ? '' : 'pl-6')}>
           <NotionBlocksRender
-            blocks={childrensRecord[block.id]?.results}
-            // baseBlock={childrensRecord[block.id] as unknown as NotionBlocksRetrieve}
+            blocks={childrensRecord?.[fromBlockId || block.id]?.results!}
+            childrensRecord={childrensRecord}
+            databasesRecord={databasesRecord}
           />
         </div>
       )}

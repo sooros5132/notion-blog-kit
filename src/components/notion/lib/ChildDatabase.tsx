@@ -1,56 +1,33 @@
 'use client';
 
-import type React from 'react';
-import type { NotionBlocksRetrieve, PropertyType } from 'src/types/notion';
+import type { DatabasesRecord, NotionBlocksRetrieve, PropertyType } from '@/types/notion';
 import { sortBy } from 'lodash';
 import { usePathname } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { BsArrowUpShort, BsArrowDownShort } from 'react-icons/bs';
-import { URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { URL_PAGE_TITLE_MAX_LENGTH } from '@/types/notion';
 import { CopyHeadingLink, HeadingContainer, HeadingInner } from './Heading';
 import { ChildDatabaseItem } from './ChildDatabaseItem';
-import { useNotionStore } from 'src/store/notion';
 import Link from 'next/link';
 import { richTextToPlainText } from './utils';
 
 export interface ChildDatabaseProps {
   block: NotionBlocksRetrieve;
+  databasesRecord: DatabasesRecord;
 }
 
 type SortKeys = 'title' | 'created_time' | 'last_edited_time';
 
-const sortablePropertyTypes: Array<PropertyType | string> = [
-  'title',
-  'rich_text',
-  'text',
-  'date',
-  'select',
-  'number'
-];
 const defaultSortRecord = {
   title: 'title',
   created_time: 'created time',
   last_edited_time: 'edited time'
 } as const;
+
 const orderKeys = Object.keys(defaultSortRecord) as Array<keyof typeof defaultSortRecord>;
 
-export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
-  const databasesRecord = useNotionStore().databasesRecord;
+export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block, databasesRecord }) => {
   const database = databasesRecord?.[block.id];
-
-  // const sortKeyRecord = {
-  //   ...defaultSortRecord
-  // };
-
-  // Object.keys(database?.results?.[0]?.properties || {}).forEach((key) => {
-  //   const property = database?.results?.[0]?.properties[key];
-  //   if (sortablePropertyTypes.includes(property?.type)) {
-  //     sortKeyRecord[key] = {
-  //       name: key,
-  //       type: property?.type
-  //     };
-  //   }
-  // });
 
   const pathname = usePathname();
 
@@ -123,42 +100,12 @@ export const ChildDatabase: React.FC<ChildDatabaseProps> = ({ block }) => {
         <HeadingInner type={type}>
           <div className='flex-auto mb-1'>
             <div className='flex items-center justify-between'>
-              <p className='break-all'>
+              <p>
                 {block?.child_database?.title || 'Untitled'}
                 <CopyHeadingLink href={href}>
-                  <Link href={'#' + encodeURIComponent(hash)}>&nbsp;🔗</Link>
+                  <Link href={'#' + hash}>&nbsp;🔗</Link>
                 </CopyHeadingLink>
               </p>
-              <div className='dropdown dropdown-left'>
-                <label
-                  tabIndex={0}
-                  className='text-xl btn btn-ghost btn-sm text-inherit flex-nowrap whitespace-nowrap capitalize'
-                >
-                  {defaultSortRecord[sortKey]}
-                  {isOrderAsc ? <BsArrowUpShort /> : <BsArrowDownShort />}
-                </label>
-                <ul
-                  tabIndex={0}
-                  className='p-2 text-lg shadow dropdown-content menu bg-base-100 rounded-box w-52'
-                >
-                  {orderKeys.map((key) => {
-                    return (
-                      <li key={key} onClick={handleCloseSortMenu(key)}>
-                        <div className='gap-x-0.5 px-3 py-2 capitalize'>
-                          {defaultSortRecord[key]}
-                          {sortKey === key ? (
-                            isOrderAsc ? (
-                              <BsArrowUpShort />
-                            ) : (
-                              <BsArrowDownShort />
-                            )
-                          ) : null}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
             </div>
           </div>
         </HeadingInner>

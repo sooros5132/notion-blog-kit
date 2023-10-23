@@ -4,6 +4,7 @@ export { Callout as NotionCalloutBlock } from './Callout';
 export { ChildDatabase as NotionChildDatabaseBlock } from './ChildDatabase';
 export { Code as NotionCodeBlock } from './Code';
 export { ColumnList as NotionColumnListBlock } from './ColumnList';
+export { Embed as NotionEmbedBlock } from './Embed';
 export { Heading as NotionHeadingBlock, CopyHeadingLink as NotionCopyHeadingLink } from './Heading';
 export { Image as NotionImageBlock } from './Image';
 export { LinkPreview as NotionLinkPreviewBlock } from './LinkPreview';

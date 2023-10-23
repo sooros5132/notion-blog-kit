@@ -1,12 +1,14 @@
-import classNames from 'classnames';
+'use client';
+
 import Image from 'next/image';
-import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { siteConfig } from 'site-config';
-import { awsImageObjectUrlToNotionUrl, NEXT_IMAGE_DOMAINS } from 'src/lib/notion';
-import { FileObject, IconObject } from 'src/types/notion';
-import { isExpired, NotionImageFetcherParams, useRenewExpiredFile } from './utils';
+import { awsImageObjectUrlToNotionUrl, NEXT_IMAGE_DOMAINS } from '@/lib/notion';
+import { FileObject, IconObject } from '@/types/notion';
+import { isExpired, NotionImageFetcherParams } from './utils';
+import { cn } from '@/lib/utils';
+import { siteConfig } from '@/lib/site-config';
+import { useRenewExpiredFile } from '@/lib/useRenewExpiredFile';
 
 /* eslint-disable @next/next/no-img-element */
 interface NotionSecureImageProps extends NotionImageFetcherParams {
@@ -75,8 +77,8 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
       {bulrImage && !isOriginalImageLoaded && !fileObject?.external?.url && (
         <>
           <img className='image w-full h-full blur-md' alt={alt} src={bulrImage} loading='eager' />
-          <div className='absolute top-0 left-0 w-full h-full flex-center text-4xl text-white rounded-xl opacity-70 pointer-events-none md:text-5xl md:rounded-3xl'>
-            <div className='animate-spin'>
+          <div className='absolute top-2 right-2 w-[20px] h-[20px] flex-center text-white rounded-xl opacity-70 pointer-events-none md:rounded-3xl'>
+            <div className='text-base animate-spin'>
               <AiOutlineLoading3Quarters className='drop-shadow-[0_0_2px_#000000]' />
             </div>
           </div>
@@ -86,7 +88,7 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
         siteConfig.enableImageOptimization && useNextImage ? (
           <Image
             key='nextImage'
-            className={classNames(
+            className={cn(
               'image',
               isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
             )}
@@ -106,7 +108,7 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
         ) : (
           <img
             key='originImage'
-            className={classNames(
+            className={cn(
               'image',
               isOriginalImageLoaded ? null : 'opacity-0 w-0 h-0 absolute top-0 left-0'
             )}

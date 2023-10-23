@@ -1,8 +1,9 @@
-import type React from 'react';
+'use client';
+
 import { useEffect, useRef } from 'react';
-import { AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC } from 'src/lib/notion';
-import type { FileObject, NotionBlocksRetrieve } from 'src/types/notion';
-import { useRenewExpiredFile } from './utils';
+import { AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC } from '@/lib/notion';
+import type { FileObject, NotionBlocksRetrieve } from '@/types/notion';
+import { useRenewExpiredFile } from '@/lib/useRenewExpiredFile';
 
 interface FileProps {
   block: NotionBlocksRetrieve;
@@ -47,7 +48,7 @@ export const File: React.FC<FileProps> = ({ block }) => {
         rel='noreferrer'
         target='_blank'
         download={fileType === 'file' ? filename || undefined : undefined}
-        className='inline-flex items-center gap-x-0.5 px-1.5 my-1.5 rounded-md bg-base-content/10 hover:bg-base-content/20'
+        className='inline-flex items-center gap-x-0.5 px-1.5 my-1.5 rounded-md bg-foreground/5 hover:bg-foreground/10'
       >
         {/* <BsLink45Deg className='text-[1.2em]' /> */}
         🔗&nbsp;

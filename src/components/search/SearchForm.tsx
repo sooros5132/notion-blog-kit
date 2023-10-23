@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import { AiOutlineSearch } from 'react-icons/ai';
-import classNames from 'classnames';
-import { useSiteSettingStore } from 'src/store/siteSetting';
+import { useSiteSettingStore } from '@/store/siteSetting';
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 interface SearchFormProps {
   searchValue?: string;
@@ -43,33 +45,34 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   }, [autoFocus, searchValue]);
 
   return (
-    <form
-      onSubmit={handleSearchSubmit}
-      className={classNames(
-        'rounded-lg',
-        autoInputHidden ? 'sm:bg-base-content/5' : 'bg-base-content/5'
-      )}
-    >
-      <div className='form-control md:overflow-visible'>
-        <div className={autoInputHidden ? 'sm:input-group' : 'input-group'}>
-          <input
+    <form onSubmit={handleSearchSubmit} className='rounded-lg'>
+      <div className='flex md:overflow-visible'>
+        <div
+          className={cn(
+            'w-full bg-background/50 border border-border rounded-md focus-within:ring-1 focus-within:ring-foreground/70 items-center',
+            autoInputHidden ? 'sm:flex' : 'flex'
+          )}
+        >
+          <Input
             ref={inputRef}
-            className={classNames(
-              'input input-sm w-full bg-transparent focus:outline-none placeholder:text-base-content/60',
+            className={cn(
+              'w-full border-none shadow-none focus-visible:ring-0 placeholder:italic',
               autoInputHidden ? 'hidden sm:block' : null
             )}
             defaultValue={searchValue}
             type='text'
             name='search'
-            placeholder='Title Search'
+            placeholder='Search'
             aria-label='search-input'
           />
-          <button
-            className='btn btn-sm btn-ghost btn-circle sm:btn-square text-lg'
+          <Button
+            variant='ghost'
+            size='icon'
+            className='w-auto h-auto p-1 rounded-full text-lg ring-0'
             aria-label='search-button'
           >
             <AiOutlineSearch />
-          </button>
+          </Button>
         </div>
       </div>
     </form>

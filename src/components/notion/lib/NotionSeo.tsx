@@ -1,8 +1,9 @@
-import type React from 'react';
+'use client';
+
 import { NextSeo } from 'next-seo';
 import Head from 'next/head';
-import { awsImageObjectUrlToNotionUrl } from 'src/lib/notion';
-import { GetNotionBlock, URL_PAGE_TITLE_MAX_LENGTH } from 'src/types/notion';
+import { awsImageObjectUrlToNotionUrl } from '@/lib/notion';
+import { GetNotionBlock, URL_PAGE_TITLE_MAX_LENGTH } from '@/types/notion';
 
 export interface NotionSeoProps {
   page: GetNotionBlock['pageInfo'];
@@ -32,6 +33,8 @@ export const NotionSeo: React.FC<NotionSeoProps> = ({ page, title, description }
   return (
     <>
       <NextSeo
+        nofollow={false}
+        noindex={false}
         title={title?.slice(0, URL_PAGE_TITLE_MAX_LENGTH) || 'Untitled'}
         description={description?.slice(0, 155)?.trim() || undefined}
         openGraph={{

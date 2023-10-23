@@ -1,4 +1,6 @@
-import { siteConfig } from 'site-config';
+import { richTextToPlainText } from '@/components/notion/lib/utils';
+import { siteConfig } from '@/lib/site-config';
+import { NotionDatabasesRetrieve } from '@/types/notion';
 
 export const AWS_PUBLIC_NOTION_STATIC =
   'https://s3-us-west-2.amazonaws.com/public.notion-static.com';
@@ -65,6 +67,42 @@ export function awsImageObjectUrlToNotionUrl({
   }
 }
 
+export function getMetadataInPageInfo(pageInfo: NotionDatabasesRetrieve) {
+  const title = richTextToPlainText(pageInfo?.title || pageInfo.properties.title?.title)?.trim();
+  const description =
+    richTextToPlainText(pageInfo?.description?.slice(0, 20))
+      ?.replace?.(/\n/gm, '')
+      ?.trim?.()
+      ?.slice?.(0, 155) || '';
+
+  const icon =
+    pageInfo?.icon?.file && pageInfo?.icon?.type === 'file'
+      ? awsImageObjectUrlToNotionUrl({
+          blockId: pageInfo.id,
+          s3ObjectUrl: pageInfo.icon.file.url
+        }) + '&width=128'
+      : pageInfo?.icon?.emoji && pageInfo?.icon?.type === 'emoji'
+      ? `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${pageInfo.icon.emoji}</text></svg>`
+      : undefined;
+  const cover = pageInfo?.cover
+    ? pageInfo?.cover?.type === 'external'
+      ? pageInfo.cover.external?.url ?? undefined
+      : pageInfo?.cover?.type === 'file'
+      ? awsImageObjectUrlToNotionUrl({
+          blockId: pageInfo.id,
+          s3ObjectUrl: pageInfo.cover.file?.url || ''
+        }) + '&width=1200'
+      : undefined
+    : undefined;
+
+  return {
+    title,
+    description,
+    icon,
+    cover
+  };
+}
+
 export const notionTagColorClasses = {
   gray: 'text-notion-tag-gray',
   default: 'text-notion-tag-default',
@@ -121,7 +159,7 @@ export const paragraphTextClasses = {
   }
 } as const;
 
-export const NEXT_IMAGE_DOMAINS = [
+export const NEXT_IMAGE_DOMAINS: readonly string[] = [
   'www.notion.so',
   'notion.so',
   's3.us-west-2.amazonaws.com',

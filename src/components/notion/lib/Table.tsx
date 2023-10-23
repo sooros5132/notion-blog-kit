@@ -1,16 +1,15 @@
-import type React from 'react';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
-import classnames from 'classnames';
+'use client';
+
+import type { ChildrensRecord, DatabasesRecord, NotionBlocksRetrieve } from '@/types/notion';
 import { NotionParagraphBlock } from '.';
-import { useNotionStore } from 'src/store/notion';
+import { cn } from '@/lib/utils';
 
 interface TableProps {
   block: NotionBlocksRetrieve;
+  childrensRecord: ChildrensRecord;
 }
 
-export const Table: React.FC<TableProps> = ({ block }) => {
-  const childrensRecord = useNotionStore().childrensRecord;
-  // ((state) => state.childrenRecord, shallow);
+export const Table: React.FC<TableProps> = ({ block, childrensRecord }) => {
   const tbodyBlock = childrensRecord?.[block.id];
 
   if (!block?.table || !tbodyBlock) {
@@ -20,7 +19,7 @@ export const Table: React.FC<TableProps> = ({ block }) => {
   return (
     <div>
       <table
-        className={classnames(
+        className={cn(
           'border-collapse',
           '[&>tbody>tr>td]:border',
           '[&>tbody>tr>td]:border-solid',

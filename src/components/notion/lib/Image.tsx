@@ -1,5 +1,6 @@
-import type React from 'react';
-import type { NotionBlocksRetrieve } from 'src/types/notion';
+'use client';
+
+import type { NotionBlocksRetrieve } from '@/types/notion';
 import { NotionParagraphBlock, NotionSecureImage } from '.';
 
 interface ImageProps {

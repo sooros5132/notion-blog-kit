@@ -1,11 +1,11 @@
-import type React from 'react';
 import Link, { LinkProps } from 'next/link';
+import { PropsWithChildren } from 'react';
 
 export const OptionalNextLink: React.FC<
   LinkProps &
-    React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    React.AnchorHTMLAttributes<HTMLAnchorElement> &
+    PropsWithChildren & {
       wrappingAnchor: boolean;
-      children: JSX.Element;
     }
 > = ({ wrappingAnchor, children, ...props }) => {
   if (wrappingAnchor) {
