@@ -40,4 +40,4 @@ Create `/.env` file and according to the table below or refrence `/.env.sample`
 <br />
 
 ## Deploy with Vercel
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=notion-blog-kit&repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&project-name=Notion+Blog+Kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME,NEXT_PUBLIC_INFOMATION_ORIGIN&envLink=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit%2Fblob%2Fmain%2F.env.sample)
