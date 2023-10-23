@@ -13,12 +13,13 @@ import { NoSsrWrapper } from '@/components/modules/NoSsrWrapper';
 import { NotionClient } from '@/server/notion/Notion';
 import { NotionDatabasesRetrieve } from '@/types/notion';
 import { getMetadataInPageInfo } from '@/lib/notion';
+import { HtmlLangAttrProvider } from '@/components/HtmlLangAttrProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <head>
         <link rel='manifest' href='/manifest.json' />
         {siteConfig.googleGTag && (
@@ -39,6 +40,7 @@ gtag('config', '${siteConfig.googleGTag}');
         )}
       </head>
       <body className={inter.className}>
+        <HtmlLangAttrProvider />
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
