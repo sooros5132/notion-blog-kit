@@ -5,9 +5,9 @@ A statically generated blog using [Next.js](https://github.com/vercel/next.js/),
 [https://notion-blog-kit-demo.vercel.app](https://notion-blog-kit-demo.vercel.app)
 
 ## Screenshot
-| Light mode | Dark mode |
-|--|--|
-| <img alt="SCR-20230405-mx1" src="https://user-images.githubusercontent.com/74892930/230012168-97ff1bfc-6858-446a-b2c1-fd0223ec0521.png" /> | <img alt="SCR-20230405-mxb" src="https://user-images.githubusercontent.com/74892930/230012197-73cfeb9f-6136-4235-99d4-19030a3ca21a.png" /> |
+| Magagin | Archive | Article | 
+|--|--|--|
+| <img alt="magagin" src="https://github.com/sooros5132/notion-blog-kit/assets/74892930/3b0b9ec4-bf26-4b0a-aca8-995482a4e7e9"> | <img alt="archive" src="https://github.com/sooros5132/notion-blog-kit/assets/74892930/b5d91818-bc67-43f6-822e-81f9d4b0b918"> | <img alt="article" src="https://github.com/sooros5132/notion-blog-kit/assets/74892930/46633aac-1c21-499b-a40b-17713537090c"> |
 
 ## Support Blocks
 [https://notion-blog-kit-demo.vercel.app/supported-notion-blocks](https://notion-blog-kit-demo.vercel.app/supported-notion-blocks)
