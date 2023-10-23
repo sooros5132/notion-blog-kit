@@ -4,7 +4,7 @@ import { NotionClient } from '@/server/notion/Notion';
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const url = new URL(siteConfig.infomation.domain);
+  const url = new URL(siteConfig.infomation.origin);
   const origin = url.origin;
 
   const notion = new NotionClient();
