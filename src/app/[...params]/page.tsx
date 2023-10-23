@@ -7,7 +7,9 @@ import { notFound, redirect } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { getMetadataInPageInfo } from '@/lib/notion';
 import { type NotionState, NotionStoreProvider } from '@/store/notion';
+import { REVALIDATE } from '@/lib/notion';
 
+export const revalidate = REVALIDATE;
 interface SlugProps {
   slug: string;
   notionBlock: GetNotionBlock;

@@ -9,9 +9,7 @@ import { REVALIDATE, getMetadataInPageInfo } from '@/lib/notion';
 import { notFound, redirect } from 'next/navigation';
 import { type NotionState, NotionStoreProvider } from '@/store/notion';
 
-export const dynamic = 'force-static';
 export const revalidate = REVALIDATE;
-export const dynamicParams = true;
 
 type SearchedPostParams = { params: { slug: string } };
 
