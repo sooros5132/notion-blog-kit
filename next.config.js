@@ -15,6 +15,12 @@ try {
   }
   if (!process.env.NEXT_PUBLIC_INFOMATION_ORIGIN) {
     throw 'NEXT_PUBLIC_INFOMATION_ORIGIN';
+  } else {
+    try {
+      new URL(process.env.NEXT_PUBLIC_INFOMATION_ORIGIN);
+    } catch (e) {
+      throw 'NEXT_PUBLIC_INFOMATION_ORIGIN';
+    }
   }
 } catch (err) {
   if (typeof err === 'string') {
