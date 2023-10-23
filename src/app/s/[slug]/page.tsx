@@ -7,6 +7,8 @@ import { redirect } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { siteConfig } from '@/lib/site-config';
 
+export const dynamic = 'force-dynamic';
+
 interface SearchResult {
   redirect?: string;
   searchValue?: string;

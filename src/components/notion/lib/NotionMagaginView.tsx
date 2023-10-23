@@ -92,7 +92,7 @@ const PostSummary: React.FC<PostSummaryProps> = ({ post }) => {
       className='shrink grow [&_.cover-image]:hover:brightness-110 [&_.cover-image>div]:transition-transform [&_.cover-image>div]:duration-700 [&_.cover-image>div]:hover:scale-105'
     >
       <Card className='h-full w-full bg-transparent shadow-none border-0 rounded-none isolate overflow-hidden'>
-        <div className='cover-image flex items-center shrink-0 brightness-95 transition-[filter] duration-700 ease-linear rounded-xl overflow-hidden [&>div]:w-full [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
+        <div className='cover-image flex items-center shrink-0 bg-foreground/5 brightness-95 transition-[filter] duration-700 ease-linear rounded-xl overflow-hidden [&>div]:w-full [&>div]:h-full [&>div>img]:w-full [&>div>img]:h-full'>
           {cover ? (
             <NotionSecureImage
               useNextImage
@@ -115,12 +115,12 @@ const PostSummary: React.FC<PostSummaryProps> = ({ post }) => {
                 alt={'page-icon'}
               />
             ) : (
-              <div className='notion-database-item-empty-cover w-full h-full bg-foreground/5 text-foreground/5'>
+              <div className='notion-database-item-empty-cover w-full h-full text-foreground/5'>
                 <SiNotion />
               </div>
             )
           ) : (
-            <div className='notion-database-item-empty-cover w-full h-full bg-foreground/5 text-foreground/5'>
+            <div className='notion-database-item-empty-cover w-full h-full text-foreground/5'>
               <SiNotion />
             </div>
           )}
