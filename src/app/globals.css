@@ -217,14 +217,6 @@
     @apply flex items-center justify-center;
   }
 
-  :root {
-  }
-
-  /* @media (prefers-color-scheme: dark) { */
-  :root.light,
-  :root[data-theme='light'] {
-  }
-
   .notion-toggle > summary {
     @apply list-none;
   }
