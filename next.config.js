@@ -24,7 +24,7 @@ try {
   }
 } catch (err) {
   if (typeof err === 'string') {
-    const message = `The environment variable \`${err}\` is required. Please check the \`/.env.sample\` and correct it.`;
+    const message = `The environment variable \`${err}\` is required. Please check the \`/.env.example\` and correct it.`;
     console.log('\x1b[37m\x1b[41m');
     console.log('ERROR - ' + message, '\x1b[0m');
     throw `\`${err}\` is invalide value`;
