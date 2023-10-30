@@ -247,6 +247,43 @@ export class NotionClient {
       }
       for (const block of children.results) {
         switch (block.type) {
+          case 'bookmark':
+          case 'link_preview': {
+            const url = block[block.type].url;
+            if (!url) {
+              break;
+            }
+            childDatabaseFetching.push(
+              axios
+                .get(url, { timeout: 3000 })
+                .then((res) => {
+                  const head = parse(res.data).querySelector('head');
+                  if (!head) return;
+
+                  const icon = getIcon(head);
+                  const title = getTitle(head);
+                  const description = getDescription(head);
+                  const image = getOpenGraphImage(head);
+                  const username = getUserName(head);
+                  const type = getOpenGraphType(head);
+                  const media = getOpenGraphMedia(head);
+
+                  block[block.type] = {
+                    ...block[block.type],
+                    icon,
+                    title,
+                    description,
+                    image,
+                    username,
+                    type,
+                    media
+                  } as any;
+                })
+                .catch(() => {})
+            );
+
+            break;
+          }
           case 'child_database': {
             if (databasesRecord[block.id]) {
               break;
