@@ -103,7 +103,7 @@ export function NotionArchiveTags({
                 variant='ghost'
                 size='sm'
                 className={cn(
-                  'h-auto w-auto p-0.5 px-1 text-sm hover:bg-',
+                  'h-auto w-auto p-0.5 px-1 text-sm',
                   isSelected ? 'font-bold' : 'bg-opacity-60 text-opacity-50',
                   notionTagColorClasses[tag.color],
                   `${

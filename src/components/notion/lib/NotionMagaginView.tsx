@@ -127,12 +127,10 @@ const PostSummary: React.FC<PostSummaryProps> = ({ post }) => {
         </div>
         <div className='post-info flex flex-col flex-auto justify-between p-4 py-3 gap-y-0.5 overflow-hidden sm:py-2'>
           {category && (
-            <span className='shrink-0 text-xs text-zinc-500 line-clamp-1 hover:underline'>
-              {category}
-            </span>
+            <span className='shrink-0 text-xs text-zinc-500 line-clamp-1'>{category}</span>
           )}
           <div className='grow overflow-hidden'>
-            <div className='post-title font-semibold min-h-[2.6em] line-clamp-3'>{title}</div>
+            <div className='post-title font-semibold line-clamp-3'>{title}</div>
           </div>
           {publishedAt && (
             <div className='flex-auto grow-0 shrink-0 text-right text-sm text-zinc-500'>

@@ -7,7 +7,7 @@
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
 
-    --card: 0 0% 98.5%;
+    --card: 0 0% 96%;
     --card-foreground: 0 0% 3.9%;
 
     --popover: 0 0% 100%;
@@ -309,8 +309,9 @@
   * {
     @apply border-border;
   }
+  html,
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-full min-w-[--site-min-width];
   }
 
   html.nprogress-busy > body > #nprogress > .spinner {

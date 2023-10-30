@@ -37,7 +37,7 @@ export function NotionPageFooter({ pageInfo }: { pageInfo: GetNotionBlock['pageI
           <div>
             {haveNext && (
               <Link
-                className='flex items-center gap-x-4 py-2 px-4 text-foreground bg-foreground/5 hover:bg-foreground/10 rounded-md shadow-md '
+                className='flex items-center gap-x-4 py-2 px-4 rounded-md shadow-md bg-foreground/5 transition-colors hover:bg-foreground/10'
                 href={`/${
                   blogArticleRelation.next?.slug ||
                   blogArticleRelation.next?.title ||
@@ -49,7 +49,7 @@ export function NotionPageFooter({ pageInfo }: { pageInfo: GetNotionBlock['pageI
                   <div className='text-xs select-none text-foreground/70'>
                     {blogArticleRelation.next?.category?.select?.name}
                   </div>
-                  <div className='text-foreground font-bold'>{blogArticleRelation.next?.title}</div>
+                  <div className='font-bold'>{blogArticleRelation.next?.title}</div>
                 </div>
               </Link>
             )}
@@ -57,7 +57,7 @@ export function NotionPageFooter({ pageInfo }: { pageInfo: GetNotionBlock['pageI
           <div>
             {havePrev && (
               <Link
-                className='flex items-center gap-x-4 py-2 px-4 text-foreground bg-foreground/5 hover:bg-foreground/10 rounded-md shadow-md '
+                className='flex items-center gap-x-4 py-2 px-4 rounded-md shadow-md bg-foreground/5 transition-colors hover:bg-foreground/10'
                 href={`/${
                   blogArticleRelation.prev?.slug ||
                   blogArticleRelation.prev?.title ||
@@ -68,31 +68,23 @@ export function NotionPageFooter({ pageInfo }: { pageInfo: GetNotionBlock['pageI
                   <div className='text-xs select-none text-foreground/70'>
                     {blogArticleRelation.prev?.category?.select?.name}
                   </div>
-                  <div className='text-foreground font-bold'>{blogArticleRelation.prev?.title}</div>
+                  <div className='font-bold'>{blogArticleRelation.prev?.title}</div>
                 </div>
                 <GrLinkNext className='shrink-0 text-[1.3em] [&>path]:stroke-current' />
               </Link>
             )}
           </div>
         </div>
-        <div className='flex justify-between mt-3 [&>a]:normal-case'>
-          {/* <Link
-          className='btn btn-sm text-foreground shadow-md bg-foreground/5 hover:bg-foreground/10 border-0'
-          href={parentIsBaseDatabase ? '/' : `/${parentDatabaseId}`}
-        >
-          <HiHome /> Home
-        </Link> */}
+        <div className='mt-3 text-right text-sm'>
           <Link
-            className='ml-auto'
+            className='inline-flex px-4 py-2 items-center rounded-md shadow-md bg-foreground/5 transition-colors hover:bg-foreground/10'
             href={
               parentDatabaseId === siteConfig.notion.baseBlock
                 ? ARCHIVE_PATH
                 : `/${parentDatabaseId}`
             }
           >
-            <Button className='bg-foreground/5 hover:bg-foreground/10' variant='ghost'>
-              <HiMenu /> View Archive
-            </Button>
+            <HiMenu /> View Archive
           </Link>
         </div>
       </div>
