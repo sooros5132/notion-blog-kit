@@ -3,6 +3,8 @@
 import type { NotionBlocksRetrieve } from '@/types/notion';
 import { NotionParagraphBlock } from '.';
 import { NoSsrWrapper } from '@/components/modules/NoSsrWrapper';
+import { memo } from 'react';
+import isEqual from 'react-fast-compare';
 
 interface EmbedProps {
   block: NotionBlocksRetrieve;
@@ -14,9 +16,7 @@ export function Embed({ block }: EmbedProps) {
       <NoSsrWrapper>
         <EmbedInner block={block} />
       </NoSsrWrapper>
-      <div>
-        <NotionParagraphBlock blockId={block.id} richText={block.embed.caption} color={'gray'} />
-      </div>
+      <NotionParagraphBlock blockId={block.id} richText={block.embed.caption} color={'gray'} />
     </div>
   );
 }
@@ -40,8 +40,8 @@ function EmbedInner({ block }: EmbedProps) {
       case 'x.com':
       case 'twitter.com': {
         return (
-          <div className='flex justify-center'>
-            <TwitterEmbed url={url} />
+          <div className='flex justify-center [&>.twitter-tweet>iframe]:rounded-xl'>
+            <TwitterEmbed href={url.href} />
           </div>
         );
       }
@@ -51,20 +51,28 @@ function EmbedInner({ block }: EmbedProps) {
       case 'typeform.com': {
         return <TypeformEmbed url={url} />;
       }
+      case 'instagram.com': {
+        return (
+          <div className='flex justify-center'>
+            <InstagramEmbed href={url.href} />
+          </div>
+        );
+      }
+      case 'maps.app.goo.gl':
       default: {
         throw 'not supported';
       }
     }
   } catch (e) {
     return (
-      <div className='p-3 border border-foreground/10 rounded-md'>
-        <a className='text-sm hover:underline' href={block.embed.url}>
-          {block.embed.url}
-        </a>
-        <div className='text-right text-xs text-foreground/70'>
-          This URL does not support embed.
+      <a className='text-sm group' href={block.embed.url}>
+        <div className='p-3 border border-foreground/10 rounded-md'>
+          <span className='group-hover:underline'>{block.embed.url}</span>
+          <div className='text-right text-xs text-foreground/70'>
+            This URL does not support embed.
+          </div>
         </div>
-      </div>
+      </a>
     );
   }
 }
@@ -95,19 +103,6 @@ function GoogleMapsEmbed({ url }: { url: URL }) {
   );
 }
 
-function TwitterEmbed({ url: _url }: { url: URL }) {
-  const url = new URL(_url, 'https://twitter.com/');
-
-  return (
-    <>
-      <blockquote className='twitter-tweet'>
-        <a target='_blank' href={url.href} />
-      </blockquote>
-      <script async src='https://platform.twitter.com/widgets.js'></script>
-    </>
-  );
-}
-
 function TypeformEmbed({ url: _url }: { url: URL }) {
   const newURL = new URL(_url, 'https://form.typeform.com');
 
@@ -121,3 +116,30 @@ function TypeformEmbed({ url: _url }: { url: URL }) {
     />
   );
 }
+
+const TwitterEmbed = memo(function ({ href: _href }: { href: string }) {
+  const url = new URL(_href, 'https://twitter.com/');
+
+  return (
+    <>
+      <blockquote className='twitter-tweet' data-dnt='true'>
+        <a target='_blank' href={url.href} />
+      </blockquote>
+      <script async src='https://platform.twitter.com/widgets.js'></script>
+    </>
+  );
+}, isEqual);
+
+const InstagramEmbed = memo(function ({ href }: { href: string }) {
+  return (
+    <>
+      <blockquote
+        className='instagram-media'
+        data-instgrm-captioned
+        data-instgrm-permalink={href}
+        data-instgrm-version='14'
+      />
+      <script async src='https://www.instagram.com/embed.js' />
+    </>
+  );
+}, isEqual);
