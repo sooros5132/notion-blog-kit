@@ -71,10 +71,10 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
   }
 
   if (fileObject?.type === 'file') {
-    return <video className='w-full aspect-video' controls src={fileObject?.file?.url} />;
+    return <video className='my-2 w-full aspect-video' controls src={fileObject?.file?.url} />;
   } else {
     return (
-      <div className='w-full [&>iframe]:w-full [&>iframe]:aspect-video '>
+      <div className='my-2 w-full [&>iframe]:w-full [&>iframe]:aspect-video '>
         <EmbedVideo url={block.video?.external?.url || ''} />
       </div>
     );
@@ -83,8 +83,10 @@ const VideoBlockInner: React.FC<VideoProps> = ({ block }) => {
 
 const EmbedVideo: React.FC<{ url: string }> = ({ url }) => {
   const originalURL = new URL(url);
+  const domain = originalURL.hostname;
 
-  switch (originalURL.hostname) {
+  switch (domain) {
+    case 'youtu.be':
     case 'youtube.com':
     case 'www.youtube.com': {
       // const embedUrl = url.replace(/\/watch\?v=/, '/embed/');
@@ -93,11 +95,19 @@ const EmbedVideo: React.FC<{ url: string }> = ({ url }) => {
         originalURL.search.charAt(0) === '?' ? originalURL.search.slice(1) : originalURL.search;
       const searchParams = queryString.decode(urlSearch);
 
-      if (originalURL.pathname === '/watch' && typeof searchParams['v'] === 'string') {
+      if (originalURL.hostname === 'youtu.be') {
+        embedUrl = `https://www.youtube.com/embed${originalURL.pathname}${originalURL.search}`;
+      } else if (originalURL.pathname === '/watch' && typeof searchParams['v'] === 'string') {
         const { v: _, ...newSearchParams } = searchParams;
         embedUrl = `https://www.youtube.com/embed/${searchParams['v']}?${queryString.encode(
           newSearchParams
         )}`;
+      } else if (originalURL.pathname.startsWith('/watch/')) {
+        const id = originalURL.pathname.replace(/^\/watch\//, '');
+        embedUrl = `https://www.youtube.com/embed/${id}`;
+      } else if (originalURL.pathname.startsWith('/w/')) {
+        const id = originalURL.pathname.replace(/^\/w\//, '');
+        embedUrl = `https://www.youtube.com/embed/${id}`;
       }
 
       return (
