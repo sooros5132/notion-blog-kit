@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html suppressHydrationWarning>
       <head>
-        <link rel='manifest' href='/manifest.json' />
+        <link rel='manifest' href='/manifest.webmanifest' />
         {siteConfig.googleGTag && (
           <script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleGTag}`} />
         )}
