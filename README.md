@@ -1,5 +1,5 @@
 # ![favicon-32x32](https://user-images.githubusercontent.com/74892930/230014114-ddbb901a-9cc6-4607-942b-0de153536ac5.png) Notion Blog Web UI Kit
-A statically generated blog using [Next.js](https://github.com/vercel/next.js/), [Notion Api](https://github.com/makenotion/notion-sdk-js).
+A statically generated blog using [Next.js](https://github.com/vercel/next.js/), [notion-sdk-js](https://github.com/makenotion/notion-sdk-js).
 
 ## Live Demo
 [https://notion-blog-kit-demo.vercel.app](https://notion-blog-kit-demo.vercel.app)
