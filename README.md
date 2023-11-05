@@ -18,7 +18,7 @@ A statically generated blog using [Next.js](https://github.com/vercel/next.js/),
 1. Star this repo⭐️
 2. [Create notion integrations secret token](https://www.notion.so/my-integrations), Please check read only access and remember secret token.
 3. Go to the page you want to share and connection to the name of the integration
-4. [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME) or Your server (Vercel is free if a [hobby](https://vercel.com/pricing).)
+4. [Deploy with Vercel](https://vercel.com/new/clone?demo-title=Notion+Blog+Kit&demo-description=You+can+create+a+blog+with+pages+written+in+Notions.&demo-url=https%3A%2F%2Fnotion-blog-kit-demo.vercel.app%2F&demo-image=https%3A%2F%2Fuser-images.githubusercontent.com%2F74892930%2F277405873-3b0b9ec4-bf26-4b0a-aca8-995482a4e7e9.png&repository-name=notion-blog-kit&repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&project-name=Notion+Blog+Kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME,NEXT_PUBLIC_INFOMATION_ORIGIN&envLink=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit%2Fblob%2Fmain%2F.env.example) or Your server (Vercel is free if a [hobby](https://vercel.com/pricing).)
 5. Create `/.env` file and according to the table below (`Deploy with Vercel` has already been set above.)
 <br />
 
@@ -40,4 +40,4 @@ Create `/.env` file and according to the table below or refrence `/.env.example`
 <br />
 
 ## Deploy with Vercel
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=notion-blog-kit&repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&project-name=Notion+Blog+Kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME,NEXT_PUBLIC_INFOMATION_ORIGIN&envLink=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit%2Fblob%2Fmain%2F.env.example)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-title=Notion+Blog+Kit&demo-description=You+can+create+a+blog+with+pages+written+in+Notions.&demo-url=https%3A%2F%2Fnotion-blog-kit-demo.vercel.app%2F&demo-image=https%3A%2F%2Fuser-images.githubusercontent.com%2F74892930%2F277405873-3b0b9ec4-bf26-4b0a-aca8-995482a4e7e9.png&repository-name=notion-blog-kit&repository-url=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit&project-name=Notion+Blog+Kit&env=NOTION_API_SECRET_KEY,NEXT_PUBLIC_NOTION_DATABASE_ID,NEXT_PUBLIC_INFOMATION_BLOGNAME,NEXT_PUBLIC_INFOMATION_ORIGIN&envLink=https%3A%2F%2Fgithub.com%2Fsooros5132%2Fnotion-blog-kit%2Fblob%2Fmain%2F.env.example)
