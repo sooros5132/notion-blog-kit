@@ -36,6 +36,12 @@ export const siteConfig = createSiteConfig({
   utterances: {
     repo: process.env.NEXT_PUBLIC_UTTERANCES_REPOSITORY || '',
     label: process.env.NEXT_PUBLIC_UTTERANCES_LABEL || ''
+  },
+  giscus: {
+    repo: process.env.NEXT_PUBLIC_GISCUS_REPOSITORY || '',
+    repoId: process.env.NEXT_PUBLIC_GISCUS_REPOSITORY_ID || '',
+    category: process.env.NEXT_PUBLIC_GISCUS_CATEGORY || '',
+    categoryId: process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || ''
   }
 });
 

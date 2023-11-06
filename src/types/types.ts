@@ -39,6 +39,12 @@ export interface SiteConfig extends Record<string, any> {
     repo: string;
     label: string;
   };
+  giscus: {
+    repo: string;
+    repoId: string;
+    category: string;
+    categoryId: string;
+  };
 }
 
 export interface NextAppContext {

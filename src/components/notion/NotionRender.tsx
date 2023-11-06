@@ -11,6 +11,7 @@ import { NotionLayout } from './lib/NotionLayout';
 import { NotionPageFooter, NotionPageFooterViewArchive } from './lib/NotionPageFooter';
 import { UtterancesComments } from '../modules/Utterances';
 import { siteConfig } from '@/lib/site-config';
+import { GiscusComments } from '../modules/Giscus';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface NotionRenderProps {
@@ -68,16 +69,18 @@ export function NotionRender({ notionBlock }: NotionRenderProps) {
         ) : null}
       </NotionLayout>
       <div className='bg-card/60 dark:bg-card/50'>
-        <div className='max-w-article mx-auto'>
-          <div className='py-10 space-y-3'>
+        <div className='max-w-article mx-auto py-10 space-y-10'>
+          {pageInfo.object === 'page' ? (
+            siteConfig.giscus.repo && siteConfig.giscus.repoId ? (
+              <GiscusComments />
+            ) : siteConfig.utterances.repo ? (
+              <UtterancesComments />
+            ) : null
+          ) : null}
+          <div className='space-y-3'>
             <NotionPageFooterViewArchive pageInfo={pageInfo} />
             <NotionPageFooter pageInfo={pageInfo} />
           </div>
-          {pageInfo.object === 'page' && siteConfig.utterances.repo && (
-            <div className='pb-10'>
-              <UtterancesComments />
-            </div>
-          )}
         </div>
       </div>
     </div>
