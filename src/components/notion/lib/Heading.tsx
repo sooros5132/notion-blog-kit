@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { copyTextAtClipBoard } from '@/lib/utils';
 import type { ChildrensRecord, DatabasesRecord, NotionBlocksRetrieve } from '@/types/notion';
 import { NotionHasChildrenRender, NotionParagraphBlock } from '.';
@@ -84,23 +84,21 @@ interface HeadingProps {
 }
 
 export const Heading: React.FC<HeadingProps> = ({ block, childrensRecord, databasesRecord }) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams().toString();
-
   const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
   const isToggleableHeading = block?.[type]?.is_toggleable;
-
-  const path = `${pathname}${searchParams ? '?' : ''}${searchParams}`; //router.asPath.replace(/#.*$/, '');
   const hash = richTextToPlainText(block[type].rich_text);
-  const href = `${path}#${hash}`;
 
-  const headingEl = (
+  const heading = (
     <NotionParagraphBlock
       blockId={block.id}
       richText={block[type].rich_text}
       color={block[type].color}
-      headingLink={href}
     />
+  );
+  const headingEl = (
+    <Suspense fallback={heading}>
+      <HeadingWithLink block={block} />
+    </Suspense>
   );
 
   if (isToggleableHeading) {
@@ -131,3 +129,21 @@ export const Heading: React.FC<HeadingProps> = ({ block, childrensRecord, databa
     </HeadingContainer>
   );
 };
+
+function HeadingWithLink({ block }: { block: NotionBlocksRetrieve }) {
+  const type = block.type as 'heading_1' | 'heading_2' | 'heading_3';
+  const pathname = usePathname();
+  const searchParams = useSearchParams().toString();
+  const hash = richTextToPlainText(block[type].rich_text);
+  const path = `${pathname}${searchParams ? '?' : ''}${searchParams}`; //router.asPath.replace(/#.*$/, '');
+  const href = `${path}#${hash}`;
+
+  return (
+    <NotionParagraphBlock
+      blockId={block.id}
+      richText={block[type].rich_text}
+      color={block[type].color}
+      headingLink={href}
+    />
+  );
+}
