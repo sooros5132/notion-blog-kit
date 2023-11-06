@@ -9,7 +9,7 @@ import type {
   IconObject
 } from '@/types/notion';
 import axios from 'axios';
-import useSWR, { SWRResponse } from 'swr';
+import useSWR from 'swr';
 import { awsImageObjectUrlToNotionUrl } from './notion';
 import { siteConfig } from './site-config';
 
@@ -25,7 +25,7 @@ export const useRenewExpiredFile = ({
 
   return useSWR(
     `${siteConfig.path}/notion/${blockType}/${blockId}?useType=${useType}`,
-    async () => {
+    async (): Promise<FileObject | IconObject> => {
       try {
         if (initialFileObject?.external?.url) {
           return initialFileObject;
@@ -101,5 +101,5 @@ export const useRenewExpiredFile = ({
       revalidateOnFocus: false,
       refreshInterval: autoRefresh ? refreshInterval : undefined
     }
-  ) as SWRResponse<FileObject & IconObject>;
+  );
 };

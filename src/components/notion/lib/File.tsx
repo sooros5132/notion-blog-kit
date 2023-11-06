@@ -38,7 +38,9 @@ export const File: React.FC<FileProps> = ({ block }) => {
       : null;
 
   useEffect(() => {
-    if (file) cachedFileObject.current = file;
+    if (file) {
+      cachedFileObject.current = file as FileObject;
+    }
   }, [file]);
 
   return (

@@ -1,10 +1,10 @@
-import { FileObject, RichText } from '@/types/notion';
+import { FileObject, IconObject, RichText } from '@/types/notion';
 
 export type NotionImageFetcherParams = {
   blockId: string;
   blockType: 'page' | 'database' | 'video' | 'image' | 'callout' | 'file';
   useType: 'image' | 'video' | 'cover' | 'icon' | 'file';
-  initialFileObject?: FileObject;
+  initialFileObject?: FileObject | IconObject;
   autoRefresh?: boolean;
   refreshInterval?: number;
 };

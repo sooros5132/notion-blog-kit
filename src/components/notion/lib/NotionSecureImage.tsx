@@ -38,8 +38,8 @@ export const NotionSecureImage: React.FC<NotionSecureImageProps> = ({
   const [isOriginalImageLoaded, setOriginalImageLoaded] = useState(
     initialFileObject?.file?.url ? !isExpired(initialFileObject?.file) : true
   );
-  const cachedFileObject = useRef<(FileObject & IconObject) | undefined>(
-    initialFileObject as FileObject & IconObject
+  const cachedFileObject = useRef<FileObject | IconObject | undefined>(
+    initialFileObject as FileObject | IconObject
   );
 
   const { data: fileObject } = useRenewExpiredFile({
