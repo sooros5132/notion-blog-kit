@@ -8,7 +8,9 @@ import { NotionDatabasePageView } from './lib';
 import { richTextToPlainText } from './lib/utils';
 import { Button } from '../ui/button';
 import { NotionLayout } from './lib/NotionLayout';
-import { NotionPageFooter } from './lib/NotionPageFooter';
+import { NotionPageFooter, NotionPageFooterViewArchive } from './lib/NotionPageFooter';
+import { UtterancesComments } from '../modules/Utterances';
+import { siteConfig } from '@/lib/site-config';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface NotionRenderProps {
@@ -48,7 +50,7 @@ export function NotionRender({ notionBlock }: NotionRenderProps) {
 
   return (
     //! Don't delete key
-    <div key={pageInfo.id} className='w-full whitespace-pre-wrap'>
+    <div key={pageInfo.id} className='w-full whitespace-normal'>
       {/* <NotionSeo page={pageInfo} title={title} description={description} /> */}
       <NotionPageHeader pageInfo={pageInfo} title={title} userInfo={userInfo} />
       <NotionLayout>
@@ -65,7 +67,19 @@ export function NotionRender({ notionBlock }: NotionRenderProps) {
           />
         ) : null}
       </NotionLayout>
-      <NotionPageFooter pageInfo={pageInfo} />
+      <div className='bg-card/60 dark:bg-card/50'>
+        <div className='max-w-article mx-auto'>
+          <div className='py-10 space-y-3'>
+            <NotionPageFooterViewArchive pageInfo={pageInfo} />
+            <NotionPageFooter pageInfo={pageInfo} />
+          </div>
+          {pageInfo.object === 'page' && siteConfig.utterances.repo && (
+            <div className='pb-10'>
+              <UtterancesComments />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

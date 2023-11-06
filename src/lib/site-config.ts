@@ -32,7 +32,11 @@ export const siteConfig = createSiteConfig({
     process.env.NEXT_PUBLIC_ENABLE_IMAGE_OPTIMIZATION === 'true' ? true : false || false,
   showSourceCodeLink: process.env.NEXT_PUBLIC_SHOW_SOURCE_CODE_LINK === 'true',
   googleAnalyticsId:
-    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || process.env.NEXT_PUBLIC_GOOGLE_G_TAG
+    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || process.env.NEXT_PUBLIC_GOOGLE_G_TAG,
+  utterances: {
+    repo: process.env.NEXT_PUBLIC_UTTERANCES_REPOSITORY || '',
+    label: process.env.NEXT_PUBLIC_UTTERANCES_LABEL || ''
+  }
 });
 
 function createSiteConfig(config: SiteConfig) {

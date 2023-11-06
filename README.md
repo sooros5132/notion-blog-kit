@@ -34,6 +34,8 @@ Create `/.env` file and according to the table below or refrence `/.env.example`
 |`NEXT_PUBLIC_INFOMATION_EMAIL`|ex) `contact@sooros.com`|
 |`NEXT_PUBLIC_INFOMATION_GITHUB`|ex) `https://github.com/sooros5132`|
 |`NEXT_PUBLIC_INFOMATION_REPOSITORY`|ex) `https://github.com/sooros5132/notion-blog-kit`|
+|`NEXT_PUBLIC_UTTERANCES_REPOSITORY`|Utterances (GitHub Comments)<br />ex) `username/repository`|
+|`NEXT_PUBLIC_UTTERANCES_LABEL`|Utterances Issue Label<br />ex) `comments`|
 |`NEXT_PUBLIC_NOTION_CUSTOM_DOMAIN`|Recommend setting this variable.<br />Notion app -> Settings -> Public settings -> Domain <br />ex) `sooros`|
 |`NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`|[Google Stream ID](https://support.google.com/analytics/answer/12332343)(Google Analytics ID)<br />ex) `G-EH6A2.....`|
 |`NEXT_PUBLIC_ENABLE_IMAGE_OPTIMIZATION`|This function has the effect of being reflected in the Google search ranking. For fast processing, this feature requires server performance as high as Intel Pentium.<br />ex) `true`|

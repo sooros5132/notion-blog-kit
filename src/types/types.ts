@@ -35,6 +35,10 @@ export interface SiteConfig extends Record<string, any> {
   enableImageOptimization: boolean;
   showSourceCodeLink: boolean;
   googleAnalyticsId?: string;
+  utterances: {
+    repo: string;
+    label: string;
+  };
 }
 
 export interface NextAppContext {
