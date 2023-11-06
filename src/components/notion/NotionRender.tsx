@@ -68,21 +68,25 @@ export function NotionRender({ notionBlock }: NotionRenderProps) {
           />
         ) : null}
       </NotionLayout>
-      <div className='bg-card/60 dark:bg-card/50'>
-        <div className='max-w-article mx-auto py-10 space-y-10'>
-          {pageInfo.object === 'page' ? (
-            siteConfig.giscus.repo && siteConfig.giscus.repoId ? (
-              <GiscusComments />
+      {pageInfo.object === 'page' && (
+        <div className='mt-10 bg-card/60 dark:bg-card/50'>
+          <div className='max-w-article mx-auto py-10 space-y-10'>
+            {siteConfig.giscus.repo && siteConfig.giscus.repoId ? (
+              <div className='mx-4'>
+                <GiscusComments />
+              </div>
             ) : siteConfig.utterances.repo ? (
-              <UtterancesComments />
-            ) : null
-          ) : null}
-          <div className='space-y-3'>
-            <NotionPageFooterViewArchive pageInfo={pageInfo} />
-            <NotionPageFooter pageInfo={pageInfo} />
+              <div className='mx-4'>
+                <UtterancesComments />
+              </div>
+            ) : null}
+            <div className='space-y-3'>
+              <NotionPageFooterViewArchive pageInfo={pageInfo} />
+              <NotionPageFooter pageInfo={pageInfo} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
