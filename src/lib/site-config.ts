@@ -31,7 +31,8 @@ export const siteConfig = createSiteConfig({
   enableImageOptimization:
     process.env.NEXT_PUBLIC_ENABLE_IMAGE_OPTIMIZATION === 'true' ? true : false || false,
   showSourceCodeLink: process.env.NEXT_PUBLIC_SHOW_SOURCE_CODE_LINK === 'true',
-  googleGTag: process.env.NEXT_PUBLIC_GOOGLE_G_TAG
+  googleAnalyticsId:
+    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || process.env.NEXT_PUBLIC_GOOGLE_G_TAG
 });
 
 function createSiteConfig(config: SiteConfig) {

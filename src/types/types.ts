@@ -34,7 +34,7 @@ export interface SiteConfig extends Record<string, any> {
   };
   enableImageOptimization: boolean;
   showSourceCodeLink: boolean;
-  googleGTag?: string;
+  googleAnalyticsId?: string;
 }
 
 export interface NextAppContext {

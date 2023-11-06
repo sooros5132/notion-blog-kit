@@ -22,10 +22,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html suppressHydrationWarning>
       <head>
         <link rel='manifest' href='/manifest.webmanifest' />
-        {siteConfig.googleGTag && (
-          <script src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleGTag}`} />
+        {siteConfig.googleAnalyticsId && (
+          <script
+            src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleAnalyticsId}`}
+          />
         )}
-        {siteConfig.googleGTag && (
+        {siteConfig.googleAnalyticsId && (
           <script
             id='google-analytics'
             dangerouslySetInnerHTML={{
@@ -33,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 
-gtag('config', '${siteConfig.googleGTag}');
+gtag('config', '${siteConfig.googleAnalyticsId}');
 `
             }}
           />
