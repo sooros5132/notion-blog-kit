@@ -33,7 +33,6 @@ export interface SiteConfig extends Record<string, any> {
     repository?: string;
   };
   enableImageOptimization: boolean;
-  hidePoweredBy: boolean;
   showSourceCodeLink: boolean;
   googleGTag?: string;
 }
