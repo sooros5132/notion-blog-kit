@@ -96,6 +96,7 @@ export const Heading: React.FC<HeadingProps> = ({ block, childrensRecord, databa
     />
   );
   const headingEl = (
+    // useSearchParams 사용으로 인한 코드 분리
     <Suspense fallback={heading}>
       <HeadingWithLink block={block} />
     </Suspense>
