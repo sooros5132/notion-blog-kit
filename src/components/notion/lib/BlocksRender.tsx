@@ -229,7 +229,7 @@ export function BlocksRender({ blocks, childrensRecord, databasesRecord }: Notio
                 childrensRecord={childrensRecord}
                 databasesRecord={databasesRecord}
               >
-                <div className='my-1.5 min-h-6'>
+                <div className='my-1.5 min-h-[1.5rem]'>
                   <NotionParagraphBlock
                     blockId={block.id}
                     richText={block.paragraph.rich_text}
