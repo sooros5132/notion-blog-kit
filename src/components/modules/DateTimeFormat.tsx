@@ -51,7 +51,7 @@ const timeFormats = [
   [604800, 'days', 86400], // 60*60*24*7, 60*60*24
   [2419200, 'weeks', 604800], // 60*60*24*7*4, 60*60*24*7
   [29030400, 'months', 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
-  [2903040000, 'years', 29030400] // 60*60*24*7*4*12*100, 60*60*24*7*4*12
+  [Infinity, 'years', 29030400] // Infinity, 60*60*24*7*4*12 -> 336
 ] as const;
 
 function relativeTimeFormat(
@@ -66,10 +66,17 @@ function relativeTimeFormat(
     format;
   while ((format = timeFormats[i++])) {
     if (seconds < format[0]) {
-      const distance =
-        sign === 1
-          ? Math.floor((seconds / format[2]) * sign)
-          : Math.ceil((seconds / format[2]) * sign);
+      let distance;
+
+      if (format[1] === 'years') {
+        // 윤년 처리
+        distance = date.getFullYear() - referenceDate.getFullYear();
+      } else {
+        distance =
+          sign === 1
+            ? Math.floor((seconds / format[2]) * sign)
+            : Math.ceil((seconds / format[2]) * sign);
+      }
 
       return { time: distance, unit: format[1] };
     }
