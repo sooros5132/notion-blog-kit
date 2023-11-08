@@ -87,7 +87,7 @@ async function getArchiveData(filter?: { category?: string; tag?: string }) {
 }
 
 export async function generateMetadata(
-  {}: ArchiveParams,
+  params: ArchiveParams,
   _parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {

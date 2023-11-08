@@ -45,7 +45,7 @@ async function getBlogProperties() {
   }
 }
 
-export async function generateMetadata({}, _parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(params: any, _parent: ResolvingMetadata): Promise<Metadata> {
   const parent = await _parent;
   const parentTitle = siteConfig.infomation.blogname || parent.title?.absolute || null;
 

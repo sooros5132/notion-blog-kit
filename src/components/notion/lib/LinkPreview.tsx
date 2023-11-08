@@ -51,6 +51,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ linkPreview }) => {
             {!icon ? (
               <AiOutlineLink className='inline-block align-text-bottom text-[1.1em]' />
             ) : (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 className='inline-block w-[1.1em] h-[1.1em] align-text-bottom mr-1'
                 src={icon.charAt(0) === '/' ? new URL(icon, url).href : icon}
@@ -64,6 +65,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ linkPreview }) => {
         {image?.url ? (
           <figure className='relative image-wrapper hidden sm:block flex-auto shrink-0 min-h-full basis-[40%] md:basis-[35%] overflow-hidden'>
             {image?.url && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 className='absolute w-full h-full'
                 src={image.url.charAt(0) === '/' ? new URL(image.url, url).href : image.url}

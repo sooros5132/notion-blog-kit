@@ -123,12 +123,13 @@ const TwitterEmbed = memo(function ({ href: _href }: { href: string }) {
   return (
     <>
       <blockquote className='twitter-tweet' data-dnt='true'>
-        <a target='_blank' href={url.href} />
+        <a target='_blank' rel='noreferrer' href={url.href} />
       </blockquote>
       <script async src='https://platform.twitter.com/widgets.js'></script>
     </>
   );
 }, isEqual);
+TwitterEmbed.displayName = 'TwitterEmbed';
 
 const InstagramEmbed = memo(function ({ href }: { href: string }) {
   return (
@@ -143,3 +144,4 @@ const InstagramEmbed = memo(function ({ href }: { href: string }) {
     </>
   );
 }, isEqual);
+InstagramEmbed.displayName = 'InstagramEmbed';

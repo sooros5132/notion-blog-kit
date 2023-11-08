@@ -29,7 +29,7 @@ export const HasChildrenRender: React.FC<HasChildrenRenderProps> = ({
       {block?.has_children && (
         <div className={cn(className ? className : '', noLeftPadding ? '' : 'pl-6')}>
           <NotionBlocksRender
-            blocks={childrensRecord?.[fromBlockId || block.id]?.results!}
+            blocks={childrensRecord?.[fromBlockId || block.id]?.results}
             childrensRecord={childrensRecord}
             databasesRecord={databasesRecord}
           />

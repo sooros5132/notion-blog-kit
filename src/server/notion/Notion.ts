@@ -231,7 +231,9 @@ export class NotionClient {
                 })
                 .catch(console.warn)
             );
-          } catch (e) {}
+          } catch (e) {
+            /* empty */
+          }
           break;
         }
       }
@@ -323,7 +325,9 @@ export class NotionClient {
                   })
                   .catch(console.warn)
               );
-            } catch (e) {}
+            } catch (e) {
+              /* empty */
+            }
             break;
           }
         }

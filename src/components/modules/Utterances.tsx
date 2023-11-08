@@ -29,7 +29,8 @@ export function UtterancesComments() {
     }
 
     utterancesEl?.insertAdjacentElement('beforeend', scriptEl);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [haveRepository]);
 
   useEffect(() => {
     const utterancesEl = utterancesRef.current;
@@ -49,7 +50,7 @@ export function UtterancesComments() {
     } catch (e) {
       console.error(e);
     }
-  }, [theme]);
+  }, [haveRepository, theme]);
 
   if (!haveRepository) {
     return null;

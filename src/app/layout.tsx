@@ -25,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {siteConfig.googleAnalyticsId && (
           <script
             src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleAnalyticsId}`}
+            async
           />
         )}
         {siteConfig.googleAnalyticsId && (
@@ -113,7 +114,7 @@ const initMetadata: Metadata = {
   }
 };
 
-export async function generateMetadata({}, _parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(params: any, _parent: ResolvingMetadata): Promise<Metadata> {
   const parent = await _parent;
   try {
     const notionClient = new NotionClient();
