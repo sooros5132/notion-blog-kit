@@ -37,7 +37,7 @@ export function GiscusComments() {
       inputPosition='top'
       theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
       lang={browserLang || 'en'}
-      loading='lazy'
+      // loading='lazy'
     />
   );
 }
