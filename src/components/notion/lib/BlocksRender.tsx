@@ -241,13 +241,12 @@ export function BlocksRender({ blocks, childrensRecord, databasesRecord }: Notio
           }
           case 'quote': {
             return (
-              <NotionQuoteBlock key={`block-${block.id}-${i}`} block={block}>
-                <NotionHasChildrenRender
-                  block={block}
-                  childrensRecord={childrensRecord}
-                  databasesRecord={databasesRecord}
-                />
-              </NotionQuoteBlock>
+              <NotionQuoteBlock
+                key={`block-${block.id}-${i}`}
+                block={block}
+                childrensRecord={childrensRecord}
+                databasesRecord={databasesRecord}
+              />
             );
           }
           case 'table': {
