@@ -13,7 +13,7 @@ export const revalidate = REVALIDATE;
 async function getHomeData() {
   try {
     const notionClient = new NotionClient();
-    const database = await notionClient.getMainDatabase(11);
+    const database = await notionClient.getMainDatabase(17);
     const blogProperties = await notionClient.getBlogProperties();
 
     return {
