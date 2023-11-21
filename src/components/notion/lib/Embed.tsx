@@ -64,6 +64,10 @@ function EmbedInner({ block }: EmbedProps) {
       }
     }
   } catch (e) {
+    if (!block?.embed?.url) {
+      return <></>;
+    }
+
     return (
       <a className='text-sm group' href={block.embed.url}>
         <div className='p-3 border border-foreground/10 rounded-md'>
