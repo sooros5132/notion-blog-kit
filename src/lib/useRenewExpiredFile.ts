@@ -59,7 +59,7 @@ export const useRenewExpiredFile = ({
           case 'video':
           case 'callout':
           case 'image': {
-            if (useType !== 'image' && useType !== 'video' && useType !== 'icon') {
+            if (['image', 'video', 'icon', 'file'].includes(useType)) {
               throw 'not support use type';
             }
             const block = await axios

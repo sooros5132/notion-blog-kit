@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withPWA = require('next-pwa');
 const isProduction = process.env.NODE_ENV === 'production';
 const debugLogs = process.env.DEBUG_LOGS === 'true';
@@ -63,6 +64,10 @@ const nextConfig = {
       {
         source: '/aws-public-notion-static/:path*',
         destination: 'https://s3.us-west-2.amazonaws.com/public.notion-static.com/:path*'
+      },
+      {
+        source: '/aws-files-secure-notion-static/:path*',
+        destination: 'https://prod-files-secure.s3.us-west-2.amazonaws.com/:path*'
       }
     ];
   }

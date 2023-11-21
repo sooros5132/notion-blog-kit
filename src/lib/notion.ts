@@ -3,11 +3,14 @@ import { siteConfig } from '@/lib/site-config';
 import { NotionDatabasesRetrieve } from '@/types/notion';
 
 export const AWS_PUBLIC_NOTION_STATIC =
-  'https://s3-us-west-2.amazonaws.com/public.notion-static.com';
-export const PROXY_PUBLIC_NOTION_STATIC = '/aws-public-notion-static/';
+  'https://s3-us-west-2.amazonaws.com/public.notion-static.com/';
+export const PROXY_PUBLIC_NOTION_STATIC = '/aws-public-notion-static';
 export const AWS_SECURE_NOTION_STATIC =
-  'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/';
-export const PROXY_SECURE_NOTION_STATIC = '/aws-secure-notion-static/';
+  'https://s3.us-west-2.amazonaws.com/secure.notion-static.com';
+export const PROXY_SECURE_NOTION_STATIC = '/aws-secure-notion-static';
+export const AWS_FILES_SECURE_NOTION_STATIC =
+  'https://prod-files-secure.s3.us-west-2.amazonaws.com';
+export const PROXY_FILES_SECURE_NOTION_STATIC = '/aws-files-secure-notion-static';
 export const REVALIDATE = 120;
 
 export function notionBlockUrlToRelativePath(url: string): string {

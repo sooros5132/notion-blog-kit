@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC } from '@/lib/notion';
+import {
+  AWS_FILES_SECURE_NOTION_STATIC,
+  AWS_SECURE_NOTION_STATIC,
+  PROXY_FILES_SECURE_NOTION_STATIC,
+  PROXY_SECURE_NOTION_STATIC
+} from '@/lib/notion';
 import type { FileObject, NotionBlocksRetrieve } from '@/types/notion';
 import { useRenewExpiredFile } from '@/lib/useRenewExpiredFile';
 
@@ -27,15 +32,31 @@ export const File: React.FC<FileProps> = ({ block }) => {
 
   const fileType = file?.type;
   const fileUrl = file?.file?.url || file?.external?.url;
-  const filename =
-    fileType === 'file'
-      ? file?.file?.url?.match(/(notion-static.com\/[-0-9a-z]+\/)(.+)(\?)/)?.[2] || null
-      : null;
+  let proxyFileUrl = '';
 
-  const proxyFileUrl =
-    fileUrl && fileUrl?.includes(AWS_SECURE_NOTION_STATIC)
-      ? fileUrl.replace(AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC)
-      : null;
+  // 새로운 경로
+  // https://prod-files-secure.s3.us-west-2.amazonaws.com/{uuid}/{uuid}/{filename}?{queryString}
+  let filename = '';
+  if (fileType === 'file') {
+    const extractedFilename =
+      file?.file?.url.match(
+        /((https|http):\/\/prod-files-secure\.s3\.us-west-2\.amazonaws\.com\/[-A-Za-z0-9]+\/[-A-Za-z0-9]+\/)(.+)(\?)/
+      )?.[3] ||
+      file?.file?.url?.match(/(notion-static\.com\/[-0-9a-z]+\/)(.+)(\?)/)?.[2] ||
+      '';
+    filename = extractedFilename;
+  }
+
+  if (fileUrl) {
+    if (fileUrl.includes(AWS_SECURE_NOTION_STATIC)) {
+      proxyFileUrl = fileUrl.replace(AWS_SECURE_NOTION_STATIC, PROXY_SECURE_NOTION_STATIC);
+    } else if (fileUrl.includes(AWS_FILES_SECURE_NOTION_STATIC)) {
+      proxyFileUrl = fileUrl.replace(
+        AWS_FILES_SECURE_NOTION_STATIC,
+        PROXY_FILES_SECURE_NOTION_STATIC
+      );
+    }
+  }
 
   useEffect(() => {
     if (file) {
