@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const sitemap: MetadataRoute.Sitemap[number] = {
           url,
           lastModified: new Date(post.last_edited_time),
+          changeFrequency: 'daily',
           priority: 1
         };
         return sitemap;
@@ -45,13 +46,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: origin,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'hourly',
       priority: 1
     },
     {
       url: `${origin}/archive`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'hourly',
       priority: 1
     },
     ...posts
