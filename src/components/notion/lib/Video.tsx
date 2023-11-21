@@ -115,6 +115,7 @@ const EmbedVideo: React.FC<{ url: string }> = ({ url }) => {
           src={embedUrl || url}
           allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share'
           allowFullScreen
+          loading='lazy'
         />
       );
     }
@@ -125,6 +126,7 @@ const EmbedVideo: React.FC<{ url: string }> = ({ url }) => {
           src={url}
           allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share'
           allowFullScreen
+          loading='lazy'
         />
       );
     }
