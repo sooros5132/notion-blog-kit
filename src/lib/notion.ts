@@ -42,6 +42,7 @@ export function awsImageObjectUrlToNotionUrl({
   table?: string;
 }) {
   // s3ObjectUrl: https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8f7f9f31-56f7-49c3-a05f-d15ac4a722ca/qemu.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220702%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220702T053925Z&X-Amz-Expires=3600&X-Amz-Signature=050701d9bc05ec877366b066584240a31a4b5d2459fe6b7f39243e90d479addd&X-Amz-SignedHeaders=host&x-id=GetObject
+  // new s3ObjectUrl: https://prod-files-secure.s3.us-west-2.amazonaws.com/bc54e308-b555-4004-9ba3-ac0d3c344f76/66ddaa37-c87a-4c27-8e25-29546f8cd0f3/NJ_GetUp_7.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20231118%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20231118T002025Z&X-Amz-Expires=3600&X-Amz-Signature=cf069020f58ae8f332b6899a53bcce13172ce588e3c176651e2a0fabefa2e5ea&X-Amz-SignedHeaders=host&x-id=GetObject&width=24
   // pageId: 12345678-abcd-1234-abcd-123456789012
   try {
     if (!table || !blockId || !s3ObjectUrl) {
@@ -49,21 +50,26 @@ export function awsImageObjectUrlToNotionUrl({
     }
     const s3Url = new URL(s3ObjectUrl);
 
-    if (
-      !s3Url?.origin?.includes('amazonaws.com') ||
-      !s3Url?.pathname?.includes('secure.notion-static.com')
-    ) {
+    if (!s3Url?.origin?.includes('amazonaws.com')) {
       return s3ObjectUrl;
     }
 
-    const s3FileUuid = s3Url.pathname.replace(/^\/secure\.notion-static\.com\//, '');
+    let s3Pathname = '';
 
-    if (!s3FileUuid) {
+    if (s3Url?.pathname?.startsWith('/secure.notion-static.com')) {
+      s3Pathname =
+        AWS_SECURE_NOTION_STATIC + s3Url.pathname.replace(/^\/secure\.notion-static\.com\//, '/');
+    }
+    if (s3Url?.hostname?.startsWith('prod-files-secure.s3.us-west-2.amazonaws.com')) {
+      s3Pathname = AWS_FILES_SECURE_NOTION_STATIC + s3Url.pathname;
+    }
+
+    if (!s3Pathname) {
       return s3ObjectUrl;
     }
 
     return `https://www.notion.so/image/${encodeURIComponent(
-      AWS_SECURE_NOTION_STATIC + s3FileUuid
+      s3Pathname
     )}?table=${table}&id=${blockId}`;
   } catch (e) {
     return s3ObjectUrl;
@@ -166,5 +172,6 @@ export const NEXT_IMAGE_DOMAINS: readonly string[] = [
   'www.notion.so',
   'notion.so',
   's3.us-west-2.amazonaws.com',
-  's3-us-west-2.amazonaws.com'
+  's3-us-west-2.amazonaws.com',
+  'prod-files-secure.s3.us-west-2.amazonaws.com'
 ];
