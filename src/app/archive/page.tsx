@@ -34,6 +34,7 @@ export default async function Archive({ params: { params } }: ArchiveParams) {
   const { notFound: _notFound, ...store } = props;
 
   if (_notFound) notFound();
+
   return (
     <NotionStoreProvider store={store}>
       <NotionLayout>
@@ -92,7 +93,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   try {
     const parent = await _parent;
-    const parentTitle = siteConfig.infomation.blogname || parent.title?.absolute || null;
+    const parentTitle = decodeURIComponent(
+      siteConfig.infomation.blogname || parent.title?.absolute || ''
+    );
 
     return {
       title: `Archive${parentTitle ? ` - ${parentTitle}` : ''}`

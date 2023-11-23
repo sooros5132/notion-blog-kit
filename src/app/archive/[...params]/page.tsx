@@ -28,9 +28,12 @@ export async function generateMetadata(
   _parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const [, name] = params.params || [];
+    const [, _name] = params.params || [];
+    const name = decodeURIComponent(_name || '');
     const parent = await _parent;
-    const parentTitle = siteConfig.infomation.blogname || parent.title?.absolute || null;
+    const parentTitle = decodeURIComponent(
+      siteConfig.infomation.blogname || parent.title?.absolute || ''
+    );
 
     return {
       title: `${name}${parentTitle ? ` - ${parentTitle}` : ''}`
